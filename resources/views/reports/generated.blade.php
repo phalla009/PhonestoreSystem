@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-   Generated Report
+    KR System PhoneStore
 @endsection
 
 @section('content')

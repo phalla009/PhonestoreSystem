@@ -1,6 +1,8 @@
 @extends('layouts.master')
 
-@section('pageTitle', 'Add Customer')
+@section('pageTitle')
+    KR System PhoneStore
+@endsection
 
 @section('headerBlock')
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">

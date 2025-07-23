@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    Show Product
+    KR System PhoneStore
 @endsection
 
 @section('headerBlock')

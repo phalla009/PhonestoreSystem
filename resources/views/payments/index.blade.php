@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    All Payments
+   KR System PhoneStore
 @endsection
 
 @section('headerBlock')

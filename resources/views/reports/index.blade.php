@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    Reports & Analytics
+    KR System PhoneStore
 @endsection
 
 @section('headerBlock')
