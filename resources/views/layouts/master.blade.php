@@ -102,6 +102,9 @@
       color: red;
       margin-bottom: 15px;
     }
+    #logout-link:hover {
+      color: red;
+    }
     .confirm-box button:hover {
       opacity: 0.7;
     }
@@ -167,7 +170,7 @@
         </a>
       </li>
       <li>
-        <a href="#" id="logout-link">
+        <a id="logout-link">
           <span class="icon"><i class="fas fa-sign-out-alt"></i></span> Logout
         </a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
