@@ -1,4 +1,5 @@
 @extends('layouts.master')
+
 @section('pageTitle')
     KR System PhoneStore
 @endsection
