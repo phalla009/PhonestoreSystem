@@ -15,7 +15,7 @@
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
-        <h2><i class="fas fa-tags"></i> Edit Category</h2>
+        <h2><i class="fas fa-tags"></i> Edit Brand</h2>
 
         <form action="{{ route('categories.update', $category->id) }}" method="POST">
             @csrf
@@ -23,7 +23,7 @@
 
             <div class="form-row">
                 <div class="form-group" style="width: 100%;">
-                    <label for="name">Category Name:</label>
+                    <label for="name">Brand Name:</label>
                     <input
                         id="name"
                         type="text"
@@ -53,7 +53,7 @@
 
             <div>
                 <button class="btn btn-update" type="submit">
-                    <i class="fas fa-save"></i> Update Category
+                    <i class="fas fa-save"></i> Update Brand
                 </button>
             </div>
         </form>

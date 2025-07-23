@@ -21,12 +21,12 @@
       <a href="{{ route('categories.index') }}" class="btn btn-back">
              <i class="fas fa-chevron-left"></i> Back
      </a>
-      <h2><i class="fas fa-tags"></i> Add New Category</h2>
+      <h2><i class="fas fa-tags"></i> Add New Brand</h2>
         <form action="{{ route('categories.store') }}" method="POST">
             @csrf
             <div class="form-row">
                 <div class="form-group" style="width: 100%;">
-                    <label for="name">Category Name:</label>
+                    <label for="name">Brand Name:</label>
                     <input id="name" type="text" name="name" value="{{ old('name') }}" placeholder="Enter category name">
                     @error('name')
                         <p class="text-danger mt-1">{{ $message }}</p>
@@ -41,7 +41,7 @@
             </div>
             <div style="text-align: right; margin-top: 1rem;">
                <button id="submitCategory" type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> Add Category
+                    <i class="fas fa-save"></i> Add New Brand
                 </button>
             </div>
             <div style="text-align: right; margin-top: 1rem;">

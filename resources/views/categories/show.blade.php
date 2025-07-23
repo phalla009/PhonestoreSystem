@@ -59,10 +59,10 @@
     <a href="{{ route('categories.index') }}" class="btn btn-back">
         <i class="fas fa-chevron-left"></i> Back
     </a>
-    <h2>Category Details</h2>
+    <h2>Brand Details</h2>
 
     <div class="row">
-        <p><strong>Category Name:</strong> {{ $category->name }}</p>
+        <p><strong>Brand Name:</strong> {{ $category->name }}</p>
         <p><strong>Description:</strong> {{ $category->description ?? 'No description available.' }}</p>
     </div>
 
