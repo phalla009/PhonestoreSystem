@@ -17,7 +17,7 @@
 
     <div class="modal-content">
         <a href="{{ route('customers.index') }}" class="btn btn-back" aria-label="Back to product list">
-            <i class="fas fa-arrow-left"></i> Back
+            <i class="fas fa-chevron-left"></i> Back
         </a>
         <h2><i class="fas fa-users"></i> Add New Customer</h2>
 

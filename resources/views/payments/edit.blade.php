@@ -12,7 +12,7 @@
 @section('content')
 <div class="modal-content">
     <a href="{{ route('payments.index') }}" class="btn btn-back">
-        <i class="fas fa-arrow-left"></i> Back
+        <i class="fas fa-chevron-left"></i> Back
     </a>
     <h2><i class="fas fa-pen-to-square"></i> Edit Payment</h2>
     <form action="{{ route('payments.update', $payment->id) }}" method="POST" enctype="multipart/form-data">

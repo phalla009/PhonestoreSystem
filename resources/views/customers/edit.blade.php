@@ -10,7 +10,7 @@
 @section('content')
 <div class="modal-content">
     <a href="{{ route('customers.index') }}" class="btn btn-back">
-        <i class="fas fa-arrow-left"></i> Back
+        <i class="fas fa-chevron-left"></i> Back
     </a>
     <h2><i class="fas fa-users"></i> Edit Customer</h2>
     <form action="{{ route('customers.update', $customer->id) }}" method="POST" enctype="multipart/form-data">

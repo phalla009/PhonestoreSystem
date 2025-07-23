@@ -12,7 +12,7 @@
 @section('content')
     <div class="modal-content" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
         <a href="{{ route('categories.index') }}" class="btn btn-back">
-            <i class="fas fa-arrow-left"></i> Back
+            <i class="fas fa-chevron-left"></i> Back
         </a>
 
         <h2><i class="fas fa-tags"></i> Edit Category</h2>

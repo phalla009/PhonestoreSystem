@@ -40,7 +40,7 @@
 @section('content')
 <div class="modal-content">
     <a href="{{ route('products.index') }}" class="btn btn-back">
-        <i class="fas fa-arrow-left"></i> Back
+        <i class="fas fa-chevron-left"></i> Back
     </a>
 
     <h2><i class="fas fa-box-open"></i> Edit Product</h2>

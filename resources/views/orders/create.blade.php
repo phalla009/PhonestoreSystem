@@ -26,7 +26,7 @@
 
     <div class="modal-content">
         <a href="{{ route('orders.index') }}" class="btn btn-back">
-            <i class="fas fa-arrow-left"></i> Back
+            <i class="fas fa-chevron-left"></i> Back
         </a>
         <h2><i class="fas fa-shopping-cart"></i> Add New Order</h2>
         <form id="orderForm" action="{{ route('orders.store') }}" method="POST" enctype="multipart/form-data">

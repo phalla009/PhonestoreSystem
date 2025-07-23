@@ -18,7 +18,7 @@
 
     <div class="modal-content">
         <a href="{{ route('orders.index') }}" class="btn btn-back">
-            <i class="fas fa-arrow-left"></i> Back
+            <i class="fas fa-chevron-left"></i> Back
         </a>
         <h2><i class="fas fa-shopping-cart"></i> EditOrder</h2>
         <form action="{{ route('orders.update', $order->id) }}" method="POST" enctype="multipart/form-data">
