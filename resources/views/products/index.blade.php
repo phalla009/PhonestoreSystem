@@ -35,8 +35,6 @@
             {{ session('success') }}
         </div>
     @endif
-
-    <div class="main-content" id="products">
         <div class="content-section" id="products">
             <h2><i class="fas fa-box-open"></i> Products Management</h2>
             <div class="filter-section">
@@ -106,8 +104,6 @@
                 </table>
             </div>
         </div>
-    </div>
-
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="modal">
         <div class="modal-content">

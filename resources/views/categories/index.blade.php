@@ -19,9 +19,7 @@
             {{ session('success') }}
         </div>
     @endif
-
-    <div class="main-content" id="categories">
-        <div class="content-section">
+        <div class="content-section" id="categories">
             <h2><i class="fas fa-tags"></i> Categories Management</h2>
             <div class="filter-section">
                 <div class="filter-controls" style="display:flex; align-items:center; gap: 10px;">
@@ -81,7 +79,6 @@
                 </table>
             </div>
         </div>
-    </div>
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="modal">
