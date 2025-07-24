@@ -20,7 +20,7 @@
         </div>
     @endif
         <div class="content-section" id="categories">
-            <h2><i class="fas fa-tags"></i> Categories Management</h2>
+            <h2><i class="fas fa-mobile-alt"></i> Categories Management</h2>
             <div class="filter-section">
                 <div class="filter-controls" style="display:flex; align-items:center; gap: 10px;">
                     <a href="{{ route('categories.create') }}" class="btn btn-primary" id="openCreateModal">

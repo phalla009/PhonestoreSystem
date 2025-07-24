@@ -21,7 +21,7 @@
       <a href="{{ route('categories.index') }}" class="btn btn-back">
              <i class="fas fa-chevron-left"></i> Back
      </a>
-      <h2><i class="fas fa-tags"></i> Add New Brand</h2>
+      <h2><i class="fas fa-mobile-alt"></i> Add New Brand</h2>
         <form action="{{ route('categories.store') }}" method="POST">
             @csrf
             <div class="form-row">

@@ -308,6 +308,7 @@ h2 {
     margin-bottom: 1.5rem;
 }
 .stat-card {
+    border-top: 5px solid #09417d69;
     color: #007bff;
     background: #d1e4ff;
     border-radius: 10px;

@@ -15,7 +15,7 @@
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
-        <h2><i class="fas fa-tags"></i> Edit Brand</h2>
+        <h2><i class="fas fa-mobile-alt"></i> Edit Brand</h2>
 
         <form action="{{ route('categories.update', $category->id) }}" method="POST">
             @csrf

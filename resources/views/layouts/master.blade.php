@@ -108,6 +108,31 @@
     .confirm-box button:hover {
       opacity: 0.7;
     }
+    .website-button {
+      margin-left: 10px;
+      font-size: 14px;
+      position: relative;
+      color: #c7ddfa;
+      text-decoration: none;
+      padding-bottom: 3px;
+      transition: color 0.3s ease;
+    }
+    .website-button::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 1.5px; 
+      width: 0;
+      background-color: #ffffff;
+      transition: width 0.3s ease;
+    }
+    .website-button:hover {
+      color: #ffffff; 
+    }
+    .website-button:hover::after {
+      width: 100%; 
+    }
   </style>
 </head>
 <body>
@@ -119,6 +144,12 @@
         <span class="l2">R</span>
         <span class="l3" style="margin-left: 10px;">System</span>
       </div>
+      <a href="#" class="website-button">
+        <i class="fas fa-globe"></i> Website 
+      </a>
+       <a href="#" class="website-button">
+         <i class="fab fa-facebook"></i> Page
+      </a>
     </div>
     <ul class="sidebar-menu">
       <li>
@@ -128,7 +159,7 @@
       </li>
       <li class="menu-container">
         <a href="javascript:void(0)">
-          <span class="icon"><i class="fas fa-list"></i></span>
+          <span class="icon"><i class="fas fa-box-open"></i></span>
             Products  
           <span class="dropdown-arrow"><i class="fas fa-chevron-right"></i></span>
         </a>
@@ -137,7 +168,7 @@
             <span class="icon"><i class="fas fa-box"></i></span> Products
           </a>
           <a href="{{ route('categories.index') }}">
-            <span class="icon"><i class="fas fa-stream"></i></span> Category
+            <span class="icon"><i class="fas fa-mobile-alt"></i></span> Category
           </a>
         </div>
       </li>
