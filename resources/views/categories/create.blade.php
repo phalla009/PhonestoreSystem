@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    KR System PhoneStore
+    Add New Categories
 @endsection
 
 @section('headerBlock')
