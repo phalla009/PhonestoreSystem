@@ -73,31 +73,34 @@
             </div>
         </div>
 
-        <div class="field">
-            <fieldset style="border: 1px solid #7d7d7d; padding: 15px;">
-                <legend style="font-weight: bold; padding: 0 15px;"> Select the permissions of your role</legend>
-                <div style="display: flex; flex-wrap: wrap; gap: 15px; flex-direction: row;">
+      <div class="field" style="margin-top: 20px;">
+            <fieldset style="border: none; padding: 0;">
+                <legend style="font-weight: 700; font-size: 16px; color: #1f2937; margin-bottom: 15px;">
+                    Select the permissions of your role
+                </legend>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
                     @foreach ($allPermissions as $permissionGroupName => $permissionsOfAGroup)
-                        <div style="background-color: white; color: black; padding: 10px; border: 1px solid #e7e7e7; flex: 1;">
-                            <h4 style="font-size: 12px;">{{ $permissionGroupName }}</h4>
+                        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;">
+                            <h4 style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 12px;">{{ $permissionGroupName }}</h4>
                             @foreach ($permissionsOfAGroup as $perm)
-                                <div style="display: flex; gap: 5px; min-width: 200px;">
-                                    <input 
-                                        type="checkbox" 
-                                        value="{{ $perm->id }}" 
-                                        name="permissions[]" 
-                                        id="permissions{{ $perm->id }}"
-                                    >
-                                    <label style="color: #535353; font-size: 12px;" for="permissions{{ $perm->id }}">
-                                        {{ $perm->permission_name }}
-                                    </label>
-                                </div>
+                                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; color: #374151; cursor: pointer; transition: color 0.2s;">
+                                    <input type="checkbox" value="{{ $perm->id }}" name="permissions[]" id="permissions{{ $perm->id }}" style="width: 16px; height: 16px; accent-color: #3b82f6;">
+                                    {{ $perm->permission_name }}
+                                </label>
                             @endforeach
                         </div>
                     @endforeach
                 </div>
             </fieldset>
         </div>
+
+        <style>
+        .field div:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        </style>
+
 
         <div style="text-align: right; margin-top: 1rem;">
             <button id="submitRole" type="submit" class="btn btn-success">
