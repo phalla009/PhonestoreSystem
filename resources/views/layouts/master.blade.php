@@ -38,6 +38,12 @@
       margin-right: 8px;
       font-size: 18px;
     }
+    .sidebar {
+      height: 100vh;      
+      overflow-y: auto;   
+      overflow-x: hidden;  
+      
+    }
     .dropdown-arrow {
       float: right;
       font-size: 15px;
@@ -133,6 +139,18 @@
     .website-button:hover::after {
       width: 100%; 
     }
+      .sidebar-header .user-info {
+        margin-top:20px;
+        display: flex;
+        align-items: center;
+        gap: 8px; 
+        font-size: 16px;
+        margin-bottom: -10px;
+      }
+      .sidebar-header .user-info i {
+        font-size: 18px;
+        color: #afdeff;
+      }
   </style>
 </head>
 <body>
@@ -150,75 +168,166 @@
        <a href="#" class="website-button">
          <i class="fab fa-facebook"></i> Page
       </a>
+       <p class="user-info">
+            <i class="fas fa-user"></i>
+            <span>{{ Auth::user()->name }}</span> 
+            - <span class="user-role">{{ Auth::user()->role->role_name ?? 'No Role' }}</span>
+        </p>
     </div>
     <ul class="sidebar-menu">
+
+      {{-- Dashboard --}}
+      @if(Auth::user()->hasPermission('dashboard'))
       <li>
-        <a href="{{ route('dashboard') }}" data-section="dashboard">
-          <span class="icon"><i class="fas fa-tachometer-alt"></i></span> Dashboard
-        </a>
+          <a href="{{ route('dashboard') }}" data-section="dashboard">
+              <span class="icon"><i class="fas fa-tachometer-alt"></i></span> Dashboard
+          </a>
       </li>
+      @endif
+
+      {{-- Products Menu --}}
+      @if(Auth::user()->hasPermission('products') || Auth::user()->hasPermission('categories'))
       <li class="menu-container">
-        <a href="javascript:void(0)">
-          <span class="icon"><i class="fas fa-box-open"></i></span>
-            Products  
-          <span class="dropdown-arrow"><i class="fas fa-chevron-right"></i></span>
-        </a>
-        <div class="submenu">
-          <a href="{{ route('products.index') }}">
-            <span class="icon"><i class="fas fa-box"></i></span> Products
+          <a href="javascript:void(0)">
+              <span class="icon"><i class="fas fa-box-open"></i></span> Products
+              <span class="dropdown-arrow"><i class="fas fa-chevron-right"></i></span>
           </a>
-          <a href="{{ route('categories.index') }}">
-            <span class="icon"><i class="fas fa-mobile-alt"></i></span> Category
-          </a>
-        </div>
-      </li>
-      <li>
-        <a href="{{ route('orders.index') }}" data-section="orders">
-          <span class="icon"><i class="fas fa-shopping-cart"></i></span> Orders
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('customers.index') }}" data-section="customers">
-          <span class="icon"><i class="fas fa-users"></i></span> Customers
-        </a>
-      </li>
-
-      <li>
-        <a href="{{ route('payments.index') }}" data-section="payments">
-          <span class="icon"><i class="fas fa-credit-card"></i></span> All Payments
-        </a>
-      </li>
-
-      <li>
-        <a href="{{ route('inventorys.index') }}" data-section="inventory">
-          <span class="icon"><i class="fas fa-boxes"></i></span> Inventory
-        </a>
-      </li>
-
-      <li>
-        <a href="{{ route('reports.index') }}" data-section="report">
-          <span class="icon"><i class="fas fa-chart-line"></i></span> Reports
-        </a>
-      </li>
-      <li>
-        <a id="logout-link">
-          <span class="icon"><i class="fas fa-sign-out-alt"></i></span> Logout
-        </a>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-          @csrf
-        </form>
-      </li>
-    <div id="logout-confirm" style="display:none;">
-      <div class="confirm-box">
-          <div class="icon-container">
-            <i class="fas fa-sign-out-alt"></i>
+          <div class="submenu">
+              @if(Auth::user()->hasPermission('products'))
+              <a href="{{ route('products.index') }}">
+                  <span class="icon"><i class="fas fa-box"></i></span> Products
+              </a>
+              @endif
+              @if(Auth::user()->hasPermission('categories'))
+              <a href="{{ route('categories.index') }}">
+                  <span class="icon"><i class="fas fa-mobile-alt"></i></span> Category
+              </a>
+              @endif
           </div>
+      </li>
+      @endif
+
+      {{-- Orders --}}
+      @if(Auth::user()->hasPermission('orders'))
+      <li>
+          <a href="{{ route('orders.index') }}" data-section="orders">
+              <span class="icon"><i class="fas fa-shopping-cart"></i></span> Orders
+          </a>
+      </li>
+      @endif
+
+      {{-- Customers --}}
+      @if(Auth::user()->hasPermission('customers'))
+      <li>
+          <a href="{{ route('customers.index') }}" data-section="customers">
+              <span class="icon"><i class="fas fa-users"></i></span> Customers
+          </a>
+      </li>
+      @endif
+
+      {{-- Payments --}}
+      @if(Auth::user()->hasPermission('payments'))
+      <li>
+          <a href="{{ route('payments.index') }}" data-section="payments">
+              <span class="icon"><i class="fas fa-credit-card"></i></span> All Payments
+          </a>
+      </li>
+      @endif
+
+      {{-- Inventory --}}
+      @if(Auth::user()->hasPermission('inventory'))
+      <li>
+          <a href="{{ route('inventorys.index') }}" data-section="inventory">
+              <span class="icon"><i class="fas fa-boxes"></i></span> Inventory
+          </a>
+      </li>
+      @endif
+
+      {{-- Reports --}}
+      @if(Auth::user()->hasPermission('reports'))
+      <li>
+          <a href="{{ route('reports.index') }}" data-section="report">
+              <span class="icon"><i class="fas fa-chart-line"></i></span> Reports
+          </a>
+      </li>
+      @endif
+
+      {{-- User Management --}}
+      @if(Auth::user()->hasPermission('usermanager') || Auth::user()->hasPermission('userroles'))
+      <li class="menu-container">
+          <a href="javascript:void(0)">
+              <span class="icon"><i class="fas fa-users"></i></span> Users
+              <span class="dropdown-arrow"><i class="fas fa-chevron-right"></i></span>
+          </a>
+          <div class="submenu">
+              @if(Auth::user()->hasPermission('usermanagers'))
+              <a href="{{ route('usermanagers.index') }}" data-section="user">
+                  <span class="icon"><i class="fas fa-user"></i></span> User Managers
+              </a>
+              @endif
+              @if(Auth::user()->hasPermission('userroles'))
+              <a href="{{ route('userroles.index') }}" data-section="role">
+                  <span class="icon"><i class="fas fa-user-shield"></i></span> User Roles&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </a>
+              @endif
+          </div>
+      </li>
+      @endif
+
+      {{-- Settings --}}
+      @if(Auth::user()->hasPermission('settings'))
+      <li>
+          <a href="#" data-section="setting">
+              <span class="icon"><i class="fas fa-cog"></i></span> Setting
+          </a>
+      </li>
+      @endif
+
+      {{-- Logout --}}
+<li>
+    <a id="logout-link">
+        <span class="icon"><i class="fas fa-sign-out-alt"></i></span> Logout
+    </a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+</li>
+
+{{-- Logout Confirmation Modal --}}
+<div id="logout-confirm" style="display:none;">
+    <div class="confirm-box">
+        <div class="icon-container">
+            <i class="fas fa-sign-out-alt"></i>
+        </div>
         <p>Are you sure you want to logout?</p>
         <button id="confirm-yes">Yes</button>
         <button id="confirm-no">No</button>
-      </div>
     </div>
-    </ul>
+</div>
+
+  <script>
+  const logoutLink = document.getElementById('logout-link');
+  const logoutConfirm = document.getElementById('logout-confirm');
+  const confirmYes = document.getElementById('confirm-yes');
+  const confirmNo = document.getElementById('confirm-no');
+  const logoutForm = document.getElementById('logout-form');
+
+  logoutLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      logoutConfirm.style.display = 'flex';
+  });
+
+  confirmYes.addEventListener('click', function() {
+      logoutForm.submit();
+  });
+
+  confirmNo.addEventListener('click', function() {
+      logoutConfirm.style.display = 'none';
+  });
+  </script>
+
+  </ul>
+
   </div>
   <div class="main-content">
     <div id="content">

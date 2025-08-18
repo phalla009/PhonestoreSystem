@@ -39,6 +39,7 @@
             font-weight: 600;
             font-size: 18px;
             animation: fadeInUp 0.5s ease;
+            z-index: 1000;
         }
         .success-message::before {
             content: '✓';

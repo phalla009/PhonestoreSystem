@@ -9,6 +9,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserManagerController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -32,7 +34,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('customers', CustomerController::class)->names('customers');
     Route::resource('inventorys', InventoryController::class)->names('inventorys');
     Route::resource('payments', PaymentController::class)->names('payments');
+    Route::resource('userroles', RoleController::class)->parameters([
+        'userroles' => 'role'
+    ]);
 
+    Route::resource('usermanagers', UserManagerController::class);
     // Reports
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
