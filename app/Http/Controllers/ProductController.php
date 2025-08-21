@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $categories = Category::all();
@@ -26,18 +23,12 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
-    { 
-        $categories = Category::all(); 
-        return view('products.create', compact('categories')); 
+    {
+        $categories = Category::all();
+        return view('products.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -50,10 +41,8 @@ class ProductController extends Controller
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Create product first (without images)
         $product = Product::create($validated);
 
-        // Save multiple images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
                 $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -61,7 +50,7 @@ class ProductController extends Controller
 
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => $filename,
+                    'image'      => $filename,
                 ]);
             }
         }
@@ -69,29 +58,20 @@ class ProductController extends Controller
         return redirect()->route('products.create')->with('success', 'Product added successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $product = Product::with('images')->findOrFail($id);
         return view('products.show', compact('product'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $product = Product::with('images')->findOrFail($id);
-        $categories = Category::all();  
+        $categories = Category::all();
         return view('products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-   public function update(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -108,7 +88,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $product->update($validated);
 
-        // Handle deleting images if any
+        // Delete selected images
         if ($request->has('delete_images')) {
             foreach ($request->delete_images as $imageId) {
                 $image = ProductImage::find($imageId);
@@ -121,7 +101,8 @@ class ProductController extends Controller
                 }
             }
         }
-        // Add new images if any
+
+        // Add new images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
                 $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -129,7 +110,7 @@ class ProductController extends Controller
 
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => $filename,
+                    'image'      => $filename,
                 ]);
             }
         }
@@ -137,15 +118,10 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 
-
-    /**
-     * Remove the specified resource from storage, including images.
-     */
     public function destroy(string $id)
     {
         $product = Product::with('images')->findOrFail($id);
 
-        // Delete product images from storage and database
         foreach ($product->images as $image) {
             $imagePath = public_path('images/products/' . $image->image);
             if (file_exists($imagePath)) {
@@ -154,15 +130,11 @@ class ProductController extends Controller
             $image->delete();
         }
 
-        // Delete product itself
         $product->delete();
 
         return redirect()->route('products.index')->with('success', 'The product and its images deleted successfully.');
     }
 
-    /**
-     * Inventory summary page.
-     */
     public function inventory()
     {
         $products = Product::all();
