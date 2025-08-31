@@ -308,28 +308,42 @@ h2 {
     margin-bottom: 1.5rem;
 }
 .stat-card {
-    border-top: 5px solid #09417d69;
     color: #007bff;
-    background: #d1e4ff;
+    background: linear-gradient(
+        145deg,
+        #b9e2ff77,
+        #8ecfff55
+    ); /* subtle gradient for depth */
     border-radius: 10px;
     padding: 1.25rem 1rem;
     text-align: center;
-    box-shadow: 0 4px 14px rgba(10, 0, 116, 0.1);
-    transition: box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(10, 0, 116, 0.1),
+        /* soft main shadow */ 0 8px 20px rgba(10, 0, 116, 0.15); /* deeper shadow for 3D effect */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+/* Optional: hover effect to pop out */
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(10, 0, 116, 0.15),
+        0 12px 25px rgba(10, 0, 116, 0.2);
+}
+
 .stat-card:hover {
     box-shadow: 0 8px 18px rgba(0, 7, 22, 0.15);
 }
-
 .stat-card h3 {
     font-size: 2rem;
     margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* subtle 3D effect */
 }
 
 .stat-card p {
     font-size: 1.1rem;
     opacity: 0.9;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* subtle shadow for depth */
 }
+
 .table-container {
     overflow-x: auto;
     margin-top: 1rem;

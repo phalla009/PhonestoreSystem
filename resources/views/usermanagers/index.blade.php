@@ -51,7 +51,24 @@
                             <td data-label="No">{{ $user->id }}</td>
                             <td data-label="Full Name">{{ $user->name }}</td>
                             <td data-label="Email">{{ $user->email }}</td>
-                            <td data-label="Role">{{ $user->role->role_name ?? 'N/A' }}</td>
+                           <td data-label="Role">
+                                @php
+                                    $roleName = $user->role->role_name ?? 'N/A';
+                                    $roleColor = 'gray'; // default color
+                                    switch(strtolower($roleName)) {
+                                        case 'admin':
+                                            $roleColor = 'red';
+                                            break;
+                                        case 'manager':
+                                            $roleColor = 'green';
+                                            break;
+                                        case 'staff':
+                                            $roleColor = 'blue';
+                                            break;
+                                    }
+                                @endphp
+                                <span style="color: {{ $roleColor }}; font-weight: 600;">{{ $roleName }}</span>
+                            </td>
                             <td data-label="Created At">{{ $user->created_at ? $user->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
                             <td data-label="Actions">
                                 <div class="action-buttons">

@@ -276,7 +276,13 @@
                     <td data-label="Quantity">{{ $order->quantity }}</td>
                     <td data-label="Paid Amount">${{ number_format($order->payments_sum_amount ?? 0, 2) }}</td>
                     <td data-label="Status">
-                        <span class="status-{{ $order->status }}">{{ ucfirst($order->status) }}</span>
+                        @if($order->status === 'completed')
+                            <i class="fas fa-check-circle" style="color: green;font-size: 20px;"></i>
+                        @elseif($order->status === 'pending')
+                            <i class="fas fa-hourglass-half" style="color: orange; font-size: 20px;"></i>
+                        @elseif($order->status === 'cancelled')
+                            <i class="fas fa-times-circle" style="color: red; font-size: 20px;"></i>
+                        @endif
                     </td>
                     <td data-label="Actions">
                         <div class="action-buttons">

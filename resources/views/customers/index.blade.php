@@ -122,9 +122,13 @@
                         <td data-label="Gender">{{ ucfirst($customer->gender) }}</td>
                         <td data-label="Phone">{{ $customer->phone }}</td>
                         <td data-label="Status">
-                            <span class="status-{{ strtolower($customer->status) }}">
-                                {{ ucfirst($customer->status) }}
-                            </span>
+                            @if(strtolower($customer->status) === 'active')
+                                <i class="fas fa-check-circle" style="color: green; margin-right: 5px;"></i>
+                                <span class="status-active">{{ ucfirst($customer->status) }}</span>
+                            @elseif(strtolower($customer->status) === 'inactive')
+                                <i class="fas fa-times-circle" style="color: red; margin-right: 5px;"></i>
+                                <span class="status-inactive">{{ ucfirst($customer->status) }}</span>
+                            @endif
                         </td>
                         <td data-label="Actions">
                             <div class="action-buttons">

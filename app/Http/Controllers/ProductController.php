@@ -43,9 +43,10 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
+        // Save images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $filename = $file->getClientOriginalName(); // Keep original name
                 $file->move(public_path('images/products'), $filename);
 
                 ProductImage::create([
@@ -105,7 +106,7 @@ class ProductController extends Controller
         // Add new images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $filename = $file->getClientOriginalName(); // Keep original name
                 $file->move(public_path('images/products'), $filename);
 
                 ProductImage::create([

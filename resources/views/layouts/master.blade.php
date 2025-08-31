@@ -114,43 +114,18 @@
     .confirm-box button:hover {
       opacity: 0.7;
     }
-    .website-button {
-      margin-left: 10px;
-      font-size: 14px;
-      position: relative;
-      color: #c7ddfa;
-      text-decoration: none;
-      padding-bottom: 3px;
-      transition: color 0.3s ease;
+    .sidebar-header .user-info {
+      margin-top:20px;
+      display: flex;
+      align-items: center;
+      gap: 8px; 
+      font-size: 16px;
+      margin-bottom: -10px;
     }
-    .website-button::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      height: 1.5px; 
-      width: 0;
-      background-color: #ffffff;
-      transition: width 0.3s ease;
+    .sidebar-header .user-info i {
+      font-size: 18px;
+      color: #afdeff;
     }
-    .website-button:hover {
-      color: #ffffff; 
-    }
-    .website-button:hover::after {
-      width: 100%; 
-    }
-      .sidebar-header .user-info {
-        margin-top:20px;
-        display: flex;
-        align-items: center;
-        gap: 8px; 
-        font-size: 16px;
-        margin-bottom: -10px;
-      }
-      .sidebar-header .user-info i {
-        font-size: 18px;
-        color: #afdeff;
-      }
   </style>
 </head>
 <body>
@@ -162,12 +137,6 @@
         <span class="l2">R</span>
         <span class="l3" style="margin-left: 10px;">System</span>
       </div>
-      <a href="#" class="website-button">
-        <i class="fas fa-globe"></i> Website 
-      </a>
-       <a href="#" class="website-button">
-         <i class="fab fa-facebook"></i> Page
-      </a>
        <p class="user-info">
             <i class="fas fa-user"></i>
             <span>{{ Auth::user()->name }}</span> 

@@ -105,9 +105,16 @@
                         <td>{{ $order->product->name ?? 'N/A' }}</td>
                         <td>${{ number_format($order->total_amount, 2) }}</td>
                         <td>
-                            <span class="status-{{ $order->status }}">
-                                {{ ucfirst($order->status) }}
-                            </span>
+                            @if($order->status === 'pending')
+                                <i class="fas fa-hourglass-half" style="color: orange; margin-right: 5px;"></i>
+                                <span class="status-pending">{{ ucfirst($order->status) }}</span>
+                            @elseif($order->status === 'completed')
+                                <i class="fas fa-check-circle" style="color: green; margin-right: 5px;"></i>
+                                <span class="status-completed">{{ ucfirst($order->status) }}</span>
+                            @elseif($order->status === 'cancelled')
+                                <i class="fas fa-times-circle" style="color: red; margin-right: 5px;"></i>
+                                <span class="status-cancelled">{{ ucfirst($order->status) }}</span>
+                            @endif
                         </td>
                     </tr>
                 @empty
