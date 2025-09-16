@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ URL::asset('css/delete_form.css') }}">
     <script src="{{ URL::asset('js/form.js') }}" defer></script>
     <script src="{{ URL::asset('js/delete_form.js') }}" defer></script>
+
 @endsection
 
 @section('content')
@@ -49,7 +50,7 @@
                     @forelse ($users as $user)
                         <tr>
                             <td data-label="No">{{ $user->id }}</td>
-                            <td data-label="Full Name">{{ $user->name }}</td>
+                            <td data-label="Full Name"><i class="fas fa-user user-icon"></i>{{ $user->name }}</td>
                             <td data-label="Email">{{ $user->email }}</td>
                            <td data-label="Role">
                                 @php

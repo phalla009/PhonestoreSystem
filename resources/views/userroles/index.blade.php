@@ -47,19 +47,56 @@
                     @forelse ($roles as $role)
                         <tr>
                             <td data-label="No">{{ $role->id }}</td>
-                            <td data-label="Role Name">{{ $role->role_name }}</td>
-                             <td data-label="Role Name">{{ $role->description  ?? 'N/A' }}</td>
-                            <td data-label="Created At">{{ $role->created_at ? $role->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
+                            
+                            <td data-label="Role Name">
+                                @php
+                                    $icon = 'fas fa-user'; 
+                                    $bgColor = '#7f8c8d'; // default gray
+
+                                    switch(strtolower($role->role_name ?? '')) {
+                                        case 'admin':
+                                            $icon = 'fas fa-user-shield';
+                                            $bgColor = '#e74c3c'; // red
+                                            break;
+                                        case 'manager':
+                                            $icon = 'fas fa-user-tie';
+                                            $bgColor = '#27ae60'; // green
+                                            break;
+                                        case 'staff':
+                                            $icon = 'fas fa-user';
+                                            $bgColor = '#2980b9'; // blue
+                                            break;
+                                    }
+                                @endphp
+
+                                <i class="{{ $icon }}" 
+                                style="color:#fff; background:{{ $bgColor }}; border-radius:50%; 
+                                        padding:5px; margin-right:5px; font-size:14px; width:25px; height:25px; 
+                                        display:inline-flex; align-items:center; justify-content:center;">
+                                </i>
+                                {{ $role->role_name }}
+                            </td>
+
+                            <td data-label="Description">{{ $role->description  ?? 'N/A' }}</td>
+
+                            <td data-label="Created At">
+                                {{ $role->created_at ? $role->created_at->format('Y-m-d H:i') : 'N/A' }}
+                            </td>
+
                             <td data-label="Actions">
                                 <div class="action-buttons">
-                                    <a href="{{ route('userroles.show', $role->id) }}" class="action-btn show-btn openShowModal">
+                                    <a href="{{ route('userroles.show', $role->id) }}" 
+                                    class="action-btn show-btn openShowModal">
                                         <i class="fas fa-eye"></i> Show
                                     </a>
-                                    <a href="{{ route('userroles.edit', $role->id) }}" class="action-btn edit-btn openEditModal" data-id="{{ $role->id }}">
+                                    
+                                    <a href="{{ route('userroles.edit', $role->id) }}" 
+                                    class="action-btn edit-btn openEditModal" data-id="{{ $role->id }}">
                                         <i class="fas fa-pen-to-square"></i> Edit
                                     </a>
 
-                                    <button type="button" class="action-btn delete-btn openDeleteModal" data-action="{{ route('userroles.destroy', $role->id) }}">
+                                    <button type="button" class="action-btn delete-btn openDeleteModal" 
+                                            data-action="{{ route('userroles.destroy', $role->id) }}">
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </div>
@@ -71,6 +108,7 @@
                         </tr>
                     @endforelse
                 </tbody>
+
             </table>
         </div>
     </div>
