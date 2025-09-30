@@ -2,24 +2,32 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * The path to your application's "home" route.
+     *
+     * @var string
      */
-    public function register(): void
-    {
-        //
-    }
+    public const HOME = '/home';
 
     /**
-     * Bootstrap any application services.
+     * Define your route model bindings, pattern filters, etc.
      */
     public function boot(): void
     {
-         Schema::defaultStringLength(191);
+        $this->routes(function () {
+            // API routes
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/api.php'));
+
+            // Web routes
+            Route::middleware('web')
+                ->group(base_path('routes/web.php'));
+        });
     }
 }

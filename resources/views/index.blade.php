@@ -87,11 +87,14 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-gap: 20px;
-            margin-top: 20px;
+            margin-top: 25px;
+           
+      
+            
         }
         canvas {
-            width: 100% !important;
-            height: 100% !important;
+            width: 90% !important;
+            height: 90% !important;
         }
     </style>
 @endsection
