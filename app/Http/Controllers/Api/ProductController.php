@@ -31,6 +31,28 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load(['category', 'images']);
+        
+        return response()->json([
+            'id'            => $product->id,
+            'name'          => $product->name,
+            'price'         => $product->price,
+            'description'   => $product->description,
+            'status'        => $product->status,
+            'category'      => $product->category ? $product->category->name : null,
+            'images'        => $product->images->pluck('image'),
+        ]);
+    }
+    // Show product by ID
+    public function showById($id)
+    {
+        $product = Product::with(['category', 'images'])->find($id);
+
+        if (!$product) {
+            return response()->json([
+                'error'   => true,
+                'message' => 'Product not found'
+            ], 404);
+        }
         return response()->json([
             'id'            => $product->id,
             'name'          => $product->name,
