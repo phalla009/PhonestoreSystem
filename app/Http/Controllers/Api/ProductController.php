@@ -9,40 +9,45 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    // List all products with category name and images
+    // List all products with category name and images URLs
     public function index()
     {
         $products = Product::with(['category', 'images'])->get()->map(function ($product) {
             return [
-                'id'            => $product->id,
-                'name'          => $product->name,
-                'price'         => $product->price,
-                'description'   => $product->description,
-                'status'        => $product->status,
-                'category'      => $product->category ? $product->category->name : null,
-                'images'        => $product->images->pluck('image'),
+                'id'          => $product->id,
+                'name'        => $product->name,
+                'price'       => $product->price,
+                'description' => $product->description,
+                'status'      => $product->status,
+                'category'    => $product->category ? $product->category->name : null,
+                'images'      => $product->images->map(function ($img) {
+                    return url('images/products/' . $img->image);
+                }),
             ];
         });
 
         return response()->json($products);
     }
 
-    // Show single product with category and images
+    // Show single product with category and images URLs
     public function show(Product $product)
     {
         $product->load(['category', 'images']);
-        
+
         return response()->json([
-            'id'            => $product->id,
-            'name'          => $product->name,
-            'price'         => $product->price,
-            'description'   => $product->description,
-            'status'        => $product->status,
-            'category'      => $product->category ? $product->category->name : null,
-            'images'        => $product->images->pluck('image'),
+            'id'          => $product->id,
+            'name'        => $product->name,
+            'price'       => $product->price,
+            'description' => $product->description,
+            'status'      => $product->status,
+            'category'    => $product->category ? $product->category->name : null,
+            'images'      => $product->images->map(function ($img) {
+                return url('images/products/' . $img->image);
+            }),
         ]);
     }
-    // Show product by ID
+
+    // Show product by ID (optional alternative)
     public function showById($id)
     {
         $product = Product::with(['category', 'images'])->find($id);
@@ -53,22 +58,24 @@ class ProductController extends Controller
                 'message' => 'Product not found'
             ], 404);
         }
+
         return response()->json([
-            'id'            => $product->id,
-            'name'          => $product->name,
-            'price'         => $product->price,
-            'description'   => $product->description,
-            'status'        => $product->status,
-            'category'      => $product->category ? $product->category->name : null,
-            'images'        => $product->images->pluck('image'),
+            'id'          => $product->id,
+            'name'        => $product->name,
+            'price'       => $product->price,
+            'description' => $product->description,
+            'status'      => $product->status,
+            'category'    => $product->category ? $product->category->name : null,
+            'images'      => $product->images->map(function ($img) {
+                return url('images/products/' . $img->image);
+            }),
         ]);
     }
 
-    // Store new product with images
+    // Store new product with multiple images
     public function store(Request $request)
     {
         $request->validate([
-            
             'name'        => 'required|string|max:255',
             'price'       => 'required|numeric',
             'description' => 'nullable|string',
@@ -77,12 +84,14 @@ class ProductController extends Controller
             'images.*'    => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $product = Product::create($request->all());
+        $product = Product::create($request->only([
+            'name', 'price', 'description', 'status', 'category_id'
+        ]));
 
-        // Save multiple images
+        // Upload and save multiple images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
-                $filename = time().'_'.$file->getClientOriginalName();
+                $filename = time() . '_' . $file->getClientOriginalName();
                 $file->move(public_path('images/products'), $filename);
 
                 ProductImage::create([
@@ -95,17 +104,19 @@ class ProductController extends Controller
         $product->load(['category', 'images']);
 
         return response()->json([
-            'id'            => $product->id,
-            'name'          => $product->name,
-            'price'         => $product->price,
-            'description'   => $product->description,
-            'status'        => $product->status,
-            'category'      => $product->category ? $product->category->name : null,
-            'images'        => $product->images->pluck('image'),
+            'id'          => $product->id,
+            'name'        => $product->name,
+            'price'       => $product->price,
+            'description' => $product->description,
+            'status'      => $product->status,
+            'category'    => $product->category ? $product->category->name : null,
+            'images'      => $product->images->map(function ($img) {
+                return url('images/products/' . $img->image);
+            }),
         ], 201);
     }
 
-    // Update product (images can be handled separately if needed)
+    // Update product (images can be updated separately if needed)
     public function update(Request $request, Product $product)
     {
         $request->validate([
@@ -116,27 +127,31 @@ class ProductController extends Controller
             'category_id' => 'sometimes|exists:categories,id',
         ]);
 
-        $product->update($request->all());
+        $product->update($request->only([
+            'name', 'price', 'description', 'status', 'category_id'
+        ]));
 
         $product->load(['category', 'images']);
 
         return response()->json([
-            'id'            => $product->id,
-            'name'          => $product->name,
-            'price'         => $product->price,
-            'description'   => $product->description,
-            'status'        => $product->status,
-            'category'      => $product->category ? $product->category->name : null,
-            'images'        => $product->images->pluck('image'),
+            'id'          => $product->id,
+            'name'        => $product->name,
+            'price'       => $product->price,
+            'description' => $product->description,
+            'status'      => $product->status,
+            'category'    => $product->category ? $product->category->name : null,
+            'images'      => $product->images->map(function ($img) {
+                return url('images/products/' . $img->image);
+            }),
         ]);
     }
 
-    // Delete product and optionally its images
+    // Delete product and its images
     public function destroy(Product $product)
     {
-        // Delete product images from storage
+        // Delete images from storage
         foreach ($product->images as $img) {
-            $path = public_path('images/products/'.$img->image);
+            $path = public_path('images/products/' . $img->image);
             if (file_exists($path)) {
                 unlink($path);
             }
