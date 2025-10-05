@@ -1,7 +1,10 @@
+# Use PHP 8.2 FPM image
 FROM php:8.2-fpm
 
+# Set working directory
 WORKDIR /var/www/html
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
@@ -15,29 +18,34 @@ RUN apt-get update && apt-get install -y \
     vim \
     libzip-dev \
     sqlite3 \
-    libsqlite3-dev
-
-RUN docker-php-ext-install pdo pdo_mysql
+    libsqlite3-dev \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Copy composer from official image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy application files
-COPY . /var/www/html
+# Copy project files
+COPY . .
 
-# Fix ownership & permissions
+# Copy real .env
+# Make sure you have a proper .env in your project root
+COPY .env /var/www/html/.env
+
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Copy .env.example → .env
-RUN cp .env.example .env
+# Clear caches
+RUN php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan route:clear
 
 # Install PHP dependencies & generate app key
-RUN composer install && php artisan key:generate
+RUN composer install --no-interaction --optimize-autoloader \
+    && php artisan key:generate
 
-# Create SQLite database
-RUN mkdir -p /var/www/html/database \
-    && touch /var/www/html/database/database.sqlite
-
+# Expose port 8000
 EXPOSE 8000
+
+# Start Laravel server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
