@@ -27,25 +27,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy project files
 COPY . .
 
-# Copy real .env
-# Make sure you have a proper .env in your project root
-COPY .env /var/www/html/.env
-
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Clear caches
-RUN php artisan config:clear \
-    && php artisan cache:clear \
-    && php artisan route:clear
-
-# Install PHP dependencies & generate app key
-RUN composer install --no-interaction --optimize-autoloader \
-    && php artisan key:generate
+# Install PHP dependencies
+RUN composer install --no-interaction --optimize-autoloader
 
 # Expose port 8000
 EXPOSE 8000
 
 # Start Laravel server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD ["sh", "-c", "php artisan config:clear && php artisan cache:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"]
