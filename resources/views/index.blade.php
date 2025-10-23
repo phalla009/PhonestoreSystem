@@ -12,93 +12,187 @@
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
     <script src="{{ URL::asset('js/form.js') }}"></script>
     <style>
-        .status-pending {
-            color: orange;
-            font-weight: bold;
-        }
-        .status-completed {
-            color: green;
-            font-weight: bold;
-        }
-        .status-cancelled {
-            color: red;
-            font-weight: bold;
-        }
-        #reorder{
-            margin-bottom: 5px;
-        }
-        .success-message {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            color: white;
-            width: 300px;
-            height: 50px;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            margin-left: 500px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 18px;
-            animation: fadeInUp 0.5s ease;
-            z-index: 1000;
-        }
-        .success-message::before {
-            content: '✓';
-            margin-right: 8px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(40px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-          .grid-dashboard {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-gap: 20px;
-            margin-bottom: 20px;
-        }
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .card h3 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .card p {
-            margin: 5px 0 0;
-            font-size: 14px;
-            color: #888;
-        }
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 20px;
-            margin-top: 20px;
-        }
-        .gauges-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-gap: 20px;
-            margin-top: 25px;
-           
-      
-            
-        }
-        canvas {
-            width: 90% !important;
-            height: 90% !important;
-        }
-    </style>
-@endsection
+    .status-pending {
+        color: orange;
+        font-weight: bold;
+    }
+    .status-completed {
+        color: green;
+        font-weight: bold;
+    }
+    .status-cancelled {
+        color: red;
+        font-weight: bold;
+    }
+    #reorder {
+        margin-bottom: 5px;
+    }
 
+    /* ✅ Success message animation */
+    .success-message {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+        max-width: 90%;
+        width: 200px;
+        height: auto;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px auto;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 16px;
+        animation: fadeInUp 0.6s ease forwards;
+        z-index: 1000;
+    }
+    .success-message::before {
+        content: '✓';
+        margin-right: 8px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(40px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ✅ Dashboard grid sections */
+    .stats-grid,
+    .charts-grid,
+    .gauges-grid {
+        display: grid;
+        grid-gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .charts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    .gauges-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        text-align: center;
+    }
+
+    /* ✅ Card style + animation */
+    .card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInCard 0.8s ease forwards;
+    }
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInCard {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ✅ Hover lift effect */
+    .card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    /* ✅ Card headings */
+    .card h3 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: bold;
+    }
+    .card p {
+        margin: 5px 0 0;
+        font-size: 14px;
+        color: #888;
+    }
+
+    /* ✅ Table responsive + animation */
+    .table-container {
+        overflow-x: auto;
+        animation: fadeInTable 1s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInTable {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    table th, table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    /* ✅ Table rows appear smoothly */
+    table tbody tr {
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeInRow 0.5s ease forwards;
+    }
+    table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+    table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+    table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+    table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInRow {
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ✅ Chart responsiveness + fade-in */
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+        animation: fadeInChart 1s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInChart {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ✅ Mobile Adjustments */
+    @media (max-width: 768px) {
+        .card h3 { font-size: 18px; }
+        .card p { font-size: 13px; }
+        h2 { font-size: 20px; }
+    }
+
+    @media (max-width: 480px) {
+        .success-message {
+            font-size: 14px;
+            padding: 10px;
+        }
+        table th, table td {
+            font-size: 12px;
+            padding: 8px;
+        }
+        h2 {
+            font-size: 18px;
+        }
+    }
+</style>
+
+@endsection
 @section('content')
 <div class="content-section active" id="dashboard">
 
