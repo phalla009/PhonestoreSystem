@@ -169,7 +169,7 @@
               @endif
               @if(Auth::user()->hasPermission('categories'))
               <a href="{{ route('categories.index') }}">
-                  <span class="icon"><i class="fas fa-mobile-alt"></i></span> Category
+                  <span class="icon"><i class="fas fa-tags"></i></span> Category
               </a>
               @endif
           </div>
