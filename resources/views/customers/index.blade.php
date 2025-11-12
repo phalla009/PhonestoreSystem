@@ -97,7 +97,7 @@
     <div class="filter-section">
         <div class="filter-controls">
             <a href="{{ route('customers.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add New Customer
+                <i class="fas fa-circle-plus"></i> Add New Customer
             </a>
         </div>
     </div>

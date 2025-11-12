@@ -52,7 +52,7 @@
                             </select>
                         </div>
                         <a href="{{ route('products.create') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Add New Product
+                            <i class="fas fa-circle-plus"></i> Add New Product
                         </a>
                     </div>
                 </form>

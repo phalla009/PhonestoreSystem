@@ -24,7 +24,7 @@
             <div class="filter-section">
                 <div class="filter-controls" style="display:flex; align-items:center; gap: 10px;">
                     <a href="{{ route('categories.create') }}" class="btn btn-primary" id="openCreateModal">
-                        <i class="fas fa-plus"></i> Add New Brand
+                        <i class="fas fa-circle-plus"></i> Add New Brand
                     </a>
                 </div>
                 <div id="sidebar">

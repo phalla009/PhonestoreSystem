@@ -26,7 +26,7 @@
         <div class="filter-section">
             <div class="filter-controls" style="display:flex; align-items:center; gap: 10px;">
                 <a href="{{ route('usermanagers.create') }}" class="btn btn-primary" id="openCreateModal">
-                    <i class="fas fa-plus"></i> Add New User Manager
+                    <i class="fas fa-circle-plus"></i> Add New User Manager
                 </a>
             </div>
             <div id="sidebar">
