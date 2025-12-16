@@ -96,7 +96,7 @@ class CategoryController extends Controller
         if (!$category) {
             return response()->json([
                 'error'   => true,
-                'message' => 'Category not found',
+                'message' => 'Category not found.',
             ], 404);
         }
 
