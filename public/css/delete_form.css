@@ -27,105 +27,116 @@
     position: relative;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     box-sizing: border-box;
+    animation: modalScale 0.25s ease;
 }
-
 /* Close button */
 #deleteConfirmModal .close {
     position: absolute;
-    top: 16px;
-    right: 22px;
-    font-size: 28px;
+    top: 14px;
+    right: 20px;
+    font-size: 26px;
     font-weight: 700;
     color: #444;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: all 0.2s ease;
 }
+
 #deleteConfirmModal .close:hover {
     color: #e74c3c;
+    transform: rotate(90deg);
 }
 
 /* Heading */
 #deleteConfirmModal h3 {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     font-weight: 700;
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     color: #222;
+    text-align: center;
 }
 
 /* Text */
 #deleteConfirmModal p {
-    font-size: 18px;
-    margin-bottom: 30px;
-    color: #000000;
+    font-size: 17px;
+    margin-bottom: 28px;
+    color: #333;
     text-align: center;
 }
 
 /* Buttons */
 #deleteConfirmModal #cancelDelete,
 #deleteConfirmModal button[type="submit"] {
-    padding: 12px 32px;
+    padding: 11px 28px;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    user-select: none;
-    transition: background-color 0.3s ease;
-    margin: 0 8px;
+    transition: all 0.25s ease;
 }
 
+/* Cancel button */
 #deleteConfirmModal #cancelDelete {
-    background-color: #ccc;
+    background-color: #e0e0e0;
     color: #333;
 }
+
 #deleteConfirmModal #cancelDelete:hover {
-    background-color: #b3b3b3;
+    background-color: #cfcfcf;
 }
 
+/* Delete button */
 #deleteConfirmModal button[type="submit"] {
     background-color: #e74c3c;
     color: #fff;
 }
+
 #deleteConfirmModal button[type="submit"]:hover {
     background-color: #c0392b;
+    transform: translateY(-2px);
 }
 
 /* Buttons container */
 #deleteConfirmModal form {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 16px;
+    gap: 15px;
 }
 
-/* Media Queries for Responsiveness */
+/* Animation */
+@keyframes modalScale {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive */
 @media (max-width: 576px) {
     #deleteConfirmModal .modal-content {
-        padding: 16px 20px;
         margin: 20% auto;
-        height: auto;
+        padding: 20px;
     }
 
-    #deleteConfirmModal h3 {
-        font-size: 1.4rem;
-        text-align: center;
-    }
-
-    #deleteConfirmModal p {
-        font-size: 16px;
+    #deleteConfirmModal form {
+        flex-direction: column;
     }
 
     #deleteConfirmModal #cancelDelete,
     #deleteConfirmModal button[type="submit"] {
         width: 100%;
-        margin: 8px 0;
-        font-size: 15px;
-    }
-
-    #deleteConfirmModal form {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
     }
 }

@@ -22,7 +22,6 @@
     .sidebar-menu :hover a { font-size: 17px; padding-left: 10px; transition: all 0.2s ease; }
     .l1 { color: #ff4d4d; } .l2 { color: #ffa500; } .l3 { color: #ffffff; }
     .sidebar-menu li:last-child a:hover { color: red; }
-    #logout-confirm { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; }
     .confirm-box { color: red; background: white; padding: 20px 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); text-align: center; font-family: Arial, sans-serif; }
     .confirm-box p { font-size: 18px; margin-bottom: 20px; }
     .confirm-box button { background-color: #ea0000; width: 100px; border: none; color: white; padding: 10px 18px; margin: 0 10px; font-size: 16px; border-radius: 24px; cursor: pointer; }
@@ -53,6 +52,91 @@
     }
     @keyframes spin {0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);}}
     #loading-text { margin-top:15px; font-size:16px; color:#333; }
+    /* Logout Modal Background */
+    #logout-confirm{
+      position: fixed;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(3px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+    }
+
+    /* Modal Box */
+    .confirm-box{
+      background:#ffffff;
+      width:320px;
+      padding:30px 25px;
+      border-radius:14px;
+      text-align:center;
+      box-shadow:0 10px 35px rgba(0,0,0,0.25);
+      animation:popup 0.3s ease;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Icon */
+    .icon-container{
+      font-size:42px;
+      color:#e74c3c;
+      margin-bottom:15px;
+    }
+
+    /* Text */
+    .confirm-box p{
+      font-size:18px;
+      color:#333;
+      margin-bottom:25px;
+      font-weight:500;
+    }
+
+    /* Buttons container */
+    .confirm-box button{
+      width:110px;
+      padding:10px;
+      border:none;
+      border-radius:24px;
+      font-size:15px;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    /* Yes button */
+    #confirm-yes{
+      background:#e74c3c;
+      color:white;
+    }
+
+    /* No button */
+    #confirm-no{
+      background:#e0e0e0;
+      color:#ffffff;
+    }
+
+    /* Hover effect */
+    #confirm-yes:hover{
+      background:#c0392b;
+    }
+
+    #confirm-no:hover{
+      background:#cfcfcf;
+    }
+
+    /* Animation */
+    @keyframes popup{
+      from{
+        transform:scale(0.8);
+        opacity:0;
+      }
+      to{
+        transform:scale(1);
+        opacity:1;
+      }
+    }
   </style>
 </head>
 <body>
@@ -166,13 +250,14 @@
   <div id="loading-text">Loading...</div>
 </div>
 
-<!-- Logout confirm -->
-<div id="logout-confirm" style="display:none;">
+<div id="logout-confirm">
   <div class="confirm-box">
-    <div class="icon-container"><i class="fas fa-sign-out-alt"></i></div>
+    <div class="icon-container">
+      <i class="fas fa-sign-out-alt"></i>
+    </div>
     <p>Are you sure you want to logout?</p>
-    <button id="confirm-yes">Yes</button>
-    <button id="confirm-no">No</button>
+    <button id="confirm-yes">Yes, Logout!</button>
+    <button id="confirm-no">No, Keep it!</button>
   </div>
 </div>
 
