@@ -11,213 +11,220 @@
     <script src="{{ URL::asset('js/delete_form.js') }}"></script>
 
     <style>
-        .action-buttons {
-            margin-left: -30px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .filter-search-wrap {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .filter-search-wrap input[type="text"] {
-            padding: 10px 16px;
-            border: 1px solid #ccc;
-            border-radius: 24px;
-            width: 300px;
-            font-size: 15px;
-            outline-color: #3498db;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .filter-search-wrap .btn {
-            padding: 10px 18px;
-            font-size: 14px;
-            border-radius: 8px;
-        }
-        .filter-form .btn-light {
-            background-color: #c82333;
-            color: white; 
-        }
-        .filter-form .btn-light:hover {
-            background-color: #a91c2a;
-            border-color: #bd2130;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
-        }
-        .custom-success {
-            padding: 12px 20px;
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            animation: fadeOut 4s ease forwards;
-        }
-        .btn.btn-primary {
-            border-radius: 24px;
-            margin-top: 2px;
-        }
-        .btn.btn-light {
-            border-radius: 24px;
-            margin-top: 2px;
-            background-color: #c82333;
-            color: white; 
-        }
-        .btn-light:hover {
-            background-color: #a91c2a;
-            border-color: #bd2130;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
-        }
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { opacity: 0; display: none; }
-        }
+        .action-buttons { margin-left: -30px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-search-wrap { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+        .filter-search-wrap input[type="text"] { padding: 10px 16px; border: 1px solid #ccc; border-radius: 24px; width: 300px; font-size: 15px; outline-color: #3498db; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .filter-search-wrap .btn { padding: 10px 18px; font-size: 14px; border-radius: 8px; }
+        .filter-form .btn-light { background-color: #c82333; color: white; }
+        .filter-form .btn-light:hover { background-color: #a91c2a; border-color: #bd2130; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3); }
+        .custom-success { padding: 12px 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 6px; margin-bottom: 15px; animation: fadeOut 4s ease forwards; }
+        .btn.btn-primary { border-radius: 24px; margin-top: 2px; }
+        .btn.btn-light { border-radius: 24px; margin-top: 2px; background-color: #c82333; color: white; }
+        .btn-light:hover { background-color: #a91c2a; border-color: #bd2130; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3); }
+        @keyframes fadeOut { 0% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; display: none; } }
 
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 99999;
+        }
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 60px; height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
     </style>
 @endsection
 
 @section('content')
 
-@if(session('success'))
-    <div id="successMessage" class="custom-success">
-        <i class="fas fa-check-circle"></i>
-        {{ session('success') }}
+    {{-- Loading Overlay --}}
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">Loading...</div>
     </div>
-@endif
 
-<div class="content-section" id="payments">
-    <h2><i class="fas fa-credit-card"></i> All Payments</h2>
+    @if(session('success'))
+        <div id="successMessage" class="custom-success">
+            <i class="fas fa-check-circle"></i>
+            {{ session('success') }}
+        </div>
+    @endif
 
-    <!-- Search Form -->
-    <form method="GET" action="{{ route('payments.index') }}" class="filter-search-wrap" role="search" aria-label="Payment search form">
-        <label for="customer_name" style="font-weight: 600; color: #08051f; font-size: 20px;">Search:</label>
-        <input
-            type="text"
-            id="customer_name"
-            name="customer_name"
-            placeholder="Search by customer name..."
-            value="{{ request('customer_name') }}"
-            aria-describedby="searchDescription"
-        >
-        <button type="submit" class="btn btn-primary" aria-label="Filter payments">
-            <i class="fas fa-search"></i> Filter
-        </button>
-        @if(request()->has('customer_name'))
-            <a href="{{ route('payments.index') }}" class="btn btn-light" aria-label="Clear search filter">
-                <i class="fas fa-times"></i> Clear
-            </a>
-        @endif
-    </form>
+    <div class="content-section" id="payments">
+        <h2><i class="fas fa-credit-card"></i> All Payments</h2>
 
-    <div class="table-container" role="region" aria-live="polite" aria-relevant="all" aria-label="Payments table">
-        <table cellpadding="8" cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>Payment ID</th>
-                    <th>Order Number</th>
-                    <th>Customer</th>
-                    <th>Product</th>
-                    <th>Amount Paid</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($payments as $payment)
-                    <tr>
-                        <td data-label="Payment ID">{{ $payment->id }}</td>
-                        <td data-label="Order Number">{{ $payment->order->order_number ?? 'N/A' }}</td>
-                        <td data-label="Customer">{{ $payment->order->customer->name ?? 'N/A' }}</td>
-                        <td data-label="Product">{{ $payment->order->product->name ?? 'N/A' }}</td>
-                        <td data-label="Amount Paid">${{ number_format($payment->amount, 2) }}</td>
-                        <td data-label="Actions">
-                            <div class="action-buttons">
-                                <a href="{{ route('payments.show', $payment->id) }}" class="action-btn show-btn">
-                                    <i class="fas fa-eye"></i> Show
-                                </a>
-                                <a href="{{ route('payments.edit', $payment->id) }}" class="action-btn edit-btn">
-                                    <i class="fas fa-pen-to-square"></i> Edit
-                                </a>
-                                <button type="button" class="action-btn delete-btn openDeleteModal"
-                                    data-action="{{ route('payments.destroy', $payment->id) }}">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" style="text-align:center;" id="found">No payments found.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="deleteConfirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" aria-describedby="deleteModalDesc">
-    <div class="modal-content">
-        <span class="close" id="deleteModalClose" role="button" tabindex="0" aria-label="Close delete confirmation modal">&times;</span>
-        <h3 id="deleteModalTitle">
-            <i class="fas fa-trash-alt" style="color: #e74c3c; margin-right: 10px;"></i>
-            Confirm Delete
-        </h3>
-        <p id="deleteModalDesc">Are you sure you want to delete this payment?</p>
-        <form id="deleteForm" method="POST" action="">
-            @csrf
-            @method('DELETE')
-            <button type="button" id="cancelDelete" class="btn btn-secondary" aria-label="Cancel deletion">Cancel</button>
-            <button type="submit" class="btn btn-danger" aria-label="Confirm deletion">Yes, Delete</button>
+        <!-- Search Form -->
+        <form method="GET" action="{{ route('payments.index') }}"
+              class="filter-search-wrap" id="filterForm"
+              role="search" aria-label="Payment search form">
+            <label for="customer_name" style="font-weight: 600; color: #08051f; font-size: 20px;">Search:</label>
+            <input
+                type="text"
+                id="customer_name"
+                name="customer_name"
+                placeholder="Search by customer name..."
+                value="{{ request('customer_name') }}"
+                aria-describedby="searchDescription"
+            >
+            <button type="submit" class="btn btn-primary" aria-label="Filter payments">
+                <i class="fas fa-search"></i> Filter
+            </button>
+            @if(request()->has('customer_name'))
+                <a href="{{ route('payments.index') }}"
+                   class="btn btn-light nav-link-loading"
+                   data-loading-text="Clearing filters..."
+                   aria-label="Clear search filter">
+                    <i class="fas fa-times"></i> Clear
+                </a>
+            @endif
         </form>
+
+        <div class="table-container" role="region" aria-live="polite" aria-relevant="all" aria-label="Payments table">
+            <table cellpadding="8" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Order Number</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Amount Paid</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($payments as $payment)
+                        <tr>
+                            <td data-label="Payment ID">{{ $payment->id }}</td>
+                            <td data-label="Order Number">{{ $payment->order->order_number ?? 'N/A' }}</td>
+                            <td data-label="Customer">{{ $payment->order->customer->name ?? 'N/A' }}</td>
+                            <td data-label="Product">{{ $payment->order->product->name ?? 'N/A' }}</td>
+                            <td data-label="Amount Paid">${{ number_format($payment->amount, 2) }}</td>
+                            <td data-label="Actions">
+                                <div class="action-buttons">
+                                    <a href="{{ route('payments.show', $payment->id) }}"
+                                       class="action-btn show-btn nav-link-loading"
+                                       data-loading-text="Loading details...">
+                                        <i class="fas fa-eye"></i> Show
+                                    </a>
+                                    <a href="{{ route('payments.edit', $payment->id) }}"
+                                       class="action-btn edit-btn nav-link-loading"
+                                       data-loading-text="Opening editor...">
+                                        <i class="fas fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <button type="button" class="action-btn delete-btn openDeleteModal"
+                                        data-action="{{ route('payments.destroy', $payment->id) }}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" style="text-align:center;" id="found">No payments found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-<!-- Delete Modal JS -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('deleteConfirmModal');
-        const deleteForm = document.getElementById('deleteForm');
-        const closeModalBtn = document.getElementById('deleteModalClose');
-        const cancelDeleteBtn = document.getElementById('cancelDelete');
-        const deleteButtons = document.querySelectorAll('.openDeleteModal');
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" aria-describedby="deleteModalDesc">
+        <div class="modal-content">
+            <span class="close" id="deleteModalClose" role="button" tabindex="0" aria-label="Close delete confirmation modal">&times;</span>
+            <h3 id="deleteModalTitle">
+                <i class="fas fa-trash-alt" style="color: #e74c3c; margin-right: 10px;"></i>
+                Confirm Delete
+            </h3>
+            <p id="deleteModalDesc">Are you sure you want to delete this payment?</p>
+            <form id="deleteForm" method="POST" action="">
+                @csrf
+                @method('DELETE')
+                <button type="button" id="cancelDelete" class="btn btn-secondary" aria-label="Cancel deletion">Cancel</button>
+                {{-- FIX: បន្ថែម id="confirmDeleteBtn" --}}
+                <button type="submit" id="confirmDeleteBtn" class="btn btn-danger" aria-label="Confirm deletion">Yes, Delete</button>
+            </form>
+        </div>
+    </div>
 
-        deleteButtons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const action = btn.getAttribute('data-action');
-                deleteForm.action = action;
-                modal.style.display = 'block';
-                // Focus modal for accessibility
-                modal.querySelector('.modal-content').focus();
+    <script>
+        const overlay     = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+
+        function showLoading(message) {
+            loadingText.textContent = message || 'Loading...';
+            overlay.style.display = 'flex';
+        }
+
+        // Show / Edit / Clear links
+        document.querySelectorAll('.nav-link-loading').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                const msg  = this.getAttribute('data-loading-text') || 'Loading...';
+                if (href && href !== '#') {
+                    showLoading(msg);
+                    window.location.href = href;
+                }
             });
         });
 
-        closeModalBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
+        // Filter form submit
+        document.getElementById('filterForm').addEventListener('submit', function() {
+            showLoading('Filtering...');
         });
 
-        cancelDeleteBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal        = document.getElementById('deleteConfirmModal');
+            const deleteForm   = document.getElementById('deleteForm');
+            const closeModalBtn  = document.getElementById('deleteModalClose');
+            const cancelDeleteBtn = document.getElementById('cancelDelete');
 
-        window.addEventListener('click', function(event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
+            // Delete modal open
+            document.querySelectorAll('.openDeleteModal').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    deleteForm.action = this.getAttribute('data-action');
+                    modal.style.display = 'block';
+                    modal.querySelector('.modal-content').focus();
+                });
+            });
+
+            // Close modal
+            closeModalBtn.addEventListener('click', function() { modal.style.display = 'none'; });
+            cancelDeleteBtn.addEventListener('click', function() { modal.style.display = 'none'; });
+            window.addEventListener('click', function(e) { if (e.target === modal) modal.style.display = 'none'; });
+            window.addEventListener('keydown', function(e) { if (e.key === 'Escape' && modal.style.display === 'block') modal.style.display = 'none'; });
+
+            // Confirm delete → show loading then submit
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                showLoading('Deleting...');
+                setTimeout(function() {
+                    deleteForm.submit();
+                }, 300);
+            });
+
+            // Auto-hide success message
+            const successMsg = document.getElementById('successMessage');
+            if (successMsg) {
+                setTimeout(function() {
+                    successMsg.style.transition = 'opacity 0.5s';
+                    successMsg.style.opacity = '0';
+                    setTimeout(function() { successMsg.style.display = 'none'; }, 500);
+                }, 3000);
             }
         });
-
-        // Optional: close modal with ESC key
-        window.addEventListener('keydown', function(event) {
-            if (event.key === "Escape" && modal.style.display === 'block') {
-                modal.style.display = 'none';
-            }
-        });
-    });
-</script>
+    </script>
 
 @endsection

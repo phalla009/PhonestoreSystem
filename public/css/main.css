@@ -317,15 +317,19 @@ h2 {
     border-radius: 10px;
     padding: 1.25rem 1rem;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(10, 0, 116, 0.1),
+    box-shadow:
+        0 4px 6px rgba(10, 0, 116, 0.1),
         /* soft main shadow */ 0 8px 20px rgba(10, 0, 116, 0.15); /* deeper shadow for 3D effect */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 /* Optional: hover effect to pop out */
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 10px rgba(10, 0, 116, 0.15),
+    box-shadow:
+        0 6px 10px rgba(10, 0, 116, 0.15),
         0 12px 25px rgba(10, 0, 116, 0.2);
 }
 
@@ -455,7 +459,9 @@ textarea {
     width: 45%;
     background: #48bb78;
     color: white;
-    transition: 0.3s ease, transform 0.2s ease;
+    transition:
+        0.3s ease,
+        transform 0.2s ease;
     float: left;
 }
 
@@ -463,7 +469,9 @@ textarea {
     width: 45%;
     background: #cc2309;
     color: white;
-    transition: 0.3s ease, transform 0.2s ease;
+    transition:
+        0.3s ease,
+        transform 0.2s ease;
     float: right;
 }
 
@@ -530,7 +538,9 @@ textarea {
     text-decoration: none;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
 
 .btn-back:hover {
@@ -1010,7 +1020,9 @@ h2 {
 
 .sidebar-menu a:focus {
     outline: none;
-    box-shadow: inset 0 -2px 0 #ffffff, inset 0 2px 0 #ffffff;
+    box-shadow:
+        inset 0 -2px 0 #ffffff,
+        inset 0 2px 0 #ffffff;
 }
 .user-icon {
     color: #fff;
