@@ -38,26 +38,38 @@
         <div class="content-section" id="products">
             <h2><i class="fas fa-box-open"></i> Products Management</h2>
             <div class="filter-section">
-                <h4>Filter Products</h4>
-                <form method="GET" action="{{ route('products.index') }}">
-                    <div class="filter-controls" style="display:flex; align-items:center; gap: 10px;">
-                        <div class="form-group" style="min-width: 200px;">
-                            <select name="category_id" onchange="this.form.submit()">
-                                <option value="">All Brands</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <a href="{{ route('products.create') }}" class="btn btn-primary">
-                            <i class="fas fa-circle-plus"></i> Add New Product
-                        </a>
+            <h4>Filter Products</h4>
+            <form id="filterForm" method="GET" action="{{ route('products.index') }}">
+                <div class="filter-controls" style="display:flex; align-items:center; gap: 10px;">
+                    
+                    <!-- Category Dropdown -->
+                    <div class="form-group" style="min-width: 200px;">
+                        <select name="category_id" onchange="this.form.submit()">
+                            <option value="">All Brands</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" 
+                                    {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                </form>
-            </div>
 
+                    <!-- Search Input (auto submit) -->
+                    <div class="form-group">
+                        <input type="text" name="search" 
+                            value="{{ request('search') }}" 
+                            placeholder="Search Products..." 
+                            id="searchInput">
+                    </div>
+
+                    <!-- Add New Product Button -->
+                    <a href="{{ route('products.create') }}" class="btn btn-primary">
+                        <i class="fas fa-circle-plus"></i> Add New Product
+                    </a>
+                </div>
+            </form>
+        </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -125,4 +137,5 @@
             </form>
         </div>
     </div>
+
 @endsection

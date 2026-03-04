@@ -13,6 +13,9 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         $query = Product::with(['category', 'images']);
+         if ($request->search) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
 
         if ($request->has('category_id') && $request->category_id != '') {
             $query->where('category_id', $request->category_id);
