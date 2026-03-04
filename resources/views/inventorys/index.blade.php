@@ -53,8 +53,9 @@
                 @forelse ($products as $product)
                     <tr>
                         <td data-label="Product">{{ $product->name }}</td>
-                        <td data-label="SKU">{{ $product->name . ' PPLT ' . str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</td>
-                        <td data-label="Current Stock">{{ $product->stock }}</td>
+                        <td data-label="SKU">
+                            {{ 'kr' . $product->created_at->format('Ymd') . str_pad($product->id, 2, '0', STR_PAD_LEFT) }}
+                        </td>                  <td data-label="Current Stock">{{ $product->stock }}</td>
                         <td data-label="Status">
                             @if($product->stock <= 0)
                                 <span class="text-danger">Out of Stock</span>

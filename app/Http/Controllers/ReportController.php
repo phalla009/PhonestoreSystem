@@ -69,6 +69,7 @@ class ReportController extends Controller
             $stockColumn = 'stock';
 
             $columns = DB::getSchemaBuilder()->getColumnListing('products');
+
             if (!in_array($stockColumn, $columns)) {
                 $results = DB::table('products')
                     ->select('name', 'price')
@@ -76,17 +77,29 @@ class ReportController extends Controller
                     ->get();
             } else {
                 $results = DB::table('products')
-                    ->select('name', $stockColumn, 'price')
+                    ->select(
+                        'name',
+                        $stockColumn,
+                        'price',
+                        DB::raw("$stockColumn * price as total")
+                    )
                     ->orderBy($stockColumn, 'asc')
                     ->get();
             }
-        } elseif ($type === 'customer') {
-            $results = DB::table('customers')
-                ->whereBetween('created_at', [$start, $end])
-                ->select('name','gender', 'created_at')
+        }elseif ($type === 'customer') {
+            $results = Customer::select('id', 'name', 'gender', 'created_at')
+                ->withCount(['orders as total_qty' => function($query) use ($start, $end) {
+                    // Aggregating the quantity of items purchased within the date range
+                    $query->whereBetween('order_date', [$start, $end])
+                        ->select(DB::raw('SUM(quantity)'));
+                }])
+                ->withSum(['orders as total_price' => function($query) use ($start, $end) {
+                    // Aggregating the total amount spent within the date range
+                    $query->whereBetween('order_date', [$start, $end]);
+                }], 'total_amount')
                 ->get();
-        } 
-        elseif ($type === 'financial') {
+        }
+                elseif ($type === 'financial') {
         $results = DB::table('orders')
             ->whereBetween('order_date', [$start, $end])
             ->selectRaw('DATE(order_date) as date, SUM(quantity) as sold_qty, SUM(total_amount) as revenue')

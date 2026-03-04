@@ -18,4 +18,5 @@ class Customer extends Model
     {
         return $this->orders()->count() > 0 ? 'Active' : 'Inactive';
     }
+    
 }
