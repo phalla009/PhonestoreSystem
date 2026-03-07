@@ -7,6 +7,28 @@
 @section('headerBlock')
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
     <style>
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 99999;
+        }
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 60px; height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+        /* Page Styles */
         .user-details {
             max-width: 100%;
             background: #fff;
@@ -48,57 +70,79 @@
         }
 
         @media (max-width: 768px) {
-            .row p {
-                flex: 1 1 100%;
-            }
+            .row p { flex: 1 1 100%; }
         }
     </style>
 @endsection
 
 @section('content')
-<div class="user-details">
-    <a href="{{ route('usermanagers.index') }}" class="btn btn-back" style="margin-bottom: 20px;">
-        <i class="fas fa-chevron-left"></i> Back
-    </a>
 
-    <h2><i class="fas fa-user-shield"></i> User Manager Details</h2>
-
-    <div class="row">
-        <p><strong>Full Name:</strong> {{ $usermanager->name }}</p>
-        <p><strong>Email:</strong> {{ $usermanager->email }}</p>
+    {{-- Loading Overlay --}}
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">Loading...</div>
     </div>
 
-    <div class="row">
-        <p><strong>Role:</strong> {{ $usermanager->role->role_name ?? 'N/A' }}</p>
-        <p><strong>Created At:</strong> {{ $usermanager->created_at ? $usermanager->created_at->format('Y-m-d H:i') : 'N/A' }}</p>
+    <div class="user-details">
+        <a href="{{ route('usermanagers.index') }}" id="backBtn" class="btn btn-back" style="margin-bottom: 20px;">
+            <i class="fas fa-chevron-left"></i> Back
+        </a>
+
+        <h2><i class="fas fa-user-shield"></i> User Manager Details</h2>
+
+        <div class="row">
+            <p><strong>Full Name:</strong> {{ $usermanager->name }}</p>
+            <p><strong>Email:</strong> {{ $usermanager->email }}</p>
+        </div>
+
+        <div class="row">
+            <p><strong>Role:</strong> {{ $usermanager->role->role_name ?? 'N/A' }}</p>
+            <p><strong>Created At:</strong> {{ $usermanager->created_at ? $usermanager->created_at->format('Y-m-d H:i') : 'N/A' }}</p>
+        </div>
+
+        <div class="row">
+            <p><strong>Last Updated:</strong> {{ $usermanager->updated_at ? $usermanager->updated_at->format('Y-m-d H:i') : 'N/A' }}</p>
+            <p><strong>Permissions:</strong></p>
+        </div>
+
+        @php
+            $permissions = $usermanager->role->permissions ?? collect();
+            $rows        = 5;
+            $totalPermissions = $permissions->count();
+            $columns     = $totalPermissions > 0 ? ceil($totalPermissions / $rows) : 1;
+            $perColumn   = ceil($totalPermissions / $columns);
+        @endphp
+
+        <div id="permissionsContainer" style="border:1px solid #ccc; padding:10px; display:grid; grid-template-columns: repeat({{ $columns }}, 1fr); gap:10px; max-height:200px; overflow-y:auto;">
+            @for($i = 0; $i < $columns; $i++)
+                <div>
+                    @foreach($permissions->slice($i * $perColumn, $perColumn) as $permission)
+                        <div style="display:flex; align-items:center; margin-bottom:5px;">
+                            <i class="fas fa-check-circle" style="color:green; margin-right:5px;"></i>
+                            {{ $permission->permission_name }}
+                        </div>
+                    @endforeach
+                </div>
+            @endfor
+        </div>
     </div>
 
-    <div class="row">
-        <p><strong>Last Updated:</strong> {{ $usermanager->updated_at ? $usermanager->updated_at->format('Y-m-d H:i') : 'N/A' }}</p>
-        <p><strong>Permissions:</strong></p>
-    </div>
+    <script>
+        const overlay     = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
 
-    @php
-        $permissions = $usermanager->role->permissions ?? collect();
-        $rows = 5; // fixed number of rows
-        $totalPermissions = $permissions->count();
-        $columns = ceil($totalPermissions / $rows); // auto-calculate columns
-        $perColumn = ceil($totalPermissions / $columns); // items per column
-    @endphp
+        // ✅ Hide overlay once page fully loads
+        window.addEventListener('load', function () {
+            overlay.style.display = 'none';
+        });
 
-    <div id="permissionsContainer" style="border:1px solid #ccc; padding:10px; display:grid; grid-template-columns: repeat({{ $columns }}, 1fr); gap:10px; max-height:200px; overflow-y:auto;">
-        @for($i = 0; $i < $columns; $i++)
-            <div>
-                @foreach($permissions->slice($i * $perColumn, $perColumn) as $permission)
-                    <div style="display:flex; align-items:center; margin-bottom:5px;">
-                        <i class="fas fa-check-circle" style="color:green; margin-right:5px;"></i>
-                        {{ $permission->permission_name }}
-                    </div>
-                @endforeach
-            </div>
-        @endfor
-    </div>
+        // Back button → show loading then navigate
+        document.getElementById('backBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+            loadingText.textContent = 'Going back...';
+            overlay.style.display = 'flex';
+            window.location.href = this.getAttribute('href');
+        });
+    </script>
 
-
-</div>
 @endsection

@@ -69,7 +69,7 @@
             <div class="filter-controls">
                 <a href="{{ route('customers.create') }}"
                    class="btn btn-primary nav-link-loading"
-                   data-loading-text="Opening form...">
+                   data-loading-text="Loading add...">
                     <i class="fas fa-circle-plus"></i> Add New Customer
                 </a>
             </div>
@@ -79,7 +79,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>#</th>
                         <th>Name</th>
                         <th>Gender</th>
                         <th>Phone</th>
@@ -90,7 +90,7 @@
                 <tbody id="customersTable">
                     @forelse ($customers as $customer)
                         <tr>
-                            <td data-label="No">{{ $customer->id }}</td>
+                            <td data-label="No">#{{ $customer->id }}</td>
                             <td data-label="Name"><i class="fas fa-user user-icon"></i>{{ $customer->name }}</td>
                             <td data-label="Gender">{{ ucfirst($customer->gender) }}</td>
                             <td data-label="Phone">{{ $customer->phone }}</td>
@@ -134,19 +134,27 @@
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="deleteModalClose">&times;</span>
-            <h3>
-                <i class="fas fa-trash-alt" style="color: #e74c3c; margin-right: 10px;"></i>
-                Confirm Delete
-            </h3>
-            <p>Are you sure you want to delete this customer?</p>
+        <div class="delete-modal-box">
+            <div class="delete-modal-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+
+            <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
+
+            <h3>Delete Record?</h3>
+            <p>This action <strong>cannot be undone.</strong> Are you sure you want to permanently delete this record?</p>
+
             <form id="deleteForm" method="POST" action="">
                 @csrf
                 @method('DELETE')
-                <button type="button" id="cancelDelete" class="btn btn-secondary">Cancel</button>
-                {{-- FIX: បន្ថែម id="confirmDeleteBtn" --}}
-                <button type="submit" id="confirmDeleteBtn" class="btn btn-danger">Yes, Delete</button>
+                <div class="delete-modal-actions">
+                    <button type="button" id="cancelDelete" class="delete-btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="delete-btn-confirm">
+                        <i class="fas fa-trash-alt"></i> Yes, Delete
+                    </button>
+                </div>
             </form>
         </div>
     </div>

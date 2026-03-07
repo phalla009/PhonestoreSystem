@@ -84,17 +84,27 @@
                     </div>
 
                     {{-- Search Input --}}
-                    <div class="form-group">
+                   <div class="form-group" style="position: relative;">
+                        <i class="fas fa-search" style="
+                            position: absolute;
+                            left: 14px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: #aaa;
+                            font-size: 14px;
+                            pointer-events: none;
+                        "></i>
                         <input type="text" name="search"
                             value="{{ request('search') }}"
                             placeholder="Search Products..."
-                            id="searchInput">
+                            id="searchInput"
+                            style="border-radius: 24px; padding-left: 38px;">
                     </div>
 
                     {{-- FIX: បន្ថែម class nav-link-loading --}}
                     <a href="{{ route('products.create') }}"
                        class="btn btn-primary nav-link-loading"
-                       data-loading-text="Opening form...">
+                       data-loading-text="Loading add...">
                         <i class="fas fa-circle-plus"></i> Add New Product
                     </a>
                 </div>
@@ -105,8 +115,8 @@
             <table>
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Name</th>
+                        <th>#</th>
+                        <th>Producs</th>
                         <th>Brand</th>
                         <th>Price</th>
                         <th>Stock</th>
@@ -117,7 +127,7 @@
                 <tbody id="productsTable">
                     @forelse ($products as $product)
                         <tr>
-                            <td data-label="No">{{ $product->id }}</td>
+                            <td data-label="No">#{{ $product->id }}</td>
                             <td data-label="Name">{{ $product->name }}</td>
                             <td data-label="Brand">{{ $product->category->name ?? 'N/A' }}</td>
                             <td data-label="Price">${{ number_format($product->price, 2) }}</td>
@@ -141,7 +151,7 @@
                                     </a>
                                     <a href="{{ route('products.edit', $product->id) }}"
                                        class="action-btn edit-btn nav-link-loading"
-                                       data-loading-text="Opening editor...">
+                                       data-loading-text="Loading editor...">
                                         <i class="fas fa-pen-to-square"></i> Edit
                                     </a>
                                     <button type="button" class="action-btn delete-btn openDeleteModal"
@@ -163,19 +173,27 @@
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="deleteModalClose">&times;</span>
-            <h3>
-                <i class="fas fa-trash-alt" style="color: #e74c3c; margin-right: 10px;"></i>
-                Confirm Delete
-            </h3>
-            <p>Are you sure you want to delete this record?</p>
+        <div class="delete-modal-box">
+            <div class="delete-modal-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+
+            <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
+
+            <h3>Delete Record?</h3>
+            <p>This action <strong>cannot be undone.</strong> Are you sure you want to permanently delete this record?</p>
+
             <form id="deleteForm" method="POST" action="">
                 @csrf
                 @method('DELETE')
-                <button type="button" id="cancelDelete" class="btn btn-secondary">Cancel</button>
-                {{-- FIX: បន្ថែម id="confirmDeleteBtn" --}}
-                <button type="submit" id="confirmDeleteBtn" class="btn btn-danger">Yes, Delete</button>
+                <div class="delete-modal-actions">
+                    <button type="button" id="cancelDelete" class="delete-btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="delete-btn-confirm">
+                        <i class="fas fa-trash-alt"></i> Yes, Delete
+                    </button>
+                </div>
             </form>
         </div>
     </div>

@@ -131,7 +131,7 @@
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
         background: rgba(255,255,255,0.85);
-        display: none;
+        display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
@@ -169,10 +169,9 @@
 
         <div class="filter-section">
             <div class="filter-header">
-                {{-- Add New Order --}}
                 <a href="{{ route('orders.create') }}"
                    class="btn btn-primary nav-link-loading"
-                   data-loading-text="Opening form...">
+                   data-loading-text="Loading add...">
                     <i class="fas fa-circle-plus"></i> Add New Order
                 </a>
             </div>
@@ -211,7 +210,6 @@
 
                 <div class="filter-clear-wrap">
                     <div class="form-group" style="flex: 1;">
-                        {{-- Filter submit → show loading --}}
                         <button type="submit" class="btn btn-primary w-100" id="filterBtn">
                             <i class="fas fa-search"></i> Filter
                         </button>
@@ -261,26 +259,24 @@
                         </td>
                         <td data-label="Actions">
                             <div class="action-buttons">
-                                {{-- Pay → opens modal (no loading) --}}
                                 <a href="javascript:void(0);"
                                    class="action-btn payment-btn open-payment-modal {{ in_array($order->status, ['completed', 'cancelled']) ? 'disabled' : '' }}"
                                    data-order-id="{{ $order->id }}">
                                     <i class="fas fa-credit-card"></i> Pay
                                 </a>
 
-                                {{-- Show / Edit → loading --}}
                                 <a href="{{ route('orders.show', $order->id) }}"
                                    class="action-btn show-btn nav-link-loading"
                                    data-loading-text="Loading details...">
                                     <i class="fas fa-eye"></i> Show
                                 </a>
+
                                 <a href="{{ route('orders.edit', $order->id) }}"
                                    class="action-btn edit-btn nav-link-loading"
                                    data-loading-text="Opening editor...">
                                     <i class="fas fa-pen-to-square"></i> Edit
                                 </a>
 
-                                {{-- Delete → opens modal --}}
                                 <button type="button" class="action-btn delete-btn openDeleteModal"
                                     data-action="{{ route('orders.destroy', $order->id) }}">
                                     <i class="fas fa-trash"></i> Delete
@@ -300,16 +296,24 @@
 
     <!-- Delete Modal -->
     <div id="deleteConfirmModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="deleteModalClose">&times;</span>
-            <h3><i class="fas fa-trash-alt" style="color: #e74c3c; margin-right: 10px;"></i> Confirm Delete</h3>
-            <p>Are you sure you want to delete this record?</p>
+        <div class="delete-modal-box">
+            <div class="delete-modal-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
+            <h3>Delete Record?</h3>
+            <p>This action <strong>cannot be undone.</strong> Are you sure you want to permanently delete this record?</p>
             <form id="deleteForm" method="POST" action="">
                 @csrf
                 @method('DELETE')
-                <button type="button" id="cancelDelete" class="btn btn-secondary">Cancel</button>
-                {{-- FIX: បន្ថែម id="confirmDeleteBtn" --}}
-                <button type="submit" id="confirmDeleteBtn" class="btn btn-danger">Yes, Delete</button>
+                <div class="delete-modal-actions">
+                    <button type="button" id="cancelDelete" class="delete-btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="delete-btn-confirm">
+                        <i class="fas fa-trash-alt"></i> Yes, Delete
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -330,6 +334,11 @@
             loadingText.textContent = message || 'Loading...';
             overlay.style.display = 'flex';
         }
+
+        // ✅ Hide overlay once page fully loads
+        window.addEventListener('load', function () {
+            overlay.style.display = 'none';
+        });
 
         // Add / Show / Edit / Clear links
         document.querySelectorAll('.nav-link-loading').forEach(function(link) {
@@ -365,18 +374,14 @@
             document.getElementById('deleteConfirmModal').style.display = 'none';
         });
 
-        // Confirm delete → show loading then submit
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function(e) {
-            e.preventDefault();
+        // ✅ Confirm delete → show loading on submit
+        document.getElementById('deleteForm').addEventListener('submit', function() {
             showLoading('Deleting...');
-            setTimeout(function() {
-                document.getElementById('deleteForm').submit();
-            }, 300);
         });
 
         // ── Payment Modal ──────────────────────────────────────
         document.addEventListener('DOMContentLoaded', function() {
-            const paymentModal    = document.getElementById('paymentModal');
+            const paymentModal     = document.getElementById('paymentModal');
             const paymentContainer = document.getElementById('paymentFormContainer');
 
             document.querySelectorAll('.open-payment-modal').forEach(function(btn) {
@@ -393,6 +398,7 @@
                 });
             });
 
+            // Close on × click
             document.addEventListener('click', function(e) {
                 if (e.target.classList.contains('close-modal')) {
                     paymentModal.style.display = 'none';
@@ -400,6 +406,7 @@
                 }
             });
 
+            // Close on backdrop click
             window.addEventListener('click', function(e) {
                 if (e.target === paymentModal) {
                     paymentModal.style.display = 'none';

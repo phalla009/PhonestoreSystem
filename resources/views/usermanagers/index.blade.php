@@ -10,12 +10,11 @@
     <script src="{{ URL::asset('js/form.js') }}" defer></script>
     <script src="{{ URL::asset('js/delete_form.js') }}" defer></script>
     <style>
-        /* Loading Overlay */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(255,255,255,0.85);
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
@@ -31,7 +30,6 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
     </style>
-
 @endsection
 
 @section('content')
@@ -40,7 +38,7 @@
         <div class="spinner"></div>
         <div id="loading-text">Loading...</div>
     </div>
-    
+
     @if(session('success'))
         <div id="successMessage" class="custom-success">
             <i class="fas fa-check-circle"></i>
@@ -66,7 +64,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>#</th>
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -77,23 +75,17 @@
                 <tbody id="usersTable">
                     @forelse ($users as $user)
                         <tr>
-                            <td data-label="No">{{ $user->id }}</td>
+                            <td data-label="No">#{{ $user->id }}</td>
                             <td data-label="Full Name"><i class="fas fa-user user-icon"></i>{{ $user->name }}</td>
                             <td data-label="Email">{{ $user->email }}</td>
-                           <td data-label="Role">
+                            <td data-label="Role">
                                 @php
                                     $roleName = $user->role->role_name ?? 'N/A';
-                                    $roleColor = 'gray'; // default color
+                                    $roleColor = 'gray';
                                     switch(strtolower($roleName)) {
-                                        case 'admin':
-                                            $roleColor = 'red';
-                                            break;
-                                        case 'manager':
-                                            $roleColor = 'green';
-                                            break;
-                                        case 'staff':
-                                            $roleColor = 'blue';
-                                            break;
+                                        case 'admin':   $roleColor = 'red';   break;
+                                        case 'manager': $roleColor = 'green'; break;
+                                        case 'staff':   $roleColor = 'blue';  break;
                                     }
                                 @endphp
                                 <span style="color: {{ $roleColor }}; font-weight: 600;">{{ $roleName }}</span>
@@ -101,15 +93,17 @@
                             <td data-label="Created At">{{ $user->created_at ? $user->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
                             <td data-label="Actions">
                                 <div class="action-buttons">
-                                    <a href="{{ route('usermanagers.show', $user->id) }}" class="action-btn show-btn openShowModal">
+                                    <a href="{{ route('usermanagers.show', $user->id) }}"
+                                       class="action-btn show-btn nav-link">
                                         <i class="fas fa-eye"></i> Show
                                     </a>
-
-                                    <a href="{{ route('usermanagers.edit', $user->id) }}" class="action-btn edit-btn openEditModal" data-id="{{ $user->id }}">
+                                    <a href="{{ route('usermanagers.edit', $user->id) }}"
+                                       class="action-btn edit-btn nav-link" data-id="{{ $user->id }}">
                                         <i class="fas fa-pen-to-square"></i> Edit
                                     </a>
-
-                                    <button type="button" class="action-btn delete-btn openDeleteModal" data-action="{{ route('usermanagers.destroy', $user->id) }}">
+                                    <button type="button"
+                                            class="action-btn delete-btn openDeleteModal"
+                                            data-action="{{ route('usermanagers.destroy', $user->id) }}">
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </div>
@@ -127,21 +121,31 @@
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="deleteModalClose">&times;</span>
-            <h3>
-                <i class="fas fa-trash-alt" style="color: #e74c3c; margin-right: 10px;"></i>
-                Confirm Delete
-            </h3>
-            <p>Are you sure you want to delete this record?</p>
+        <div class="delete-modal-box">
+            <div class="delete-modal-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+
+            <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
+
+            <h3>Delete Record?</h3>
+            <p>This action <strong>cannot be undone.</strong> Are you sure you want to permanently delete this record?</p>
+
             <form id="deleteForm" method="POST" action="">
                 @csrf
                 @method('DELETE')
-                <button type="button" id="cancelDelete" class="btn btn-secondary">Cancel</button>
-                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <div class="delete-modal-actions">
+                    <button type="button" id="cancelDelete" class="delete-btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="delete-btn-confirm">
+                        <i class="fas fa-trash-alt"></i> Yes, Delete
+                    </button>
+                </div>
             </form>
         </div>
     </div>
+
     <script>
         const overlay     = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
@@ -150,5 +154,48 @@
             loadingText.textContent = message || 'Loading...';
             overlay.style.display = 'flex';
         }
+
+        // ✅ Hide overlay once page fully loads
+        window.addEventListener('load', function () {
+            overlay.style.display = 'none';
+        });
+
+        // Add New User Manager button
+        document.getElementById('openCreateModal').addEventListener('click', function (e) {
+            e.preventDefault();
+            showLoading('Loading add...');
+            window.location.href = this.getAttribute('href');
+        });
+
+        // Show & Edit links
+        document.querySelectorAll('a.nav-link').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const isEdit = this.classList.contains('edit-btn');
+                showLoading(isEdit ? 'Loading editor...' : 'Loading details...');
+                window.location.href = this.getAttribute('href');
+            });
+        });
+
+        // Delete button → populate form action & open modal
+        document.querySelectorAll('.openDeleteModal').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.getElementById('deleteForm').action = this.dataset.action;
+                document.getElementById('deleteConfirmModal').style.display = 'flex';
+            });
+        });
+
+        // Delete confirm submit → show loading
+        document.getElementById('deleteForm').addEventListener('submit', function () {
+            showLoading('Deleting...');
+        });
+
+        // Close delete modal
+        document.getElementById('deleteModalClose').addEventListener('click', function () {
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+        });
+        document.getElementById('cancelDelete').addEventListener('click', function () {
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+        });
     </script>
 @endsection

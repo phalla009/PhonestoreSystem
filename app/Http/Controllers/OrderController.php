@@ -88,7 +88,7 @@ public function index(Request $request)
             ->orderBy('id', 'desc')
             ->first();
         $newNumber = $lastOrder ? intval(substr($lastOrder->order_number, 6)) + 1 : 1;
-        $orderNumber = 'ORD-PP' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        $orderNumber = 'ORD-KR' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 
         Order::create([
             'order_number' => $orderNumber,

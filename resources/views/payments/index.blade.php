@@ -94,7 +94,7 @@
             <table cellpadding="8" cellspacing="0" width="100%">
                 <thead>
                     <tr>
-                        <th>Payment ID</th>
+                        <th>#</th>
                         <th>Order Number</th>
                         <th>Customer</th>
                         <th>Product</th>
@@ -105,7 +105,7 @@
                 <tbody>
                     @forelse($payments as $payment)
                         <tr>
-                            <td data-label="Payment ID">{{ $payment->id }}</td>
+                            <td data-label="Payment ID">#{{ $payment->id }}</td>
                             <td data-label="Order Number">{{ $payment->order->order_number ?? 'N/A' }}</td>
                             <td data-label="Customer">{{ $payment->order->customer->name ?? 'N/A' }}</td>
                             <td data-label="Product">{{ $payment->order->product->name ?? 'N/A' }}</td>
@@ -119,7 +119,7 @@
                                     </a>
                                     <a href="{{ route('payments.edit', $payment->id) }}"
                                        class="action-btn edit-btn nav-link-loading"
-                                       data-loading-text="Opening editor...">
+                                       data-loading-text="Loading add...">
                                         <i class="fas fa-pen-to-square"></i> Edit
                                     </a>
                                     <button type="button" class="action-btn delete-btn openDeleteModal"
@@ -140,20 +140,28 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" aria-describedby="deleteModalDesc">
-        <div class="modal-content">
-            <span class="close" id="deleteModalClose" role="button" tabindex="0" aria-label="Close delete confirmation modal">&times;</span>
-            <h3 id="deleteModalTitle">
-                <i class="fas fa-trash-alt" style="color: #e74c3c; margin-right: 10px;"></i>
-                Confirm Delete
-            </h3>
-            <p id="deleteModalDesc">Are you sure you want to delete this payment?</p>
+    <div id="deleteConfirmModal" class="modal">
+        <div class="delete-modal-box">
+            <div class="delete-modal-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+
+            <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
+
+            <h3>Delete Record?</h3>
+            <p>This action <strong>cannot be undone.</strong> Are you sure you want to permanently delete this record?</p>
+
             <form id="deleteForm" method="POST" action="">
                 @csrf
                 @method('DELETE')
-                <button type="button" id="cancelDelete" class="btn btn-secondary" aria-label="Cancel deletion">Cancel</button>
-                {{-- FIX: បន្ថែម id="confirmDeleteBtn" --}}
-                <button type="submit" id="confirmDeleteBtn" class="btn btn-danger" aria-label="Confirm deletion">Yes, Delete</button>
+                <div class="delete-modal-actions">
+                    <button type="button" id="cancelDelete" class="delete-btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="delete-btn-confirm">
+                        <i class="fas fa-trash-alt"></i> Yes, Delete
+                    </button>
+                </div>
             </form>
         </div>
     </div>

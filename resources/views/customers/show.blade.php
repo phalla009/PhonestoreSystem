@@ -80,6 +80,10 @@
                 <label>Phone:</label>
                 <div>{{ $customer->phone }}</div>
             </div>
+           <div class="details-group">
+                <label>Email:</label>
+                <div>{{ $customer->email ?? 'No Email' }}</div>
+            </div>
             <div class="details-group">
                 <label>Status:</label>
                 <div>
