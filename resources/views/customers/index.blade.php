@@ -13,7 +13,6 @@
 <style>
     .status-active  { color: green; background-color: transparent !important; }
     .status-inactive { color: red;  background-color: transparent !important; }
-    .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
 
     table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
     thead tr { background-color: #f7f7f7; }
@@ -103,22 +102,30 @@
                                     <span class="status-inactive">{{ ucfirst($customer->status) }}</span>
                                 @endif
                             </td>
-                            <td data-label="Actions">
+                           <td data-label="Actions">
                                 <div class="action-buttons">
+
                                     <a href="{{ route('customers.show', $customer->id) }}"
-                                       class="action-btn show-btn nav-link-loading"
-                                       data-loading-text="Loading details...">
-                                        <i class="fas fa-eye"></i> Show
+                                    class="action-btn show-btn nav-link-loading"
+                                    data-loading-text="Loading details..."
+                                    title="View Details">
+                                        <i class="fas fa-info-circle"></i>
                                     </a>
+
                                     <a href="{{ route('customers.edit', $customer->id) }}"
-                                       class="action-btn edit-btn nav-link-loading"
-                                       data-loading-text="Opening editor...">
-                                        <i class="fas fa-pen-to-square"></i> Edit
+                                    class="action-btn edit-btn nav-link-loading"
+                                    data-loading-text="Opening editor..."
+                                    title="Edit Customer">
+                                        <i class="fas fa-pen-to-square"></i>
                                     </a>
-                                    <button type="button" class="action-btn delete-btn openDeleteModal"
-                                        data-action="{{ route('customers.destroy', $customer->id) }}">
-                                        <i class="fas fa-trash"></i> Delete
+
+                                    <button type="button"
+                                        class="action-btn delete-btn openDeleteModal"
+                                        data-action="{{ route('customers.destroy', $customer->id) }}"
+                                        title="Delete Customer">
+                                        <i class="fas fa-trash"></i>
                                     </button>
+
                                 </div>
                             </td>
                         </tr>

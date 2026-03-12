@@ -11,12 +11,6 @@
 <script src="{{ URL::asset('js/delete_form.js') }}"></script>
 
 <style>
-    .action-buttons {
-        margin-left: -20px;
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
 
     .status-pending { color: orange; }
     .status-completed { color: green; }
@@ -259,28 +253,35 @@
                         </td>
                         <td data-label="Actions">
                             <div class="action-buttons">
+
                                 <a href="javascript:void(0);"
-                                   class="action-btn payment-btn open-payment-modal {{ in_array($order->status, ['completed', 'cancelled']) ? 'disabled' : '' }}"
-                                   data-order-id="{{ $order->id }}">
-                                    <i class="fas fa-credit-card"></i> Pay
+                                class="action-btn payment-btn open-payment-modal {{ in_array($order->status, ['completed', 'cancelled']) ? 'disabled' : '' }}"
+                                data-order-id="{{ $order->id }}"
+                                title="Make Payment">
+                                    <i class="fas fa-credit-card"></i>
                                 </a>
 
                                 <a href="{{ route('orders.show', $order->id) }}"
-                                   class="action-btn show-btn nav-link-loading"
-                                   data-loading-text="Loading details...">
-                                    <i class="fas fa-eye"></i> Show
+                                class="action-btn show-btn nav-link-loading"
+                                data-loading-text="Loading details..."
+                                title="View Details">
+                                    <i class="fas fa-info-circle"></i>
                                 </a>
 
                                 <a href="{{ route('orders.edit', $order->id) }}"
-                                   class="action-btn edit-btn nav-link-loading"
-                                   data-loading-text="Opening editor...">
-                                    <i class="fas fa-pen-to-square"></i> Edit
+                                class="action-btn edit-btn nav-link-loading"
+                                data-loading-text="Opening editor..."
+                                title="Edit Order">
+                                    <i class="fas fa-pen-to-square"></i>
                                 </a>
 
-                                <button type="button" class="action-btn delete-btn openDeleteModal"
-                                    data-action="{{ route('orders.destroy', $order->id) }}">
-                                    <i class="fas fa-trash"></i> Delete
+                                <button type="button"
+                                    class="action-btn delete-btn openDeleteModal"
+                                    data-action="{{ route('orders.destroy', $order->id) }}"
+                                    title="Delete Order">
+                                    <i class="fas fa-trash"></i>
                                 </button>
+
                             </div>
                         </td>
                     </tr>
@@ -352,7 +353,7 @@
         });
         confirmYes.addEventListener('click', function() { logoutForm.submit(); });
         confirmNo.addEventListener('click',  function() { logoutConfirm.style.display = 'none'; });
-        
+
         const overlay     = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 

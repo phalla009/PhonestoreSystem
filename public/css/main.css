@@ -114,7 +114,7 @@ a {
     margin-left: -80px;
 }
 .action-btn {
-    padding: 6px 12px;
+    padding: 6px 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #f8f9fa;
@@ -125,7 +125,7 @@ a {
     transition: all 0.2s ease;
     text-decoration: none;
     display: inline-block;
-    min-width: 60px;
+    min-width: 40px;
     text-align: center;
 }
 .action-btn:hover {
@@ -1036,4 +1036,28 @@ h2 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+.action-btn {
+    position: relative;
+}
+
+.action-btn::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.action-btn:hover::after {
+    opacity: 1;
 }

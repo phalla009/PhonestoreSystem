@@ -83,30 +83,32 @@
                             <td data-label="Category Name">{{ $category->name }}</td>
                             <td data-label="Created At">{{ $category->created_at ? $category->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
                             <td data-label="Actions">
-                                <div class="action-buttons">
+                               <div class="action-buttons">
+                                {{-- Show Button --}}
+                                <a href="{{ route('categories.show', $category->id) }}"
+                                class="action-btn show-btn nav-link-loading"
+                                data-loading-text="Loading details..."
+                                title="View Details">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
 
-                                    {{-- Show Button --}}
-                                    <a href="{{ route('categories.show', $category->id) }}"
-                                       class="action-btn show-btn nav-link-loading"
-                                       data-loading-text="Loading details...">
-                                        <i class="fas fa-eye"></i> Show
-                                    </a>
+                                {{-- Edit Button --}}
+                                <a href="{{ route('categories.edit', $category->id) }}"
+                                class="action-btn edit-btn nav-link-loading"
+                                data-loading-text="Opening editor..."
+                                title="Edit Category">
+                                    <i class="fas fa-pen-to-square"></i>
+                                </a>
 
-                                    {{-- Edit Button --}}
-                                    <a href="{{ route('categories.edit', $category->id) }}"
-                                       class="action-btn edit-btn nav-link-loading"
-                                       data-loading-text="Opening editor...">
-                                        <i class="fas fa-pen-to-square"></i> Edit
-                                    </a>
+                                {{-- Delete Button --}}
+                                <button type="button"
+                                    class="action-btn delete-btn openDeleteModal"
+                                    data-action="{{ route('categories.destroy', $category->id) }}"
+                                    title="Delete Category">
+                                    <i class="fas fa-trash"></i>
+                                </button>
 
-                                    {{-- Delete Button → open modal (no loading yet) --}}
-                                    <button type="button"
-                                        class="action-btn delete-btn openDeleteModal"
-                                        data-action="{{ route('categories.destroy', $category->id) }}">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-
-                                </div>
+                            </div>
                             </td>
                         </tr>
                     @empty
@@ -172,7 +174,7 @@
         });
         confirmYes.addEventListener('click', function() { logoutForm.submit(); });
         confirmNo.addEventListener('click',  function() { logoutConfirm.style.display = 'none'; });
-        
+
         const overlay   = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
         function showLoading(message) {

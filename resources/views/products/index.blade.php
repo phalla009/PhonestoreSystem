@@ -23,7 +23,7 @@
         border-radius: 24px;
     }
     .action-buttons{
-        margin-left: -30px;
+        margin-left: -50px;
     }
     /* Loading Overlay */
     #loading-overlay {
@@ -142,24 +142,31 @@
                                 @endif
                             </td>
                             <td data-label="Actions">
-                                <div class="action-buttons">
-                                    {{-- FIX: បន្ថែម class nav-link-loading + data-loading-text --}}
-                                    <a href="{{ route('products.show', $product->id) }}"
-                                       class="action-btn show-btn nav-link-loading"
-                                       data-loading-text="Loading details...">
-                                        <i class="fas fa-eye"></i> Show
-                                    </a>
-                                    <a href="{{ route('products.edit', $product->id) }}"
-                                       class="action-btn edit-btn nav-link-loading"
-                                       data-loading-text="Loading editor...">
-                                        <i class="fas fa-pen-to-square"></i> Edit
-                                    </a>
-                                    <button type="button" class="action-btn delete-btn openDeleteModal"
-                                        data-action="{{ route('products.destroy', $product->id) }}">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </div>
-                            </td>
+                            <div class="action-buttons">
+
+                                <a href="{{ route('products.show', $product->id) }}"
+                                class="action-btn show-btn nav-link-loading"
+                                data-loading-text="Loading details..."
+                                title="View Details">
+                                <i class="fas fa-info-circle"></i>
+                                </a>
+
+                                <a href="{{ route('products.edit', $product->id) }}"
+                                class="action-btn edit-btn nav-link-loading"
+                                data-loading-text="Loading editor..."
+                                title="Edit Product">
+                                    <i class="fas fa-pen-to-square"></i>
+                                </a>
+
+                                <button type="button"
+                                    class="action-btn delete-btn openDeleteModal"
+                                    data-action="{{ route('products.destroy', $product->id) }}"
+                                    title="Delete Product">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
+                            </div>
+                        </td>
                         </tr>
                     @empty
                         <tr>

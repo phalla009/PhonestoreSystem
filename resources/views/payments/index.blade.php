@@ -11,7 +11,7 @@
     <script src="{{ URL::asset('js/delete_form.js') }}"></script>
 
     <style>
-        .action-buttons { margin-left: -30px; display: flex; gap: 10px; flex-wrap: wrap; }
+       
         .filter-search-wrap { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
         .filter-search-wrap input[type="text"] { padding: 10px 16px; border: 1px solid #ccc; border-radius: 24px; width: 300px; font-size: 15px; outline-color: #3498db; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .filter-search-wrap .btn { padding: 10px 18px; font-size: 14px; border-radius: 8px; }
@@ -111,23 +111,31 @@
                             <td data-label="Product">{{ $payment->order->product->name ?? 'N/A' }}</td>
                             <td data-label="Amount Paid">${{ number_format($payment->amount, 2) }}</td>
                             <td data-label="Actions">
-                                <div class="action-buttons">
-                                    <a href="{{ route('payments.show', $payment->id) }}"
-                                       class="action-btn show-btn nav-link-loading"
-                                       data-loading-text="Loading details...">
-                                        <i class="fas fa-eye"></i> Show
-                                    </a>
-                                    <a href="{{ route('payments.edit', $payment->id) }}"
-                                       class="action-btn edit-btn nav-link-loading"
-                                       data-loading-text="Loading add...">
-                                        <i class="fas fa-pen-to-square"></i> Edit
-                                    </a>
-                                    <button type="button" class="action-btn delete-btn openDeleteModal"
-                                        data-action="{{ route('payments.destroy', $payment->id) }}">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </div>
-                            </td>
+                            <div class="action-buttons">
+
+                                <a href="{{ route('payments.show', $payment->id) }}"
+                                class="action-btn show-btn nav-link-loading"
+                                data-loading-text="Loading details..."
+                                title="View Details">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+
+                                <a href="{{ route('payments.edit', $payment->id) }}"
+                                class="action-btn edit-btn nav-link-loading"
+                                data-loading-text="Loading add..."
+                                title="Edit Payment">
+                                    <i class="fas fa-pen-to-square"></i>
+                                </a>
+
+                                <button type="button"
+                                    class="action-btn delete-btn openDeleteModal"
+                                    data-action="{{ route('payments.destroy', $payment->id) }}"
+                                    title="Delete Payment">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
+                            </div>
+                        </td>
                         </tr>
                     @empty
                         <tr>
@@ -193,7 +201,7 @@
         });
         confirmYes.addEventListener('click', function() { logoutForm.submit(); });
         confirmNo.addEventListener('click',  function() { logoutConfirm.style.display = 'none'; });
-        
+
         const overlay     = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 

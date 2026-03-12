@@ -102,20 +102,27 @@
 
                             <td data-label="Actions">
                                 <div class="action-buttons">
+
                                     <a href="{{ route('userroles.show', $role->id) }}"
-                                       class="action-btn show-btn nav-link">
-                                        <i class="fas fa-eye"></i> Show
+                                    class="action-btn show-btn nav-link"
+                                    title="View Details">
+                                    <i class="fas fa-info-circle"></i>
                                     </a>
 
                                     <a href="{{ route('userroles.edit', $role->id) }}"
-                                       class="action-btn edit-btn nav-link" data-id="{{ $role->id }}">
-                                        <i class="fas fa-pen-to-square"></i> Edit
+                                    class="action-btn edit-btn nav-link"
+                                    data-id="{{ $role->id }}"
+                                    title="Edit Role">
+                                        <i class="fas fa-pen-to-square"></i>
                                     </a>
 
-                                    <button type="button" class="action-btn delete-btn openDeleteModal"
-                                            data-action="{{ route('userroles.destroy', $role->id) }}">
-                                        <i class="fas fa-trash"></i> Delete
+                                    <button type="button"
+                                            class="action-btn delete-btn openDeleteModal"
+                                            data-action="{{ route('userroles.destroy', $role->id) }}"
+                                            title="Delete Role">
+                                        <i class="fas fa-trash"></i>
                                     </button>
+
                                 </div>
                             </td>
                         </tr>

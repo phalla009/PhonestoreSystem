@@ -93,19 +93,27 @@
                             <td data-label="Created At">{{ $user->created_at ? $user->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
                             <td data-label="Actions">
                                 <div class="action-buttons">
+
                                     <a href="{{ route('usermanagers.show', $user->id) }}"
-                                       class="action-btn show-btn nav-link">
-                                        <i class="fas fa-eye"></i> Show
+                                    class="action-btn show-btn nav-link"
+                                    title="View Details">
+                                        <i class="fas fa-info-circle"></i>
                                     </a>
+
                                     <a href="{{ route('usermanagers.edit', $user->id) }}"
-                                       class="action-btn edit-btn nav-link" data-id="{{ $user->id }}">
-                                        <i class="fas fa-pen-to-square"></i> Edit
+                                    class="action-btn edit-btn nav-link"
+                                    data-id="{{ $user->id }}"
+                                    title="Edit User">
+                                        <i class="fas fa-pen-to-square"></i>
                                     </a>
+
                                     <button type="button"
                                             class="action-btn delete-btn openDeleteModal"
-                                            data-action="{{ route('usermanagers.destroy', $user->id) }}">
-                                        <i class="fas fa-trash"></i> Delete
+                                            data-action="{{ route('usermanagers.destroy', $user->id) }}"
+                                            title="Delete User">
+                                        <i class="fas fa-trash"></i>
                                     </button>
+
                                 </div>
                             </td>
                         </tr>
