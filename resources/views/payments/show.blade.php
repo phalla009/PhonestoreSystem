@@ -1,30 +1,13 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-   Show Payments
+    Payments Details
 @endsection
 
 @section('headerBlock')
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
     <script src="{{ URL::asset('js/form.js') }}"></script>
     <style>
-        .payment-details {
-            max-width: 100%;
-            height: 650px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            padding: 30px 40px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #2c3e50;
-        }
-        .payment-details h2 { text-align: center; margin-bottom: 30px; color: #34495e; font-weight: 700; font-size: 2rem; }
-        .row { display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; }
-        .row p { flex: 1 1 30%; margin: 0 10px 10px 0; font-size: 1.1rem; white-space: nowrap; }
-        .row p strong { color: #2980b9; margin-right: 5px; }
-        @media (max-width: 600px) { .row p { flex: 1 1 100%; white-space: normal; } }
-
-        /* Loading Overlay */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -44,6 +27,55 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-row-1 {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-box {
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .info-box:hover {
+            border-color: #a5b4fc;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.08);
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4338ca;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-label i {
+            font-size: 11px;
+            color: #6366f1;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 500;
+        }
     </style>
 @endsection
 
@@ -56,40 +88,68 @@
     </div>
 
     @if(session('success'))
-        <div id="successMessage" class="custom-success" style="max-width:700px; margin: 20px auto; padding:10px; background:#d4edda; color:#155724; border-radius:5px;">
+        <div id="successMessage" class="custom-success">
+            <i class="fas fa-check-circle" style="color: green; margin-right: 8px;"></i>
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="payment-details" role="main" aria-label="Payment Details">
+    <div class="modal-content" role="main" aria-label="Payment Details">
         <a href="{{ route('payments.index') }}" id="backBtn" class="btn btn-back">
             <i class="fas fa-chevron-left"></i> Back
         </a>
+
         <h2><i class="fas fa-credit-card"></i> Payment Details</h2>
 
-        <div class="row">
-            <p><strong>Payment ID:</strong> {{ $payment->id }}</p>
-            <p><strong>Order Number:</strong> {{ $payment->order->order_number ?? 'N/A' }}</p>
-            <p><strong>Customer:</strong> {{ $payment->order->customer->name ?? 'N/A' }}</p>
+        {{-- Row 1: Payment ID, Order Number, Customer --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-hashtag"></i> Payment ID</div>
+                <div class="info-value">{{ $payment->id }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-receipt"></i> Order Number</div>
+                <div class="info-value">{{ $payment->order->order_number ?? 'N/A' }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-user"></i> Customer</div>
+                <div class="info-value">{{ $payment->order->customer->name ?? 'N/A' }}</div>
+            </div>
         </div>
 
-        <div class="row">
-            <p><strong>Product:</strong> {{ $payment->order->product->name ?? 'N/A' }}</p>
-            <p><strong>Amount Paid:</strong> ${{ number_format($payment->amount, 2) }}</p>
-            <p><strong>Payment Date:</strong> {{
-                $payment->paid_at
-                    ? \Carbon\Carbon::parse($payment->paid_at)->timezone('Asia/Phnom_Penh')->format('d-m-Y H:i')
-                    : \Carbon\Carbon::now('Asia/Phnom_Penh')->format('d-m-Y H:i')
-            }}</p>
+        {{-- Row 2: Product, Amount Paid, Payment Date --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-box"></i> Product</div>
+                <div class="info-value">{{ $payment->order->product->name ?? 'N/A' }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-dollar-sign"></i> Amount Paid</div>
+                <div class="info-value">${{ number_format($payment->amount, 2) }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-calendar-alt"></i> Payment Date</div>
+                <div class="info-value">
+                    {{
+                        $payment->paid_at
+                            ? \Carbon\Carbon::parse($payment->paid_at)->timezone('Asia/Phnom_Penh')->format('d-m-Y H:i')
+                            : \Carbon\Carbon::now('Asia/Phnom_Penh')->format('d-m-Y H:i')
+                    }}
+                </div>
+            </div>
         </div>
 
-        <div class="row">
-            <p><strong>Payment Method:</strong> {{ ucfirst($payment->payment_method ?? 'N/A') }}</p>
+        {{-- Row 3: Payment Method --}}
+        <div class="info-row-1">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-credit-card"></i> Payment Method</div>
+                <div class="info-value">{{ ucfirst($payment->payment_method ?? 'N/A') }}</div>
+            </div>
         </div>
+
     </div>
 
     <script>
-        // Back button → show loading then navigate
         document.getElementById('backBtn').addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('loading-overlay').style.display = 'flex';

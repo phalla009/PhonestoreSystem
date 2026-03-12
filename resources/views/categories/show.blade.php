@@ -1,50 +1,13 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-   Show Categories
+    Categories Details
 @endsection
 
 @section('headerBlock')
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
     <script src="{{ URL::asset('js/form.js') }}"></script>
     <style>
-        .category-details {
-            max-width: 100%;
-            height: 750px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            padding: 30px 40px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #2c3e50;
-        }
-        .category-details h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #34495e;
-            font-weight: 700;
-            font-size: 2rem;
-        }
-        .row {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .row p {
-            flex: 1 1 48%;
-            margin: 10px 0;
-            font-size: 1.1rem;
-        }
-        .row p strong {
-            color: #2980b9;
-            margin-right: 5px;
-        }
-        @media (max-width: 768px) {
-            .row p { flex: 1 1 100%; }
-        }
-
-        /* Loading Overlay */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -64,6 +27,48 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-box {
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .info-box:hover {
+            border-color: #a5b4fc;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.08);
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4338ca;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-label i {
+            font-size: 11px;
+            color: #6366f1;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 500;
+        }
     </style>
 @endsection
 
@@ -75,26 +80,42 @@
         <div id="loading-text">Going back...</div>
     </div>
 
-    <div class="category-details">
+    <div class="modal-content" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
         <a href="{{ route('categories.index') }}" id="backBtn" class="btn btn-back">
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
         <h2><i class="fas fa-mobile-alt"></i> Brand Details</h2>
 
-        <div class="row">
-            <p><strong>Brand Name:</strong> {{ $category->name }}</p>
-            <p><strong>Description:</strong> {{ $category->description ?? 'No description available.' }}</p>
+        {{-- Row 1: Brand Name & Description --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-tag"></i> Brand Name</div>
+                <div class="info-value">{{ $category->name }}</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-align-left"></i> Description</div>
+                <div class="info-value">{{ $category->description ?? 'No description available.' }}</div>
+            </div>
         </div>
 
-        <div class="row">
-            <p><strong>Created At:</strong> {{ $category->created_at ? $category->created_at->format('Y-m-d H:i') : 'N/A' }}</p>
-            <p><strong>Last Updated:</strong> {{ $category->updated_at ? $category->updated_at->format('Y-m-d H:i') : 'N/A' }}</p>
+        {{-- Row 2: Created At & Last Updated --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-calendar-plus"></i> Created At</div>
+                <div class="info-value">{{ $category->created_at ? $category->created_at->format('Y-m-d H:i') : 'N/A' }}</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-clock"></i> Last Updated</div>
+                <div class="info-value">{{ $category->updated_at ? $category->updated_at->format('Y-m-d H:i') : 'N/A' }}</div>
+            </div>
         </div>
+
     </div>
 
     <script>
-        // Back button → show loading then navigate
         document.getElementById('backBtn').addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('loading-overlay').style.display = 'flex';

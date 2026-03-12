@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    Show User Role
+     UserRole Details
 @endsection
 
 @section('headerBlock')
@@ -28,39 +28,70 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
 
-        .role-details {
-            max-width: 100%;
-            min-height: 500px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            padding: 30px 40px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #2c3e50;
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
-        .row {
+        .info-box {
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .info-box:hover {
+            border-color: #a5b4fc;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.08);
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4338ca;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
             display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            align-items: center;
+            gap: 6px;
         }
 
-        .row p {
-            flex: 1 1 48%;
-            margin: 10px 0;
-            font-size: 1.1rem;
+        .info-label i {
+            font-size: 11px;
+            color: #6366f1;
         }
 
-        .row p strong {
-            color: #2980b9;
-            margin-right: 5px;
+        .info-value {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 500;
         }
 
-        .btn-back i { margin-right: 5px; }
+        .perm-tag-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin-top: 4px;
+        }
 
-        @media (max-width: 768px) {
-            .row p { flex: 1 1 100%; }
+        .perm-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid #e0e7ff;
+            font-size: 12.5px;
+            color: #4338ca;
+            background: #eef2ff;
+        }
+
+        .perm-tag i {
+            font-size: 10px;
+            color: #6366f1;
         }
     </style>
 @endsection
@@ -73,38 +104,64 @@
         <div id="loading-text">Loading...</div>
     </div>
 
-    <div class="role-details">
+    <div class="modal-content" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
         <a href="{{ route('userroles.index') }}" id="backBtn" class="btn btn-back">
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
         <h2><i class="fas fa-user-shield"></i> Role Details</h2>
 
-        <div class="row">
-            <p><strong>Role Name:</strong> {{ $role->role_name }}</p>
-            <p><strong>Permissions:</strong>
-                @foreach($role->permissions as $permission)
-                    {{ $permission->permission_name }}{{ !$loop->last ? ',' : '' }}
-                @endforeach
-            </p>
+        {{-- Row 1: Role Name & Dates --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-tag"></i> Role Name</div>
+                <div class="info-value">{{ $role->role_name }}</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-align-left"></i> Description</div>
+                <div class="info-value">{{ $role->description ?? 'N/A' }}</div>
+            </div>
         </div>
 
-        <div class="row">
-            <p><strong>Created At:</strong> {{ $role->created_at ? $role->created_at->format('Y-m-d H:i') : 'N/A' }}</p>
-            <p><strong>Last Updated:</strong> {{ $role->updated_at ? $role->updated_at->format('Y-m-d H:i') : 'N/A' }}</p>
+        {{-- Row 2: Created & Updated --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-calendar-plus"></i> Created At</div>
+                <div class="info-value">{{ $role->created_at ? $role->created_at->format('Y-m-d H:i') : 'N/A' }}</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-clock"></i> Last Updated</div>
+                <div class="info-value">{{ $role->updated_at ? $role->updated_at->format('Y-m-d H:i') : 'N/A' }}</div>
+            </div>
         </div>
+
+        {{-- Permissions --}}
+        <div class="info-box" style="margin-bottom: 16px;">
+            <div class="info-label"><i class="fas fa-shield-alt"></i> Permissions</div>
+            <div class="perm-tag-grid">
+                @forelse($role->permissions as $permission)
+                    <div class="perm-tag">
+                        <i class="fas fa-check-circle"></i>
+                        {{ $permission->permission_name }}
+                    </div>
+                @empty
+                    <span style="font-size: 13px; color: #9ca3af;">No permissions assigned.</span>
+                @endforelse
+            </div>
+        </div>
+
     </div>
 
     <script>
         const overlay     = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 
-        // ✅ Hide overlay once page fully loads
         window.addEventListener('load', function () {
             overlay.style.display = 'none';
         });
 
-        // Back button → show loading then navigate
         document.getElementById('backBtn').addEventListener('click', function (e) {
             e.preventDefault();
             loadingText.textContent = 'Going back...';

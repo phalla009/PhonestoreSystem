@@ -1,12 +1,11 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    Show Product
+    Product Details
 @endsection
 
 @section('headerBlock')
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
-    <link rel="stylesheet" href="{{ URL::asset('css/show-products.css') }}">
     <script src="{{ URL::asset('js/form.js') }}"></script>
     <style>
         #loading-overlay {
@@ -28,6 +27,117 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-box {
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .info-box:hover {
+            border-color: #a5b4fc;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.08);
+        }
+
+        .info-box.full {
+            grid-column: span 2;
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4338ca;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-label i {
+            font-size: 11px;
+            color: #6366f1;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-active   { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .status-inactive { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+
+        /* Image Gallery */
+        .product-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .image-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .thumbnail-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .thumbnail-list img {
+            width: 58px;
+            height: 58px;
+            object-fit: cover;
+            border-radius: 7px;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .thumbnail-list img:hover,
+        .thumbnail-list img.selected {
+            border-color: #6366f1;
+        }
+
+        .no-image {
+            width: 100%;
+            height: 220px;
+            border-radius: 10px;
+            border: 1px dashed #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 13px;
+        }
     </style>
 @endsection
 
@@ -39,13 +149,16 @@
         <div id="loading-text">Going back...</div>
     </div>
 
-    <div class="details-card" role="main" aria-label="Product Details">
-        <a href="{{ route('products.index') }}" id="backBtn" class="btn btn-back" style="margin-bottom:20px; display:inline-block;">
+    <div class="modal-content" role="main" aria-label="Product Details">
+        <a href="{{ route('products.index') }}" id="backBtn" class="btn btn-back">
             <i class="fas fa-chevron-left"></i> Back
         </a>
+
         <h2><i class="fas fa-box-open"></i> Product Details</h2>
 
+        {{-- Image + Info Layout --}}
         <div class="product-layout">
+
             {{-- Image Gallery --}}
             <div class="image-gallery">
                 @if ($product->images->count() > 0)
@@ -55,83 +168,97 @@
                         alt="{{ $product->name }}"
                         class="main-image"
                     >
-                    <div class="thumbnail-list" role="list">
+                    <div class="thumbnail-list">
                         @foreach ($product->images as $index => $img)
                             <img
                                 src="{{ asset('images/products/' . $img->image) }}"
                                 alt="{{ $product->name . ' image ' . ($index + 1) }}"
                                 class="{{ $index === 0 ? 'selected' : '' }}"
-                                role="listitem"
                                 onclick="document.getElementById('mainImage').src=this.src; selectThumbnail(this)"
                             >
                         @endforeach
                     </div>
                 @else
-                    <div>No images available</div>
+                    <div class="no-image">
+                        <i class="fas fa-image" style="margin-right:6px;"></i> No images available
+                    </div>
                 @endif
             </div>
 
-            {{-- Product Information --}}
-            <div class="product-info">
-                <div class="details-row">
-                    <div class="details-group">
-                        <label>Product Name:</label>
-                        <div>{{ $product->name }}</div>
+            {{-- Product Info --}}
+            <div>
+                {{-- Row 1: Name & SKU --}}
+                <div class="info-row">
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-box"></i> Product Name</div>
+                        <div class="info-value">{{ $product->name }}</div>
                     </div>
-                      <div class="details-group">
-                        <label>SKU:</label>
-                        <div>{{ $product->sku ?? '-' }}</div>
-                    </div>
-                    <div class="details-group">
-                        <label>Brand:</label>
-                        <div>{{ $product->category->name ?? 'N/A' }}</div>
-                    </div>
-                    <div class="details-group">
-                        <label>Price:</label>
-                        <div>${{ number_format($product->price, 2) }}</div>
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-barcode"></i> SKU</div>
+                        <div class="info-value">{{ $product->sku ?? '-' }}</div>
                     </div>
                 </div>
 
-                <div class="details-row">
-                    <div class="details-group">
-                        <label>Stock:</label>
-                        <div>{{ $product->stock }}</div>
+                {{-- Row 2: Brand & Price --}}
+                <div class="info-row">
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-tag"></i> Brand</div>
+                        <div class="info-value">{{ $product->category->name ?? 'N/A' }}</div>
                     </div>
-                    <div class="details-group">
-                        <label>Status:</label>
-                        <span class="status-badge status-{{ strtolower($product->status) }}">
-                            {{ ucfirst($product->status) }}
-                        </span>
-                    </div>
-                    <div class="details-group" style="flex: 1 1 100%;">
-                        <label>Description:</label>
-                        {{ $product->description ?: 'No description.' }}
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-dollar-sign"></i> Price</div>
+                        <div class="info-value">${{ number_format($product->price, 2) }}</div>
                     </div>
                 </div>
 
-                <div class="details-row">
-                    <div class="details-group">
-                        <label>Created:</label>
-                        {{ $product->created_at->setTimezone('Asia/Phnom_Penh')->format('M d, Y \a\t g:i A') }}
+                {{-- Row 3: Stock & Status --}}
+                <div class="info-row">
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-cubes"></i> Stock</div>
+                        <div class="info-value">{{ $product->stock }}</div>
                     </div>
-                    <div class="details-group">
-                        <label>Last Updated:</label>
-                        {{ $product->updated_at->setTimezone('Asia/Phnom_Penh')->format('M d, Y \a\t g:i A') }}
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-circle"></i> Status</div>
+                        <div class="info-value">
+                            <span class="status-badge status-{{ strtolower($product->status) }}">
+                                {{ ucfirst($product->status) }}
+                            </span>
+                        </div>
                     </div>
                 </div>
+
+                {{-- Row 4: Description full width --}}
+                <div class="info-row">
+                    <div class="info-box full">
+                        <div class="info-label"><i class="fas fa-align-left"></i> Description</div>
+                        <div class="info-value">{{ $product->description ?: 'No description.' }}</div>
+                    </div>
+                </div>
+
+                {{-- Row 5: Created & Updated --}}
+                <div class="info-row">
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-calendar-plus"></i> Created</div>
+                        <div class="info-value">{{ $product->created_at->setTimezone('Asia/Phnom_Penh')->format('M d, Y \a\t g:i A') }}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-clock"></i> Last Updated</div>
+                        <div class="info-value">{{ $product->updated_at->setTimezone('Asia/Phnom_Penh')->format('M d, Y \a\t g:i A') }}</div>
+                    </div>
+                </div>
+
             </div>
         </div>
+
     </div>
 
     <script>
-        // Back button → show loading then navigate
         document.getElementById('backBtn').addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('loading-overlay').style.display = 'flex';
             window.location.href = this.getAttribute('href');
         });
 
-        // Thumbnail selector
         function selectThumbnail(el) {
             document.querySelectorAll('.thumbnail-list img').forEach(function(img) {
                 img.classList.remove('selected');

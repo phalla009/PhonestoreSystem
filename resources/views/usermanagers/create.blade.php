@@ -27,6 +27,36 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+        .text-danger { color: red; margin-top: 4px; }
+
+        /* Permission Display */
+        .perm-display-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            min-height: 80px;
+        }
+
+        .perm-display-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-size: 12.5px;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+        }
+
+        .perm-display-item input[type="checkbox"] {
+            width: 13px;
+            height: 13px;
+            accent-color: #6366f1;
+            flex-shrink: 0;
+        }
     </style>
 @endsection
 
@@ -54,45 +84,39 @@
         <form id="userManagerForm" action="{{ route('usermanagers.store') }}" method="POST">
             @csrf
 
-            <!-- Full Name -->
-            <div class="form-row">
-                <div class="form-group" style="width: 100%;">
+            {{-- Row 1: Full Name & Email --}}
+            <div class="form-row" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                <div class="form-group">
                     <label for="name">Full Name:</label>
                     <input id="name" type="text" name="name" value="{{ old('name') }}" placeholder="Enter full name">
-                    @error('name') <p class="text-danger mt-1">{{ $message }}</p> @enderror
+                    @error('name') <p class="text-danger">{{ $message }}</p> @enderror
                 </div>
-            </div>
 
-            <!-- Email -->
-            <div class="form-row">
-                <div class="form-group" style="width: 100%;">
+                <div class="form-group">
                     <label for="email">Email:</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="Enter email">
-                    @error('email') <p class="text-danger mt-1">{{ $message }}</p> @enderror
+                    @error('email') <p class="text-danger">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <!-- Password -->
-            <div class="form-row">
-                <div class="form-group" style="width: 100%;">
+            {{-- Row 2: Password & Confirm Password --}}
+            <div class="form-row" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 12px;">
+                <div class="form-group">
                     <label for="password">Password:</label>
                     <input id="password" type="password" name="password" placeholder="Enter password">
-                    @error('password') <p class="text-danger mt-1">{{ $message }}</p> @enderror
+                    @error('password') <p class="text-danger">{{ $message }}</p> @enderror
                 </div>
-            </div>
 
-            <!-- Password Confirmation -->
-            <div class="form-row">
-                <div class="form-group" style="width: 100%;">
+                <div class="form-group">
                     <label for="password_confirmation">Confirm Password:</label>
                     <input id="password_confirmation" type="password" name="password_confirmation" placeholder="Confirm password">
-                    @error('password_confirmation') <p class="text-danger mt-1">{{ $message }}</p> @enderror
+                    @error('password_confirmation') <p class="text-danger">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <!-- Role Selection -->
-            <div class="form-row">
-                <div class="form-group" style="width: 100%;">
+            {{-- Row 3: Role & Permissions --}}
+            <div class="form-row" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 12px;">
+                <div class="form-group">
                     <label for="role_id">Assign Role:</label>
                     <select id="role_id" name="role_id">
                         <option value="">Select role</option>
@@ -102,33 +126,26 @@
                             </option>
                         @endforeach
                     </select>
-                    @error('role_id') <p class="text-danger mt-1">{{ $message }}</p> @enderror
+                    @error('role_id') <p class="text-danger">{{ $message }}</p> @enderror
                 </div>
             </div>
-
-            <!-- Permissions Display -->
-            <div class="form-row">
-                <div class="form-group" style="width: 100%;">
+            {{-- <div class="form-group">
                     <label>Permissions for Selected Role:</label>
-                    <div id="permissionsContainer" style="border:1px solid #ccc; padding:10px; height:150px; overflow-y:auto;">
-                        <!-- dynamically filled -->
+                    <div id="permissionsContainer" class="perm-display-grid">
+                        <span style="color: #9ca3af; font-size: 12.5px; grid-column: span 2;">Select a role to view permissions...</span>
                     </div>
-                </div>
-            </div>
+                </div> --}}
 
-            <!-- Submit -->
-            <div style="text-align:right; margin-top:1rem;">
+            {{-- Buttons --}}
+            <div style=" margin-top: 1rem;">
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Add User Manager
                 </button>
-            </div>
-
-            <!-- Cancel -->
-            <div style="text-align:right; margin-top:1rem;">
                 <button type="button" id="cancel" class="btn btn-cancel">
                     <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
+
         </form>
     </div>
 
@@ -136,12 +153,10 @@
         const overlay     = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 
-        // ✅ Hide overlay once page fully loads
         window.addEventListener('load', function () {
             overlay.style.display = 'none';
         });
 
-        // Back button → show loading then navigate
         document.getElementById('backBtn').addEventListener('click', function(e) {
             e.preventDefault();
             loadingText.textContent = 'Going back...';
@@ -149,19 +164,17 @@
             window.location.href = this.getAttribute('href');
         });
 
-        // Submit form → show loading
         document.getElementById('userManagerForm').addEventListener('submit', function() {
             loadingText.textContent = 'Saving...';
             overlay.style.display = 'flex';
         });
 
-        // Cancel → reset form and clear permissions
         document.getElementById('cancel').addEventListener('click', function() {
             document.getElementById('userManagerForm').reset();
-            document.getElementById('permissionsContainer').innerHTML = '';
+            document.getElementById('permissionsContainer').innerHTML =
+                '<span style="color:#9ca3af;font-size:12.5px;grid-column:span 2;">Select a role to view permissions...</span>';
         });
 
-        // Roles with Permissions
         const roles = @json($roles);
         const roleSelect = document.getElementById('role_id');
         const permissionsContainer = document.getElementById('permissionsContainer');
@@ -171,19 +184,22 @@
             permissionsContainer.innerHTML = '';
             const role = roles.find(r => r.id == roleId);
 
-            if (role && role.permissions) {
+            if (role && role.permissions && role.permissions.length > 0) {
                 role.permissions.forEach(p => {
                     const div = document.createElement('div');
+                    div.className = 'perm-display-item';
                     div.innerHTML = `
                         <input type="checkbox" checked disabled id="perm_${p.id}">
-                        <label for="perm_${p.id}">${p.permission_name}</label>
+                        <label for="perm_${p.id}" style="font-size:12.5px; color:#4b5563; cursor:default;">${p.permission_name}</label>
                     `;
                     permissionsContainer.appendChild(div);
                 });
+            } else {
+                permissionsContainer.innerHTML =
+                    '<span style="color:#9ca3af;font-size:12.5px;grid-column:span 2;">No permissions found for this role.</span>';
             }
         });
 
-        // Initialize display if old role selected
         if (roleSelect.value) {
             roleSelect.dispatchEvent(new Event('change'));
         }

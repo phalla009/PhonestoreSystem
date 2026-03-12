@@ -29,10 +29,24 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            width: fit-content;
+        }
+        .role-admin   { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+        .role-manager { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .role-staff   { background: #dbeafe; color: #2563eb; border: 1px solid #bfdbfe; }
+        .role-default { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
     </style>
 @endsection
 
 @section('content')
+
     {{-- Loading Overlay --}}
     <div id="loading-overlay">
         <div class="spinner"></div>
@@ -76,44 +90,42 @@
                     @forelse ($users as $user)
                         <tr>
                             <td data-label="No">#{{ $loop->iteration }}</td>
-                            <td data-label="Full Name"><i class="fas fa-user user-icon"></i>{{ $user->name }}</td>
+                            <td data-label="Full Name">
+                                <i class="fas fa-user user-icon"></i> {{ $user->name }}
+                            </td>
                             <td data-label="Email">{{ $user->email }}</td>
                             <td data-label="Role">
                                 @php
                                     $roleName = $user->role->role_name ?? 'N/A';
-                                    $roleColor = 'gray';
-                                    switch(strtolower($roleName)) {
-                                        case 'admin':   $roleColor = 'red';   break;
-                                        case 'manager': $roleColor = 'green'; break;
-                                        case 'staff':   $roleColor = 'blue';  break;
-                                    }
+                                    $roleClass = match(strtolower($roleName)) {
+                                        'admin'   => 'role-admin',
+                                        'manager' => 'role-manager',
+                                        'staff'   => 'role-staff',
+                                        default   => 'role-default',
+                                    };
                                 @endphp
-                                <span style="color: {{ $roleColor }}; font-weight: 600;">{{ $roleName }}</span>
+                                <span class="role-badge {{ $roleClass }}">{{ $roleName }}</span>
                             </td>
                             <td data-label="Created At">{{ $user->created_at ? $user->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
                             <td data-label="Actions">
                                 <div class="action-buttons">
-
                                     <a href="{{ route('usermanagers.show', $user->id) }}"
-                                    class="action-btn show-btn nav-link"
-                                    title="View Details">
+                                        class="action-btn show-btn nav-link"
+                                        title="View Details">
                                         <i class="fas fa-info-circle"></i>
                                     </a>
-
                                     <a href="{{ route('usermanagers.edit', $user->id) }}"
-                                    class="action-btn edit-btn nav-link"
-                                    data-id="{{ $user->id }}"
-                                    title="Edit User">
+                                        class="action-btn edit-btn nav-link"
+                                        data-id="{{ $user->id }}"
+                                        title="Edit User">
                                         <i class="fas fa-pen-to-square"></i>
                                     </a>
-
                                     <button type="button"
-                                            class="action-btn delete-btn openDeleteModal"
-                                            data-action="{{ route('usermanagers.destroy', $user->id) }}"
-                                            title="Delete User">
+                                        class="action-btn delete-btn openDeleteModal"
+                                        data-action="{{ route('usermanagers.destroy', $user->id) }}"
+                                        title="Delete User">
                                         <i class="fas fa-trash"></i>
                                     </button>
-
                                 </div>
                             </td>
                         </tr>
@@ -127,18 +139,15 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    {{-- Delete Confirmation Modal --}}
     <div id="deleteConfirmModal" class="modal">
         <div class="delete-modal-box">
             <div class="delete-modal-icon">
                 <i class="fas fa-trash-alt"></i>
             </div>
-
             <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
-
             <h3>Delete Record?</h3>
             <p>This action <strong>cannot be undone.</strong> Are you sure you want to permanently delete this record?</p>
-
             <form id="deleteForm" method="POST" action="">
                 @csrf
                 @method('DELETE')
@@ -154,20 +163,19 @@
         </div>
     </div>
 
-     <div id="logout-confirm">
-    <div class="confirm-box">
-        <div class="icon-container">
-        <i class="fas fa-sign-out-alt"></i>
+    {{-- Logout Confirm --}}
+    <div id="logout-confirm">
+        <div class="confirm-box">
+            <div class="icon-container">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <p>Are you sure you want to logout?</p>
+            <button id="confirm-yes">Yes, Logout!</button>
+            <button id="confirm-no">No, Keep it!</button>
         </div>
-        <p>Are you sure you want to logout?</p>
-        <button id="confirm-yes">Yes, Logout!</button>
-        <button id="confirm-no">No, Keep it!</button>
     </div>
-    </div>
+
     <script>
-     // =============================================
-        // Logout confirm
-        // =============================================
         const logoutLink    = document.getElementById('logout-link');
         const logoutConfirm = document.getElementById('logout-confirm');
         const confirmYes    = document.getElementById('confirm-yes');
@@ -189,19 +197,16 @@
             overlay.style.display = 'flex';
         }
 
-        // ✅ Hide overlay once page fully loads
         window.addEventListener('load', function () {
             overlay.style.display = 'none';
         });
 
-        // Add New User Manager button
         document.getElementById('openCreateModal').addEventListener('click', function (e) {
             e.preventDefault();
             showLoading('Loading add...');
             window.location.href = this.getAttribute('href');
         });
 
-        // Show & Edit links
         document.querySelectorAll('a.nav-link').forEach(function (link) {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -211,7 +216,6 @@
             });
         });
 
-        // Delete button → populate form action & open modal
         document.querySelectorAll('.openDeleteModal').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 document.getElementById('deleteForm').action = this.dataset.action;
@@ -219,12 +223,10 @@
             });
         });
 
-        // Delete confirm submit → show loading
         document.getElementById('deleteForm').addEventListener('submit', function () {
             showLoading('Deleting...');
         });
 
-        // Close delete modal
         document.getElementById('deleteModalClose').addEventListener('click', function () {
             document.getElementById('deleteConfirmModal').style.display = 'none';
         });
@@ -232,4 +234,5 @@
             document.getElementById('deleteConfirmModal').style.display = 'none';
         });
     </script>
+
 @endsection

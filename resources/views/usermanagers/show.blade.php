@@ -1,13 +1,12 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    Show User Manager
+     UserManager Details
 @endsection
 
 @section('headerBlock')
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
     <style>
-        /* Loading Overlay */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -28,49 +27,70 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
 
-        /* Page Styles */
-        .user-details {
-            max-width: 100%;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            padding: 30px 40px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #2c3e50;
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
-        .user-details h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #34495e;
+        .info-box {
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .info-box:hover {
+            border-color: #a5b4fc;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.08);
+        }
+
+        .info-label {
+            font-size: 11px;
             font-weight: 700;
-            font-size: 2rem;
-        }
-
-        .row {
+            color: #4338ca;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
             display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            align-items: center;
+            gap: 6px;
         }
 
-        .row p {
-            flex: 1 1 48%;
-            margin: 10px 0;
-            font-size: 1.1rem;
+        .info-label i {
+            font-size: 11px;
+            color: #6366f1;
         }
 
-        .row p strong {
-            color: #2980b9;
-            margin-right: 5px;
+        .info-value {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 500;
         }
 
-        #permissionsContainer div {
-            margin-bottom: 5px;
+        .perm-tag-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin-top: 4px;
         }
 
-        @media (max-width: 768px) {
-            .row p { flex: 1 1 100%; }
+        .perm-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid #e0e7ff;
+            font-size: 12.5px;
+            color: #4338ca;
+            background: #eef2ff;
+        }
+
+        .perm-tag i {
+            font-size: 10px;
+            color: #6366f1;
         }
     </style>
 @endsection
@@ -83,60 +103,72 @@
         <div id="loading-text">Loading...</div>
     </div>
 
-    <div class="user-details">
-        <a href="{{ route('usermanagers.index') }}" id="backBtn" class="btn btn-back" style="margin-bottom: 20px;">
+    <div class="modal-content" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+        <a href="{{ route('usermanagers.index') }}" id="backBtn" class="btn btn-back">
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
         <h2><i class="fas fa-user-shield"></i> User Manager Details</h2>
 
-        <div class="row">
-            <p><strong>Full Name:</strong> {{ $usermanager->name }}</p>
-            <p><strong>Email:</strong> {{ $usermanager->email }}</p>
+        {{-- Row 1: Full Name & Email --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-user"></i> Full Name</div>
+                <div class="info-value">{{ $usermanager->name }}</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-envelope"></i> Email</div>
+                <div class="info-value">{{ $usermanager->email }}</div>
+            </div>
         </div>
 
-        <div class="row">
-            <p><strong>Role:</strong> {{ $usermanager->role->role_name ?? 'N/A' }}</p>
-            <p><strong>Created At:</strong> {{ $usermanager->created_at ? $usermanager->created_at->format('Y-m-d H:i') : 'N/A' }}</p>
+        {{-- Row 2: Role & Created At --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-user-tag"></i> Role</div>
+                <div class="info-value">{{ $usermanager->role->role_name ?? 'N/A' }}</div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-calendar-plus"></i> Created At</div>
+                <div class="info-value">{{ $usermanager->created_at ? $usermanager->created_at->format('Y-m-d H:i') : 'N/A' }}</div>
+            </div>
         </div>
 
-        <div class="row">
-            <p><strong>Last Updated:</strong> {{ $usermanager->updated_at ? $usermanager->updated_at->format('Y-m-d H:i') : 'N/A' }}</p>
-            <p><strong>Permissions:</strong></p>
+        {{-- Row 3: Last Updated (single) --}}
+        <div class="info-row" style="grid-template-columns: repeat(1, 1fr);">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-clock"></i> Last Updated</div>
+                <div class="info-value">{{ $usermanager->updated_at ? $usermanager->updated_at->format('Y-m-d H:i') : 'N/A' }}</div>
+            </div>
         </div>
 
-        @php
-            $permissions = $usermanager->role->permissions ?? collect();
-            $rows        = 5;
-            $totalPermissions = $permissions->count();
-            $columns     = $totalPermissions > 0 ? ceil($totalPermissions / $rows) : 1;
-            $perColumn   = ceil($totalPermissions / $columns);
-        @endphp
-
-        <div id="permissionsContainer" style="border:1px solid #ccc; padding:10px; display:grid; grid-template-columns: repeat({{ $columns }}, 1fr); gap:10px; max-height:200px; overflow-y:auto;">
-            @for($i = 0; $i < $columns; $i++)
-                <div>
-                    @foreach($permissions->slice($i * $perColumn, $perColumn) as $permission)
-                        <div style="display:flex; align-items:center; margin-bottom:5px;">
-                            <i class="fas fa-check-circle" style="color:green; margin-right:5px;"></i>
-                            {{ $permission->permission_name }}
-                        </div>
-                    @endforeach
-                </div>
-            @endfor
+        {{-- Permissions --}}
+        <div class="info-box" style="margin-bottom: 16px;">
+            <div class="info-label"><i class="fas fa-shield-alt"></i> Permissions</div>
+            <div class="perm-tag-grid">
+                @forelse($usermanager->role->permissions ?? [] as $permission)
+                    <div class="perm-tag">
+                        <i class="fas fa-check-circle"></i>
+                        {{ $permission->permission_name }}
+                    </div>
+                @empty
+                    <span style="font-size: 13px; color: #9ca3af;">No permissions assigned.</span>
+                @endforelse
+            </div>
         </div>
+
     </div>
 
     <script>
         const overlay     = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 
-        // ✅ Hide overlay once page fully loads
         window.addEventListener('load', function () {
             overlay.style.display = 'none';
         });
 
-        // Back button → show loading then navigate
         document.getElementById('backBtn').addEventListener('click', function (e) {
             e.preventDefault();
             loadingText.textContent = 'Going back...';

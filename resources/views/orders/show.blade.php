@@ -1,48 +1,13 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    Show Orders
+    Orders Details
 @endsection
 
 @section('headerBlock')
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
     <script src="{{ URL::asset('js/form.js') }}"></script>
     <style>
-        .details-card {
-            max-width: 100%;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            padding: 30px 40px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #2c3e50;
-        }
-        .details-card h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #34495e;
-            font-weight: 700;
-            font-size: 2rem;
-        }
-        .details-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .details-group { flex: 1 1 30%; margin-bottom: 20px; }
-        .details-group label { font-weight: bold; color: #2980b9; display: block; margin-bottom: 5px; }
-        .details-group div { font-size: 1.1rem; }
-        .status-badge { padding: 5px 10px; border-radius: 4px; color: #fff; font-weight: bold; text-transform: capitalize; }
-        .status-pending   { background-color: #ffc107; }
-        .status-completed { background-color: #28a745; }
-        .status-cancelled { background-color: #dc3545; }
-        .note-display { white-space: pre-wrap; }
-
-        @media (max-width: 900px) { .details-group { flex: 1 1 45%; } }
-        @media (max-width: 600px) { .details-group { flex: 1 1 100%; } }
-
-        /* Loading Overlay */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -62,6 +27,69 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-box {
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .info-box:hover {
+            border-color: #a5b4fc;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.08);
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4338ca;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-label i {
+            font-size: 11px;
+            color: #6366f1;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 500;
+            white-space: pre-wrap;
+            display: flex;
+            align-items: center;
+            
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0px;
+            border-radius: 24px;
+            font-size: 12px;
+        }
+        .status-pending   { background: none; color: #a16207; border: none;}
+        .status-completed { background: none; color: #16a34a; border: none; }
+        .status-cancelled { background: none; color: #dc2626; border: none; }
     </style>
 @endsection
 
@@ -74,29 +102,32 @@
     </div>
 
     @if(session('success'))
-        <div id="successMessage" class="custom-success" style="max-width:700px; margin: 20px auto; padding:10px; background:#d4edda; color:#155724; border-radius:5px;">
+        <div id="successMessage" class="custom-success">
+            <i class="fas fa-check-circle" style="color: green; margin-right: 8px;"></i>
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="details-card" role="main" aria-label="Order Details">
+    <div class="modal-content" role="main" aria-label="Order Details">
         <a href="{{ route('orders.index') }}" id="backBtn" class="btn btn-back">
             <i class="fas fa-chevron-left"></i> Back
         </a>
+
         <h2><i class="fas fa-shopping-cart"></i> Order Details</h2>
 
-        <div class="details-row">
-            <div class="details-group">
-                <label>Order ID:</label>
-                <div>{{ $order->order_number }}</div>
+        {{-- Row 1: Order ID, Customer, Status --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-hashtag"></i> Order ID</div>
+                <div class="info-value">{{ $order->order_number }}</div>
             </div>
-            <div class="details-group">
-                <label>Customer:</label>
-                <div>{{ optional($order->customer)->name ?? 'N/A' }}</div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-user"></i> Customer</div>
+                <div class="info-value">{{ optional($order->customer)->name ?? 'N/A' }}</div>
             </div>
-            <div class="details-group">
-                <label>Status:</label>
-                <div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-circle"></i> Status</div>
+                <div class="info-value">
                     <span class="status-badge status-{{ strtolower($order->status) }}">
                         {{ ucfirst($order->status) }}
                     </span>
@@ -104,50 +135,53 @@
             </div>
         </div>
 
-        <div class="details-row">
-            <div class="details-group">
-                <label>Product:</label>
-                <div>{{ optional($order->product)->name ?? 'N/A' }}</div>
+        {{-- Row 2: Product, Quantity, Order Date --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-box"></i> Product</div>
+                <div class="info-value">{{ optional($order->product)->name ?? 'N/A' }}</div>
             </div>
-            <div class="details-group">
-                <label>Quantity:</label>
-                <div>{{ $order->quantity }}</div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-sort-numeric-up"></i> Quantity</div>
+                <div class="info-value">{{ $order->quantity }}</div>
             </div>
-            <div class="details-group">
-                <label>Order Date:</label>
-                <div>{{ \Carbon\Carbon::parse($order->order_date)->format('M d, Y') }}</div>
-            </div>
-        </div>
-
-        <div class="details-row">
-            <div class="details-group">
-                <label>Cost Amount:</label>
-                <div>${{ number_format($order->total_amount ?? 0, 2) }}</div>
-            </div>
-            <div class="details-group">
-                <label>Selling Amount:</label>
-                <div>${{ number_format($order->payments_sum_amount ?? 0, 2) }}</div>
-            </div>
-            <div class="details-group">
-                <label>Note:</label>
-                <div class="note-display">{{ $order->note ?? 'N/A' }}</div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-calendar-alt"></i> Order Date</div>
+                <div class="info-value">{{ \Carbon\Carbon::parse($order->order_date)->format('M d, Y') }}</div>
             </div>
         </div>
 
-        <div class="details-row">
-            <div class="details-group">
-                <label>Created:</label>
-                <div>{{ $order->created_at->setTimezone('Asia/Phnom_Penh')->format('M d, Y \a\t g:i A') }}</div>
+        {{-- Row 3: Cost Amount, Selling Amount, Note --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-dollar-sign"></i> Cost Amount</div>
+                <div class="info-value">${{ number_format($order->total_amount ?? 0, 2) }}</div>
             </div>
-            <div class="details-group">
-                <label>Last Updated:</label>
-                <div>{{ $order->updated_at->setTimezone('Asia/Phnom_Penh')->format('M d, Y \a\t g:i A') }}</div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-cash-register"></i> Selling Amount</div>
+                <div class="info-value">${{ number_format($order->payments_sum_amount ?? 0, 2) }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-sticky-note"></i> Note</div>
+                <div class="info-value">{{ $order->note ?? 'N/A' }}</div>
             </div>
         </div>
+
+        {{-- Row 4: Created & Updated --}}
+        <div class="info-row-2">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-calendar-plus"></i> Created</div>
+                <div class="info-value">{{ $order->created_at->setTimezone('Asia/Phnom_Penh')->format('M d, Y \a\t g:i A') }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-clock"></i> Last Updated</div>
+                <div class="info-value">{{ $order->updated_at->setTimezone('Asia/Phnom_Penh')->format('M d, Y \a\t g:i A') }}</div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // Back button → show loading then navigate
         document.getElementById('backBtn').addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('loading-overlay').style.display = 'flex';
