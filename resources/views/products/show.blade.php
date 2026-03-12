@@ -78,6 +78,10 @@
                         <label>Product Name:</label>
                         <div>{{ $product->name }}</div>
                     </div>
+                      <div class="details-group">
+                        <label>SKU:</label>
+                        <div>{{ $product->sku ?? '-' }}</div>
+                    </div>
                     <div class="details-group">
                         <label>Brand:</label>
                         <div>{{ $product->category->name ?? 'N/A' }}</div>

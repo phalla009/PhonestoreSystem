@@ -13,8 +13,12 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         $query = Product::with(['category', 'images']);
-         if ($request->search) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('sku', 'like', '%' . $request->search . '%');
+            });
         }
 
         if ($request->has('category_id') && $request->category_id != '') {
@@ -32,35 +36,40 @@ class ProductController extends Controller
         return view('products.create', compact('categories'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
-            'status' => 'required|in:active,inactive',
-            'description' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string',
+        'price' => 'required|numeric',
+        'stock' => 'required|integer',
+        'status' => 'required|in:active,inactive',
+        'description' => 'nullable|string',
+        'category_id' => 'required|exists:categories,id',
+        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-        $product = Product::create($validated);
+    $product = Product::create($validated);
 
-        // Save images
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $file) {
-                $filename = $file->getClientOriginalName(); // Keep original name
-                $file->move(public_path('images/products'), $filename);
+    // Auto-generate SKU: kr + date + padded id
+    $product->update([
+        'sku' => 'kr' . $product->created_at->format('Ymd') . str_pad($product->id, 2, '0', STR_PAD_LEFT)
+    ]);
 
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image'      => $filename,
-                ]);
-            }
+    // Save images
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $file) {
+            $filename = $file->getClientOriginalName();
+            $file->move(public_path('images/products'), $filename);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'image'      => $filename,
+            ]);
         }
-
-        return redirect()->route('products.create')->with('success', 'Product added successfully.');
     }
+
+    return redirect()->route('products.create')->with('success', 'Product added successfully.');
+}
 
     public function show(string $id)
     {

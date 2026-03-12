@@ -105,7 +105,7 @@
                 <tbody>
                     @forelse($payments as $payment)
                         <tr>
-                            <td data-label="Payment ID">#{{ $payment->id }}</td>
+                            <td data-label="No">#{{ $loop->iteration }}</td>
                             <td data-label="Order Number">{{ $payment->order->order_number ?? 'N/A' }}</td>
                             <td data-label="Customer">{{ $payment->order->customer->name ?? 'N/A' }}</td>
                             <td data-label="Product">{{ $payment->order->product->name ?? 'N/A' }}</td>

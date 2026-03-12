@@ -79,7 +79,7 @@
                 <tbody id="categoriesTable">
                     @forelse ($categories as $category)
                         <tr>
-                            <td data-label="No">#{{ $category->id }}</td>
+                            <td data-label="No">#{{ $loop->iteration }}</td>
                             <td data-label="Category Name">{{ $category->name }}</td>
                             <td data-label="Created At">{{ $category->created_at ? $category->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
                             <td data-label="Actions">

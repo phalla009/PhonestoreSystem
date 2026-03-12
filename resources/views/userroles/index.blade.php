@@ -74,8 +74,7 @@
                 <tbody id="rolesTable">
                     @forelse ($roles as $role)
                         <tr>
-                            <td data-label="No">#{{ $role->id }}</td>
-
+                           <td data-label="No">#{{ $loop->iteration }}</td>
                             <td data-label="Role Name">
                                 @php
                                     $icon    = 'fas fa-user';

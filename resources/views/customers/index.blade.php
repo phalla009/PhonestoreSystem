@@ -89,7 +89,7 @@
                 <tbody id="customersTable">
                     @forelse ($customers as $customer)
                         <tr>
-                            <td data-label="No">#{{ $customer->id }}</td>
+                            <td data-label="No">#{{ $loop->iteration }}</td>
                             <td data-label="Name"><i class="fas fa-user user-icon"></i>{{ $customer->name }}</td>
                             <td data-label="Gender">{{ ucfirst($customer->gender) }}</td>
                             <td data-label="Phone">{{ $customer->phone }}</td>

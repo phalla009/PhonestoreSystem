@@ -75,7 +75,7 @@
                 <tbody id="usersTable">
                     @forelse ($users as $user)
                         <tr>
-                            <td data-label="No">#{{ $user->id }}</td>
+                            <td data-label="No">#{{ $loop->iteration }}</td>
                             <td data-label="Full Name"><i class="fas fa-user user-icon"></i>{{ $user->name }}</td>
                             <td data-label="Email">{{ $user->email }}</td>
                             <td data-label="Role">

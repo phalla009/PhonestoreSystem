@@ -127,7 +127,7 @@
                 <tbody id="productsTable">
                     @forelse ($products as $product)
                         <tr>
-                            <td data-label="No">#{{ $product->id }}</td>
+                            <td data-label="No">#{{ $loop->iteration }}</td>
                             <td data-label="Name">{{ $product->name }}</td>
                             <td data-label="Brand">{{ $product->category->name ?? 'N/A' }}</td>
                             <td data-label="Price">${{ number_format($product->price, 2) }}</td>

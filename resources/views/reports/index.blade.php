@@ -105,26 +105,6 @@
     </div>
 
     <script>
-             // =============================================
-        // Logout confirm
-        // =============================================
-        const logoutLink    = document.getElementById('logout-link');
-        const logoutConfirm = document.getElementById('logout-confirm');
-        const confirmYes    = document.getElementById('confirm-yes');
-        const confirmNo     = document.getElementById('confirm-no');
-        const logoutForm    = document.getElementById('logout-form');
-
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            logoutConfirm.style.display = 'flex';
-        });
-        confirmYes.addEventListener('click', function() { logoutForm.submit(); });
-        confirmNo.addEventListener('click',  function() { logoutConfirm.style.display = 'none'; });
-        // Generate Report → show loading
-        document.getElementById('reportForm').addEventListener('submit', function() {
-            document.getElementById('loading-overlay').style.display = 'flex';
-        });
-
         // Chart
         const ctx = document.getElementById('salesChart').getContext('2d');
         const salesChart = new Chart(ctx, {

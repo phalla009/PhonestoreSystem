@@ -9,22 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-       Schema::table('customers', function (Blueprint $table) {
-            $table->string('email')->unique()->after('phone');
-            $table->string('password')->after('email');
-        });
+   public function up(): void
+        {
+            Schema::table('customers', function (Blueprint $table) {
+                if (!Schema::hasColumn('customers', 'email')) {
+                    $table->string('email')->unique()->after('phone');
+                }
+                if (!Schema::hasColumn('customers', 'password')) {
+                    $table->string('password')->after('email');
+                }
+            });
+        }
 
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('customers', function (Blueprint $table) {
-            //
-        });
-    }
+        public function down(): void
+        {
+            Schema::table('customers', function (Blueprint $table) {
+                $table->dropColumn(['email', 'password']);
+            });
+        }
 };

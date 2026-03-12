@@ -225,6 +225,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Order ID</th>
                         <th>Customer</th>
                         <th>Product</th>
@@ -237,6 +238,7 @@
                 <tbody id="ordersTable">
                     @forelse ($orders as $order)
                     <tr>
+                        <td data-label="No">#{{ $loop->iteration }}</td>
                         <td data-label="Order ID">{{ $order->order_number }}</td>
                         <td data-label="Customer">{{ $order->customer->name ?? 'N/A' }}</td>
                         <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>

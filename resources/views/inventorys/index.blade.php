@@ -42,6 +42,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>#</th>
                     <th>Products</th>
                     <th>SKU</th>
                     <th>Current Stock</th>   
@@ -52,19 +53,19 @@
             <tbody>
                 @forelse ($products as $product)
                     <tr>
+                        <td data-label="No">#{{ $loop->iteration }}</td>
                         <td data-label="Product">{{ $product->name }}</td>
-                        <td data-label="SKU">
-                            {{ 'kr' . $product->created_at->format('Ymd') . str_pad($product->id, 2, '0', STR_PAD_LEFT) }}
-                        </td>                  <td data-label="Current Stock">{{ $product->stock }}</td>
-                        <td data-label="Status">
-                            @if($product->stock <= 0)
-                                <span class="text-danger">Out of Stock</span>
-                            @elseif($product->stock <= $product->min_stock)
-                                <span class="text-warning">Low Stock</span>
-                            @else
-                                <span class="text-success">In Stock</span>
-                            @endif
-                        </td>
+                       <td data-label="SKU">{{ $product->sku ?? '-' }}</td>                 
+                        <td data-label="Current Stock">{{ $product->stock }}</td>
+                            <td data-label="Status">
+                                @if($product->stock <= 0)
+                                    <span class="text-danger">Out of Stock</span>
+                                @elseif($product->stock <= $product->min_stock)
+                                    <span class="text-warning">Low Stock</span>
+                                @else
+                                    <span class="text-success">In Stock</span>
+                                @endif
+                            </td>
                         <td data-label="Updated Date">{{ $product->updated_at->timezone('Asia/Phnom_Penh')->format('Y-m-d H:i') }}</td>
                     </tr>
                 @empty
