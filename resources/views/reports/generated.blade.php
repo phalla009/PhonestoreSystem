@@ -26,6 +26,29 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+        .btn-export {
+            background-color: #1d6f42;
+            color: #ffffff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 16px;
+            margin-left: 8px;
+            transition: background-color 0.2s;
+        }
+        .btn-export:hover {
+            background-color: #155232;
+            color: #fff;
+            text-decoration: none;
+        }
+        .btn-export i {
+            margin-right: 6px;
+        }
     </style>
 @endsection
 
@@ -42,6 +65,12 @@
         {{-- Back Button --}}
         <a href="{{ route('reports.index') }}" id="backBtn" class="btn btn-back" style="margin-bottom: 16px; display: inline-block;">
             <i class="fas fa-chevron-left"></i> Back
+        </a>
+
+        {{-- Export to Excel Button --}}
+        <a href="{{ route('reports.export', ['type' => $type, 'range' => $range]) }}"
+           class="btn-export">
+            <i class="fas fa-file-excel"></i> Export to Excel
         </a>
 
         <h2>{{ ucfirst($type) }} Report</h2>
@@ -64,6 +93,16 @@
                         </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr style="background-color: #1a73e8; color: #ffffff;">
+                        <th style="padding: 12px 16px; font-size: 15px;">Grand Total</th>
+                        <th style="padding: 12px 16px; font-size: 15px;">
+                            ${{ number_format($results->sum('total'), 2) }} USD
+                            <br>
+                            <small>៛{{ number_format($results->sum('total') * 4000, 0) }} KHR</small>
+                        </th>
+                    </tr>
+                </tfoot>
             </table>
 
         {{-- Financial Report --}}
@@ -93,7 +132,7 @@
             @php
                 $grandTotalUSD = 0;
                 $totalQty      = 0;
-                $rate          = 4100; // 1 USD = 4100 KHR
+                $rate          = 4100;
             @endphp
             <table class="table">
                 <thead>
@@ -172,8 +211,31 @@
 
     </div>
 
+    <div id="logout-confirm">
+        <div class="confirm-box">
+            <div class="icon-container">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <p>Are you sure you want to logout?</p>
+            <button id="confirm-yes">Yes, Logout!</button>
+            <button id="confirm-no">No, Keep it!</button>
+        </div>
+    </div>
+
     <script>
-        // Back button → show loading then navigate
+        const logoutLink    = document.getElementById('logout-link');
+        const logoutConfirm = document.getElementById('logout-confirm');
+        const confirmYes    = document.getElementById('confirm-yes');
+        const confirmNo     = document.getElementById('confirm-no');
+        const logoutForm    = document.getElementById('logout-form');
+
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            logoutConfirm.style.display = 'flex';
+        });
+        confirmYes.addEventListener('click', function() { logoutForm.submit(); });
+        confirmNo.addEventListener('click',  function() { logoutConfirm.style.display = 'none'; });
+
         document.getElementById('backBtn').addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('loading-overlay').style.display = 'flex';

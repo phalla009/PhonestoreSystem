@@ -165,8 +165,35 @@
             </form>
         </div>
     </div>
+     <div id="logout-confirm">
+    <div class="confirm-box">
+        <div class="icon-container">
+        <i class="fas fa-sign-out-alt"></i>
+        </div>
+        <p>Are you sure you want to logout?</p>
+        <button id="confirm-yes">Yes, Logout!</button>
+        <button id="confirm-no">No, Keep it!</button>
+    </div>
+    </div>
+
 
     <script>
+             // =============================================
+        // Logout confirm
+        // =============================================
+        const logoutLink    = document.getElementById('logout-link');
+        const logoutConfirm = document.getElementById('logout-confirm');
+        const confirmYes    = document.getElementById('confirm-yes');
+        const confirmNo     = document.getElementById('confirm-no');
+        const logoutForm    = document.getElementById('logout-form');
+
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            logoutConfirm.style.display = 'flex';
+        });
+        confirmYes.addEventListener('click', function() { logoutForm.submit(); });
+        confirmNo.addEventListener('click',  function() { logoutConfirm.style.display = 'none'; });
+        
         const overlay     = document.getElementById('loading-overlay');
         const loadingText = document.getElementById('loading-text');
 

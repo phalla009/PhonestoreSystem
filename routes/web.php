@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     // Reports
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
-
+    Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
     // Payment actions
     Route::get('/payments/payment/{order}', [PaymentController::class, 'payment'])->name('payments.payment');
     Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');

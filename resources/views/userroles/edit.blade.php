@@ -107,9 +107,7 @@
                 <button type="submit" class="btn btn-update">
                     <i class="fas fa-save"></i> Update Role
                 </button>
-                <button type="button" id="cancel" class="btn btn-cancel">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
+                
             </div>
         </form>
     </div>
