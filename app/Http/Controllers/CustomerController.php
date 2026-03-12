@@ -10,16 +10,13 @@ class CustomerController extends Controller
     // Show list of customers
     public function index()
     {
-          $customers = Customer::withCount('orders')->get();
+        $customers = Customer::withCount('orders')->get();
 
-            foreach ($customers as $customer) {
-                $customer->status = $customer->orders_count > 0 ? 'Active' : 'Inactive';
-            }
+        foreach ($customers as $customer) {
+            $customer->status = $customer->orders_count > 0 ? 'Active' : 'Inactive';
+        }
 
-         return view('customers.index', compact('customers'));
-        
-        // $customers = Customer::all();
-        // return view('customers.index', compact('customers'));
+        return view('customers.index', compact('customers'));
     }
 
     // Show create form
@@ -32,17 +29,24 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'gender' => 'required|string|in:male,female',
-            'phone' => 'required|string|max:20', 
-            'status' => 'required|in:active,inactive',
+            'name'     => 'required|string|max:255',
+            'gender'   => 'required|string|in:male,female',
+            'phone'    => 'required|string|max:20|unique:customers,phone',
+            'email'    => 'required|email|max:255|unique:customers,email',
+            'password' => 'required|string|min:8|confirmed',
+            'status'   => 'required|in:active,inactive',
+        ], [
+            'phone.unique' => 'This phone number already exists.',
+            'email.unique' => 'This email address already exists.',
         ]);
 
         Customer::create([
-            'name' => $validated['name'],
-            'gender' => $validated['gender'],
-            'phone' => $validated['phone'],
-            'status' => $validated['status'], 
+            'name'     => $validated['name'],
+            'gender'   => $validated['gender'],
+            'phone'    => $validated['phone'],
+            'email'    => $validated['email'],
+            'password' => bcrypt($validated['password']),
+            'status'   => $validated['status'],
         ]);
 
         return redirect()->route('customers.create')->with('success', 'Customer added successfully.');
@@ -64,24 +68,35 @@ class CustomerController extends Controller
 
     // Update customer
     public function update(Request $request, $id)
-        {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'gender' => 'required|string|in:male,female',
-                'phone' => 'required|string|max:20',
-            ]);
+    {
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'gender'   => 'required|string|in:male,female',
+            'phone'    => 'required|string|max:20|unique:customers,phone,' . $id,
+            'email'    => 'required|email|max:255|unique:customers,email,' . $id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ], [
+            'phone.unique' => 'This phone number already exists.',
+            'email.unique' => 'This email address already exists.',
+        ]);
 
-            $customer = Customer::findOrFail($id);
-            $customer->name = $validated['name'];
-            $customer->gender = $validated['gender'];
-            $customer->phone = $validated['phone'];
+        $customer         = Customer::findOrFail($id);
+        $customer->name   = $validated['name'];
+        $customer->gender = $validated['gender'];
+        $customer->phone  = $validated['phone'];
+        $customer->email  = $validated['email'];
 
-            if ($request->has('status')) {
-                $customer->status = $request->input('status');
-            }
-            $customer->save();
-            return redirect()->route('customers.index')->with('success', 'Customer updated successfully!');
+        if (!empty($validated['password'])) {
+            $customer->password = bcrypt($validated['password']);
         }
+
+        if ($request->has('status')) {
+            $customer->status = $request->input('status');
+        }
+
+        $customer->save();
+        return redirect()->route('customers.index')->with('success', 'Customer updated successfully!');
+    }
 
     // Delete customer
     public function destroy(string $id)
