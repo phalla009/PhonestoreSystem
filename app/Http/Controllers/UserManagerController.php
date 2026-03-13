@@ -29,6 +29,7 @@ class UserManagerController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
+            'description' => 'nullable|string|max:500',
         ]);
 
         UserManager::create([
@@ -36,10 +37,11 @@ class UserManagerController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => $request->role_id,
+            'description' => $request->description,
         ]);
 
         return redirect()->route('usermanagers.index')->with('success', 'User created successfully!');
-    }
+}
 
     public function edit(UserManager $usermanager)
     {
@@ -58,6 +60,7 @@ class UserManagerController extends Controller
             'email' => 'required|email|unique:users,email,' . $usermanager->id,
             'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
+            'description' => 'nullable|string|max:500',
         ]);
 
         $usermanager->update([
@@ -65,6 +68,7 @@ class UserManagerController extends Controller
             'email' => $request->email,
             'password' => $request->password ? Hash::make($request->password) : $usermanager->password,
             'role_id' => $request->role_id,
+            'description' => $request->description,
         ]);
 
         return redirect()->route('usermanagers.index')->with('success', 'User updated successfully!');

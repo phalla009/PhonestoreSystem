@@ -136,8 +136,13 @@
             </div>
         </div>
 
-        {{-- Row 3: Last Updated (single) --}}
-        <div class="info-row" style="grid-template-columns: repeat(1, 1fr);">
+        {{-- Row 3: Description & Last Updated --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-align-left"></i> Description</div>
+                <div class="info-value">{{ $usermanager->description ?? 'N/A' }}</div>
+            </div>
+
             <div class="info-box">
                 <div class="info-label"><i class="fas fa-clock"></i> Last Updated</div>
                 <div class="info-value">{{ $usermanager->updated_at ? $usermanager->updated_at->format('Y-m-d H:i') : 'N/A' }}</div>

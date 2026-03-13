@@ -17,6 +17,7 @@ class UserManager extends Authenticatable
         'email',
         'password',
         'role_id',
+        'description'
     ];
 
     protected $hidden = [

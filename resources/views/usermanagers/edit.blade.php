@@ -114,7 +114,7 @@
                 </div>
             </div>
 
-            {{-- Row 3: Role & Permissions --}}
+            {{-- Row 3: Role & Description --}}
             <div class="form-row" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 12px;">
                 <div class="form-group">
                     <label for="role_id">Assign Role:</label>
@@ -127,6 +127,15 @@
                         @endforeach
                     </select>
                     @error('role_id') <p class="text-danger">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description"
+                        placeholder="Enter a brief description about this user manager..."
+                        rows="3"
+                        style="width: 100%; resize: none;">{{ old('description', $usermanager->description) }}</textarea>
+                    @error('description') <p class="text-danger">{{ $message }}</p> @enderror
                 </div>
             </div>
              {{-- <div class="form-group">
