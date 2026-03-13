@@ -11,6 +11,7 @@ class RolePermissionSeeder extends Seeder
     {
         $permissions = [
             ['permission_name' => 'Dashboard', 'slug' => 'dashboard'],
+            ['permission_name' => 'Pos', 'slug' => 'pos'],
             ['permission_name' => 'Orders', 'slug' => 'orders'],
             ['permission_name' => 'Customers', 'slug' => 'customers'],
             ['permission_name' => 'Payments', 'slug' => 'payments'],
@@ -28,7 +29,8 @@ class RolePermissionSeeder extends Seeder
 
         $roles = [
             ['role_name' => 'Admin', 'description' => 'Full access'],
-            ['role_name' => 'Staff', 'description' => 'Dashboard, Orders, Customers, Payments'],
+            ['role_name' => 'Staff', 'description' => 'Dashboard,Pos, Orders, Customers, Payments'],
+            ['role_name' => 'Salse', 'description' => 'Dashboard,Pos, Orders, Customers, Payments','Reports'],
             ['role_name' => 'Stock', 'description' => 'Dashboard, Products, Categories, Inventory, Reports'],
         ];
 
@@ -38,7 +40,7 @@ class RolePermissionSeeder extends Seeder
 
         Role::where('role_name', 'Admin')->first()->permissions()->sync(Permission::pluck('id'));
         Role::where('role_name', 'Staff')->first()->permissions()->sync(
-            Permission::whereIn('slug', ['dashboard','orders','customers','payments'])->pluck('id')
+            Permission::whereIn('slug', ['dashboard','pos','orders','customers','payments'])->pluck('id')
         );
         Role::where('role_name', 'Stock')->first()->permissions()->sync(
             Permission::whereIn('slug', ['products','categories','inventory','reports'])->pluck('id')

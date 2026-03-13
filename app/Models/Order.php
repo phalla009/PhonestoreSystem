@@ -20,6 +20,7 @@ class Order extends Model
     'note',
     'payment_method',
     'payment_notes',
+    'created_by',
 ];
 
     protected $casts = [
@@ -67,6 +68,10 @@ class Order extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
 

@@ -155,11 +155,11 @@
         <div class="info-row">
             <div class="info-box">
                 <div class="info-label"><i class="fas fa-dollar-sign"></i> Cost Amount</div>
-                <div class="info-value">${{ number_format($order->total_amount ?? 0, 2) }}</div>
+                <div class="info-value">${{ number_format(($order->product->price ?? 0) * $order->quantity, 2) }}</div>
             </div>
             <div class="info-box">
                 <div class="info-label"><i class="fas fa-cash-register"></i> Selling Amount</div>
-                <div class="info-value">${{ number_format($order->payments_sum_amount ?? 0, 2) }}</div>
+                <div class="info-value">${{ number_format($order->total_amount ?? 0, 2) }}</div>
             </div>
             <div class="info-box">
                 <div class="info-label"><i class="fas fa-sticky-note"></i> Note</div>

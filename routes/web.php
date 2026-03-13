@@ -10,6 +10,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\UserManagerController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,12 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard home
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout');
+    // routes/web.php
+    Route::delete('orders/bulk-destroy', [OrderController::class, 'bulkDestroy'])->name('orders.bulkDestroy');
+    Route::get('/orders/{order}/invoice-partial', [OrderController::class, 'invoicePartial'])->name('orders.invoicePartial');
+    Route::get('/orders/invoice-combined', [OrderController::class, 'invoiceCombined'])->name('orders.invoiceCombined');
 
     // Resource controllers
     Route::resource('products', ProductController::class)->names('products');
@@ -36,6 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('payments', PaymentController::class)->names('payments');
     Route::resource('userroles', RoleController::class)->parameters([
         'userroles' => 'role'
+
+        
     ]);
 
     Route::resource('usermanagers', UserManagerController::class);

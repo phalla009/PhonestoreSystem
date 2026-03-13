@@ -140,6 +140,71 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+    /* Bulk Toolbar */
+    #bulkToolbar {
+        display: none;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+        padding: 10px 16px;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        animation: slideDown 0.2s ease;
+    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+    #bulkDeleteBtn {
+        background: #c82333;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s, transform 0.15s;
+    }
+    #bulkDeleteBtn:hover { background: #a91c2a; transform: translateY(-1px); }
+
+    /* Print Invoice Button */
+    #bulkPrintBtn {
+        background: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s, transform 0.15s;
+    }
+    #bulkPrintBtn:hover { background: #2980b9; transform: translateY(-1px); }
+
+    #cancelSelectionBtn {
+        background: transparent;
+        border: none;
+        color: #856404;
+        cursor: pointer;
+        font-size: 13px;
+        text-decoration: underline;
+    }
+
+    /* Highlight checked rows */
+    tr.row-selected { background-color: #fff8e1 !important; }
+
+    /* Checkbox styling */
+    .row-checkbox, #selectAll {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        accent-color: #c82333;
+    }
 </style>
 @endsection
 
@@ -221,13 +286,28 @@
             </form>
         </div>
 
+        {{-- Bulk Toolbar --}}
+        <div id="bulkToolbar">
+            <span id="selectedCount" style="font-weight:600; color:#856404;">0 selected</span>
+            <button type="button" id="bulkDeleteBtn">
+                <i class="fas fa-trash-alt"></i> Delete Selected
+            </button>
+            <button type="button" id="bulkPrintBtn">
+                <i class="fas fa-print"></i> Print Invoice
+            </button>
+            <button type="button" id="cancelSelectionBtn">Cancel</button>
+        </div>
+
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
+                        <th style="width:40px; text-align:center;">
+                            <input type="checkbox" id="selectAll" title="Select All">
+                        </th>
                         <th>#</th>
                         <th>Order ID</th>
-                        <th>Customer</th>
+                        {{-- <th>Customer</th> --}}
                         <th>Product</th>
                         <th>Quantity</th>
                         <th>Paid Amount</th>
@@ -238,12 +318,15 @@
                 <tbody id="ordersTable">
                     @forelse ($orders as $order)
                     <tr>
+                        <td style="text-align:center;">
+                            <input type="checkbox" class="row-checkbox" value="{{ $order->id }}">
+                        </td>
                         <td data-label="No">#{{ $loop->iteration }}</td>
                         <td data-label="Order ID">{{ $order->order_number }}</td>
-                        <td data-label="Customer">{{ $order->customer->name ?? 'N/A' }}</td>
+                        {{-- <td data-label="Customer">{{ $order->customer->name ?? 'N/A' }}</td> --}}
                         <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>
                         <td data-label="Quantity">{{ $order->quantity }}</td>
-                        <td data-label="Paid Amount">${{ number_format($order->payments_sum_amount ?? 0, 2) }}</td>
+                        <td data-label="Paid Amount">${{ number_format($order->total_amount ?? 0, 2) }}</td>
                         <td data-label="Status">
                             @if($order->status === 'completed')
                                 <i class="fas fa-check-circle" style="color: green; font-size: 20px;"></i>
@@ -289,7 +372,7 @@
                     </tr>
                     @empty
                         <tr>
-                            <td colspan="7" style="text-align:center;" id="found">No order found.</td>
+                            <td colspan="9" style="text-align:center;" id="found">No order found.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -297,7 +380,7 @@
         </div>
     </div>
 
-    <!-- Delete Modal -->
+    <!-- Delete Modal (single) -->
     <div id="deleteConfirmModal" class="modal">
         <div class="delete-modal-box">
             <div class="delete-modal-icon">
@@ -321,6 +404,31 @@
         </div>
     </div>
 
+    <!-- Bulk Delete Modal -->
+    <div id="bulkDeleteModal" class="modal">
+        <div class="delete-modal-box">
+            <div class="delete-modal-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <button class="delete-modal-close" id="bulkDeleteModalClose" aria-label="Close">&times;</button>
+            <h3>Delete Selected Orders?</h3>
+            <p>You are about to delete <strong id="bulkDeleteCount">0</strong> order(s). This action <strong>cannot be undone.</strong></p>
+            <form id="bulkDeleteForm" method="POST" action="{{ route('orders.bulkDestroy') }}">
+                @csrf
+                @method('DELETE')
+                <div id="bulkDeleteInputs"></div>
+                <div class="delete-modal-actions">
+                    <button type="button" id="cancelBulkDelete" class="delete-btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="delete-btn-confirm">
+                        <i class="fas fa-trash-alt"></i> Yes, Delete All
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Payment Modal -->
     <div id="paymentModal" class="modal">
         <div class="modal-content">
@@ -328,19 +436,20 @@
             <div id="paymentFormContainer"></div>
         </div>
     </div>
-     <div id="logout-confirm">
-    <div class="confirm-box">
-        <div class="icon-container">
-        <i class="fas fa-sign-out-alt"></i>
+
+    <div id="logout-confirm">
+        <div class="confirm-box">
+            <div class="icon-container">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <p>Are you sure you want to logout?</p>
+            <button id="confirm-yes">Yes, Logout!</button>
+            <button id="confirm-no">No, Keep it!</button>
         </div>
-        <p>Are you sure you want to logout?</p>
-        <button id="confirm-yes">Yes, Logout!</button>
-        <button id="confirm-no">No, Keep it!</button>
-    </div>
     </div>
 
     <script>
-             // =============================================
+        // =============================================
         // Logout confirm
         // =============================================
         const logoutLink    = document.getElementById('logout-link');
@@ -364,7 +473,7 @@
             overlay.style.display = 'flex';
         }
 
-        // ✅ Hide overlay once page fully loads
+        // Hide overlay once page fully loads
         window.addEventListener('load', function () {
             overlay.style.display = 'none';
         });
@@ -387,7 +496,9 @@
             showLoading('Filtering...');
         });
 
-        // Delete → open modal
+        // =============================================
+        // Single Delete Modal
+        // =============================================
         document.querySelectorAll('.openDeleteModal').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 document.getElementById('deleteForm').setAttribute('action', this.getAttribute('data-action'));
@@ -395,7 +506,6 @@
             });
         });
 
-        // Close delete modal
         document.getElementById('deleteModalClose').addEventListener('click', function() {
             document.getElementById('deleteConfirmModal').style.display = 'none';
         });
@@ -403,12 +513,127 @@
             document.getElementById('deleteConfirmModal').style.display = 'none';
         });
 
-        // ✅ Confirm delete → show loading on submit
         document.getElementById('deleteForm').addEventListener('submit', function() {
             showLoading('Deleting...');
         });
 
-        // ── Payment Modal ──────────────────────────────────────
+        // =============================================
+        // Checkbox Bulk Delete
+        // =============================================
+        const selectAll        = document.getElementById('selectAll');
+        const bulkToolbar      = document.getElementById('bulkToolbar');
+        const selectedCount    = document.getElementById('selectedCount');
+        const bulkDeleteBtn    = document.getElementById('bulkDeleteBtn');
+        const cancelSelBtn     = document.getElementById('cancelSelectionBtn');
+        const bulkDeleteModal  = document.getElementById('bulkDeleteModal');
+        const bulkDeleteCount  = document.getElementById('bulkDeleteCount');
+        const bulkDeleteInputs = document.getElementById('bulkDeleteInputs');
+        const bulkDeleteForm   = document.getElementById('bulkDeleteForm');
+
+        function getChecked() {
+            return Array.from(document.querySelectorAll('.row-checkbox:checked'));
+        }
+
+        function updateToolbar() {
+            const checked = getChecked();
+            const count   = checked.length;
+
+            if (count > 0) {
+                bulkToolbar.style.display = 'flex';
+                selectedCount.textContent = count + ' selected';
+            } else {
+                bulkToolbar.style.display = 'none';
+            }
+
+            // Update "Select All" indeterminate state
+            const all = document.querySelectorAll('.row-checkbox');
+            selectAll.checked       = count === all.length && all.length > 0;
+            selectAll.indeterminate = count > 0 && count < all.length;
+
+            // Highlight selected rows
+            document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+                cb.closest('tr').classList.toggle('row-selected', cb.checked);
+            });
+        }
+
+        // Select All toggle
+        selectAll.addEventListener('change', function() {
+            document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+                cb.checked = selectAll.checked;
+            });
+            updateToolbar();
+        });
+
+        // Individual checkboxes
+        document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+            cb.addEventListener('change', updateToolbar);
+        });
+
+        // Cancel selection
+        cancelSelBtn.addEventListener('click', function() {
+            document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+                cb.checked = false;
+            });
+            selectAll.checked       = false;
+            selectAll.indeterminate = false;
+            updateToolbar();
+        });
+
+        // Open bulk delete modal
+        bulkDeleteBtn.addEventListener('click', function() {
+            const checked = getChecked();
+            if (checked.length === 0) return;
+
+            bulkDeleteCount.textContent = checked.length;
+
+            bulkDeleteInputs.innerHTML = '';
+            checked.forEach(function(cb) {
+                const input = document.createElement('input');
+                input.type  = 'hidden';
+                input.name  = 'ids[]';
+                input.value = cb.value;
+                bulkDeleteInputs.appendChild(input);
+            });
+
+            bulkDeleteModal.style.display = 'flex';
+        });
+
+        // Close bulk delete modal
+        document.getElementById('bulkDeleteModalClose').addEventListener('click', function() {
+            bulkDeleteModal.style.display = 'none';
+        });
+        document.getElementById('cancelBulkDelete').addEventListener('click', function() {
+            bulkDeleteModal.style.display = 'none';
+        });
+
+        // Submit bulk delete → show loading
+        bulkDeleteForm.addEventListener('submit', function() {
+            showLoading('Deleting selected orders...');
+        });
+
+        // =============================================
+        // Bulk Print Invoice
+        // =============================================
+        // =============================================
+        // Bulk Print Invoice (80mm Combined Receipt)
+        // =============================================
+        document.getElementById('bulkPrintBtn').addEventListener('click', function () {
+            const checked = getChecked();
+            if (checked.length === 0) return;
+
+            const ids = checked.map(function(cb) { return 'ids[]=' + cb.value; }).join('&');
+            const url = '/orders/invoice-combined?' + ids;
+
+            const printWindow = window.open(url, '_blank', 'width=400,height=700');
+            printWindow.addEventListener('load', function () {
+                printWindow.focus();
+                printWindow.print();
+            });
+        });
+
+        // =============================================
+        // Payment Modal
+        // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             const paymentModal     = document.getElementById('paymentModal');
             const paymentContainer = document.getElementById('paymentFormContainer');
@@ -427,7 +652,6 @@
                 });
             });
 
-            // Close on × click
             document.addEventListener('click', function(e) {
                 if (e.target.classList.contains('close-modal')) {
                     paymentModal.style.display = 'none';
@@ -435,7 +659,6 @@
                 }
             });
 
-            // Close on backdrop click
             window.addEventListener('click', function(e) {
                 if (e.target === paymentModal) {
                     paymentModal.style.display = 'none';
@@ -486,6 +709,7 @@
                 setTimeout(function() { successMsg.style.display = 'none'; }, 500);
             }, 3000);
         }
+        
     </script>
 
 @endsection

@@ -161,7 +161,14 @@
       @if(Auth::user()->hasPermission('dashboard'))
       <li><a href="{{ route('dashboard') }}"><span class="icon"><i class="fas fa-tachometer-alt"></i></span> Dashboard</a></li>
       @endif
-
+        {{-- POS --}}
+      @if(Auth::user()->hasPermission('pos'))
+      <li>
+          <a href="{{ route('pos.index') }}" class="nav-link-loading" data-loading-text="Loading POS...">
+              <span class="icon"><i class="fas fa-cash-register"></i></span> POS
+          </a>
+      </li>
+      @endif
       {{-- Products --}}
       @if(Auth::user()->hasPermission('products') || Auth::user()->hasPermission('categories'))
       <li class="menu-container">
