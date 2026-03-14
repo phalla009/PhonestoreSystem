@@ -140,14 +140,14 @@
         .product-card-img-wrap {
             position: relative;
             width: 100%;
-            height: 96px;
+            height: 200px;
             background: #f7f7f7;
             overflow: hidden;
         }
 
         .product-card-img {
             width: 100%;
-            height: 100%;
+            height:100%;
             object-fit: cover;
             display: block;
             transition: transform 0.35s ease;
@@ -569,7 +569,7 @@
             <div class="pos-products-panel">
                 @php
                     $grouped = $products
-                        ->filter(fn($p) => strtolower($p->status) === 'active')
+                        ->filter(fn($p) => $p->add_to_pos == 1)
                         ->groupBy(fn($p) => $p->category->name ?? 'N/A');
                 @endphp
 
@@ -590,11 +590,10 @@
                 {{-- Products grouped by category --}}
                 <div id="productGrid">
                     @php
-                        $grouped = $products
-                            ->filter(fn($p) => strtolower($p->status) === 'active')
+                    $grouped = $products
+                        ->filter(fn($p) => $p->add_to_pos == 1)
                             ->groupBy(fn($p) => $p->category->name ?? 'N/A');
                     @endphp
-
                     @forelse($grouped as $categoryName => $items)
                         <div class="category-group" data-category="{{ strtolower($categoryName) }}">
                             <div class="category-heading">{{ $categoryName }}</div>

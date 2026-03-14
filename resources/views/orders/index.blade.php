@@ -112,7 +112,18 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
     }
-    .filter-clear-wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 15px; }
+
+    .filter-clear-wrap {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        margin-top: 0px;
+        
+    }
+    #filterBtn,#clearBtn{
+        width: 100px;
+    }
 
     @keyframes fadeOut {
         0% { opacity: 1; }
@@ -170,7 +181,6 @@
     }
     #bulkDeleteBtn:hover { background: #a91c2a; transform: translateY(-1px); }
 
-    /* Print Invoice Button */
     #bulkPrintBtn {
         background: #3498db;
         color: #fff;
@@ -195,16 +205,67 @@
         text-decoration: underline;
     }
 
-    /* Highlight checked rows */
     tr.row-selected { background-color: #fff8e1 !important; }
 
-    /* Checkbox styling */
     .row-checkbox, #selectAll {
         width: 16px;
         height: 16px;
         cursor: pointer;
         accent-color: #c82333;
     }
+
+    /* ── PENDING ALERT BANNER ── */
+    .pending-alert-banner {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 10px;
+        padding: 10px 16px;
+    }
+
+    .pending-alert-banner .pending-icon {
+        font-size: 16px;
+        color: #f97316;
+        flex-shrink: 0;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50%       { transform: scale(1.2); }
+    }
+
+    .pending-alert-banner .pending-text {
+        font-size: 13px;
+        color: #9a3412;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .pending-alert-banner .pending-count {
+        font-weight: 800;
+        color: #ea580c;
+        font-size: 14px;
+        margin: 0 3px;
+    }
+
+    .pending-alert-banner .pending-filter-link {
+        font-size: 12px;
+        color: #ea580c;
+        text-decoration: none;
+        font-weight: 600;
+        border: 1px solid #fed7aa;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #ffedd5;
+        white-space: nowrap;
+        transition: background 0.15s;
+        flex-shrink: 0;
+    }
+
+    .pending-alert-banner .pending-filter-link:hover { background: #fed7aa; }
 </style>
 @endsection
 
@@ -224,6 +285,7 @@
     @endif
 
     <div class="content-section" id="orders">
+
         <h2><i class="fas fa-shopping-cart"></i> Orders Management</h2>
 
         <div class="filter-section">
@@ -267,23 +329,38 @@
                     </div>
                 </div>
 
+                {{-- RIGHT: Filter + Clear buttons --}}
                 <div class="filter-clear-wrap">
-                    <div class="form-group" style="flex: 1;">
-                        <button type="submit" class="btn btn-primary w-100" id="filterBtn">
-                            <i class="fas fa-search"></i> Filter
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-primary" id="filterBtn">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
                     @if(request()->hasAny(['search', 'customer_id', 'status']))
-                        <div class="form-group" style="flex: 1;">
-                            <a href="{{ route('orders.index') }}"
-                               class="btn btn-light w-100 nav-link-loading"
-                               data-loading-text="Clearing filters...">
-                                <i class="fas fa-times"></i> Clear
-                            </a>
-                        </div>
+                        <a href="{{ route('orders.index') }}"
+                           class="btn btn-light nav-link-loading" id="clearBtn"
+                           data-loading-text="Clearing filters...">
+                            <i class="fas fa-times"></i> Clear
+                        </a>
                     @endif
                 </div>
             </form>
+
+            {{-- ── PENDING BANNER នៅខាងក្រៅ form ហើយ align left ── --}}
+            @php $pendingCount = $orders->where('status', 'pending')->count(); @endphp
+            @if($pendingCount > 0)
+                <div class="pending-alert-banner">
+                    <i class="fas fa-hourglass-half pending-icon"></i>
+                    <span class="pending-text">
+                        You have <span class="pending-count">{{ $pendingCount }}</span>
+                        pending order(s) waiting for payment.
+                    </span>
+                    <a href="{{ route('orders.index', ['status' => 'pending']) }}"
+                       class="pending-filter-link nav-link-loading"
+                       data-loading-text="Filtering pending orders...">
+                        <i class="fas fa-filter" style="font-size:10px;"></i> View Pending
+                    </a>
+                </div>
+            @endif
+
         </div>
 
         {{-- Bulk Toolbar --}}
@@ -307,7 +384,6 @@
                         </th>
                         <th>#</th>
                         <th>Order ID</th>
-                        {{-- <th>Customer</th> --}}
                         <th>Product</th>
                         <th>Quantity</th>
                         <th>Paid Amount</th>
@@ -323,7 +399,6 @@
                         </td>
                         <td data-label="No">#{{ $loop->iteration }}</td>
                         <td data-label="Order ID">{{ $order->order_number }}</td>
-                        {{-- <td data-label="Customer">{{ $order->customer->name ?? 'N/A' }}</td> --}}
                         <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>
                         <td data-label="Quantity">{{ $order->quantity }}</td>
                         <td data-label="Paid Amount">${{ number_format($order->total_amount ?? 0, 2) }}</td>
@@ -383,9 +458,7 @@
     <!-- Delete Modal (single) -->
     <div id="deleteConfirmModal" class="modal">
         <div class="delete-modal-box">
-            <div class="delete-modal-icon">
-                <i class="fas fa-trash-alt"></i>
-            </div>
+            <div class="delete-modal-icon"><i class="fas fa-trash-alt"></i></div>
             <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
             <h3>Delete Record?</h3>
             <p>This action <strong>cannot be undone.</strong> Are you sure you want to permanently delete this record?</p>
@@ -407,9 +480,7 @@
     <!-- Bulk Delete Modal -->
     <div id="bulkDeleteModal" class="modal">
         <div class="delete-modal-box">
-            <div class="delete-modal-icon">
-                <i class="fas fa-trash-alt"></i>
-            </div>
+            <div class="delete-modal-icon"><i class="fas fa-trash-alt"></i></div>
             <button class="delete-modal-close" id="bulkDeleteModalClose" aria-label="Close">&times;</button>
             <h3>Delete Selected Orders?</h3>
             <p>You are about to delete <strong id="bulkDeleteCount">0</strong> order(s). This action <strong>cannot be undone.</strong></p>
@@ -439,9 +510,7 @@
 
     <div id="logout-confirm">
         <div class="confirm-box">
-            <div class="icon-container">
-                <i class="fas fa-sign-out-alt"></i>
-            </div>
+            <div class="icon-container"><i class="fas fa-sign-out-alt"></i></div>
             <p>Are you sure you want to logout?</p>
             <button id="confirm-yes">Yes, Logout!</button>
             <button id="confirm-no">No, Keep it!</button>
@@ -449,9 +518,6 @@
     </div>
 
     <script>
-        // =============================================
-        // Logout confirm
-        // =============================================
         const logoutLink    = document.getElementById('logout-link');
         const logoutConfirm = document.getElementById('logout-confirm');
         const confirmYes    = document.getElementById('confirm-yes');
@@ -473,12 +539,10 @@
             overlay.style.display = 'flex';
         }
 
-        // Hide overlay once page fully loads
         window.addEventListener('load', function () {
             overlay.style.display = 'none';
         });
 
-        // Add / Show / Edit / Clear links
         document.querySelectorAll('.nav-link-loading').forEach(function(link) {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -491,35 +555,28 @@
             });
         });
 
-        // Filter form submit
         document.getElementById('filterForm').addEventListener('submit', function() {
             showLoading('Filtering...');
         });
 
-        // =============================================
         // Single Delete Modal
-        // =============================================
         document.querySelectorAll('.openDeleteModal').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 document.getElementById('deleteForm').setAttribute('action', this.getAttribute('data-action'));
                 document.getElementById('deleteConfirmModal').style.display = 'flex';
             });
         });
-
         document.getElementById('deleteModalClose').addEventListener('click', function() {
             document.getElementById('deleteConfirmModal').style.display = 'none';
         });
         document.getElementById('cancelDelete').addEventListener('click', function() {
             document.getElementById('deleteConfirmModal').style.display = 'none';
         });
-
         document.getElementById('deleteForm').addEventListener('submit', function() {
             showLoading('Deleting...');
         });
 
-        // =============================================
-        // Checkbox Bulk Delete
-        // =============================================
+        // Checkbox Bulk
         const selectAll        = document.getElementById('selectAll');
         const bulkToolbar      = document.getElementById('bulkToolbar');
         const selectedCount    = document.getElementById('selectedCount');
@@ -537,103 +594,64 @@
         function updateToolbar() {
             const checked = getChecked();
             const count   = checked.length;
-
-            if (count > 0) {
-                bulkToolbar.style.display = 'flex';
-                selectedCount.textContent = count + ' selected';
-            } else {
-                bulkToolbar.style.display = 'none';
-            }
-
-            // Update "Select All" indeterminate state
+            bulkToolbar.style.display = count > 0 ? 'flex' : 'none';
+            if (count > 0) selectedCount.textContent = count + ' selected';
             const all = document.querySelectorAll('.row-checkbox');
             selectAll.checked       = count === all.length && all.length > 0;
             selectAll.indeterminate = count > 0 && count < all.length;
-
-            // Highlight selected rows
             document.querySelectorAll('.row-checkbox').forEach(function(cb) {
                 cb.closest('tr').classList.toggle('row-selected', cb.checked);
             });
         }
 
-        // Select All toggle
         selectAll.addEventListener('change', function() {
             document.querySelectorAll('.row-checkbox').forEach(function(cb) {
                 cb.checked = selectAll.checked;
             });
             updateToolbar();
         });
-
-        // Individual checkboxes
         document.querySelectorAll('.row-checkbox').forEach(function(cb) {
             cb.addEventListener('change', updateToolbar);
         });
-
-        // Cancel selection
         cancelSelBtn.addEventListener('click', function() {
-            document.querySelectorAll('.row-checkbox').forEach(function(cb) {
-                cb.checked = false;
-            });
-            selectAll.checked       = false;
+            document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.checked = false; });
+            selectAll.checked = false;
             selectAll.indeterminate = false;
             updateToolbar();
         });
 
-        // Open bulk delete modal
         bulkDeleteBtn.addEventListener('click', function() {
             const checked = getChecked();
             if (checked.length === 0) return;
-
             bulkDeleteCount.textContent = checked.length;
-
             bulkDeleteInputs.innerHTML = '';
             checked.forEach(function(cb) {
                 const input = document.createElement('input');
-                input.type  = 'hidden';
-                input.name  = 'ids[]';
-                input.value = cb.value;
+                input.type = 'hidden'; input.name = 'ids[]'; input.value = cb.value;
                 bulkDeleteInputs.appendChild(input);
             });
-
             bulkDeleteModal.style.display = 'flex';
         });
-
-        // Close bulk delete modal
         document.getElementById('bulkDeleteModalClose').addEventListener('click', function() {
             bulkDeleteModal.style.display = 'none';
         });
         document.getElementById('cancelBulkDelete').addEventListener('click', function() {
             bulkDeleteModal.style.display = 'none';
         });
-
-        // Submit bulk delete → show loading
         bulkDeleteForm.addEventListener('submit', function() {
             showLoading('Deleting selected orders...');
         });
 
-        // =============================================
-        // Bulk Print Invoice
-        // =============================================
-        // =============================================
-        // Bulk Print Invoice (80mm Combined Receipt)
-        // =============================================
+        // Bulk Print
         document.getElementById('bulkPrintBtn').addEventListener('click', function () {
             const checked = getChecked();
             if (checked.length === 0) return;
-
             const ids = checked.map(function(cb) { return 'ids[]=' + cb.value; }).join('&');
-            const url = '/orders/invoice-combined?' + ids;
-
-            const printWindow = window.open(url, '_blank', 'width=400,height=700');
-            printWindow.addEventListener('load', function () {
-                printWindow.focus();
-                printWindow.print();
-            });
+            const printWindow = window.open('/orders/invoice-combined?' + ids, '_blank', 'width=400,height=700');
+            printWindow.addEventListener('load', function () { printWindow.focus(); printWindow.print(); });
         });
 
-        // =============================================
         // Payment Modal
-        // =============================================
         document.addEventListener('DOMContentLoaded', function() {
             const paymentModal     = document.getElementById('paymentModal');
             const paymentContainer = document.getElementById('paymentFormContainer');
@@ -641,8 +659,7 @@
             document.querySelectorAll('.open-payment-modal').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     if (this.classList.contains('disabled')) return;
-                    const orderId = this.getAttribute('data-order-id');
-                    fetch(`/payments/payment/${orderId}`)
+                    fetch(`/payments/payment/${this.getAttribute('data-order-id')}`)
                         .then(function(r) { return r.text(); })
                         .then(function(html) {
                             paymentContainer.innerHTML = html;
@@ -658,7 +675,6 @@
                     paymentContainer.innerHTML = '';
                 }
             });
-
             window.addEventListener('click', function(e) {
                 if (e.target === paymentModal) {
                     paymentModal.style.display = 'none';
@@ -671,7 +687,6 @@
             const paymentForm         = document.getElementById('paymentForm');
             const paymentMethodSelect = document.getElementById('payment_method');
             const methodGroup         = document.getElementById('payment-method-group');
-
             if (!paymentForm || !paymentMethodSelect || !methodGroup) return;
 
             paymentForm.addEventListener('submit', function(e) {
@@ -679,7 +694,6 @@
                 if (existingError) existingError.remove();
                 paymentMethodSelect.classList.remove('input-error');
                 paymentMethodSelect.removeAttribute('aria-describedby');
-
                 if (paymentMethodSelect.value === '') {
                     e.preventDefault();
                     paymentMethodSelect.classList.add('input-error');
@@ -700,7 +714,6 @@
             });
         }
 
-        // Auto-hide success message
         const successMsg = document.getElementById('successMessage');
         if (successMsg) {
             setTimeout(function() {
@@ -709,7 +722,6 @@
                 setTimeout(function() { successMsg.style.display = 'none'; }, 500);
             }, 3000);
         }
-        
     </script>
 
 @endsection

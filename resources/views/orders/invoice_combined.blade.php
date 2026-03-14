@@ -144,9 +144,9 @@
     <hr class="divider">
 
     {{-- META INFO --}}
-    <div class="info-row">
+   <div class="info-row">
         <span>Date:</span>
-        <span>{{ now()->format('d/m/Y H:i') }}</span>
+        <span>{{ now()->timezone('Asia/Phnom_Penh')->format('d/m/Y H:i') }}</span>
     </div>
     <div class="info-row">
         <span>Total Orders:</span>

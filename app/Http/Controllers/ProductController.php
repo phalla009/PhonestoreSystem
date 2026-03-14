@@ -36,40 +36,43 @@ class ProductController extends Controller
         return view('products.create', compact('categories'));
     }
 
-   public function store(Request $request)
-{
-    $validated = $request->validate([
-        'name' => 'required|string',
-        'price' => 'required|numeric',
-        'stock' => 'required|integer',
-        'status' => 'required|in:active,inactive',
-        'description' => 'nullable|string',
-        'category_id' => 'required|exists:categories,id',
-        'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    ]);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'        => 'required|string',
+            'price'       => 'required|numeric',
+            'stock'       => 'required|integer',
+            'status'      => 'required|in:active,inactive',
+            'description' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
+            'images.*'    => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-    $product = Product::create($validated);
+        // Handle checkbox — unchecked sends nothing, so default to 0
+        $validated['add_to_pos'] = $request->has('add_to_pos') ? 1 : 0;
 
-    // Auto-generate SKU: kr + date + padded id
-    $product->update([
-        'sku' => 'kr' . $product->created_at->format('Ymd') . str_pad($product->id, 2, '0', STR_PAD_LEFT)
-    ]);
+        $product = Product::create($validated);
 
-    // Save images
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $file) {
-            $filename = $file->getClientOriginalName();
-            $file->move(public_path('images/products'), $filename);
+        // Auto-generate SKU: kr + date + padded id
+        $product->update([
+            'sku' => 'kr' . $product->created_at->format('Ymd') . str_pad($product->id, 2, '0', STR_PAD_LEFT)
+        ]);
 
-            ProductImage::create([
-                'product_id' => $product->id,
-                'image'      => $filename,
-            ]);
+        // Save images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $filename = $file->getClientOriginalName();
+                $file->move(public_path('images/products'), $filename);
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image'      => $filename,
+                ]);
+            }
         }
-    }
 
-    return redirect()->route('products.create')->with('success', 'Product added successfully.');
-}
+        return redirect()->route('products.create')->with('success', 'Product added successfully.');
+    }
 
     public function show(string $id)
     {
@@ -87,16 +90,19 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
-            'status' => 'required|in:active,inactive',
-            'description' => 'nullable|string|max:1000',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'delete_images' => 'nullable|array',
+            'name'            => 'required|string|max:255',
+            'category_id'     => 'required|exists:categories,id',
+            'price'           => 'required|numeric',
+            'stock'           => 'required|integer',
+            'status'          => 'required|in:active,inactive',
+            'description'     => 'nullable|string|max:1000',
+            'images.*'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'delete_images'   => 'nullable|array',
             'delete_images.*' => 'integer|exists:product_images,id',
         ]);
+
+        // Handle checkbox — unchecked sends nothing, so default to 0
+        $validated['add_to_pos'] = $request->has('add_to_pos') ? 1 : 0;
 
         $product = Product::findOrFail($id);
         $product->update($validated);
@@ -118,7 +124,7 @@ class ProductController extends Controller
         // Add new images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
-                $filename = $file->getClientOriginalName(); // Keep original name
+                $filename = $file->getClientOriginalName();
                 $file->move(public_path('images/products'), $filename);
 
                 ProductImage::create([

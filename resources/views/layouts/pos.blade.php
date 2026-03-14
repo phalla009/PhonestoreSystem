@@ -64,8 +64,6 @@
         background: #d9a61a;
         color: #fff;
     }
-/* 
-    .pos-page-wrap { padding: 24px; } */
 
     #loading-overlay {
         position: fixed;
@@ -86,15 +84,63 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
+
+    /* ── STOCK ALERT BANNER ── */
+    .stock-alert-banner {
+        background: #fff7ed;
+        border-bottom: 1px solid #fed7aa;
+        padding: 10px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .stock-alert-banner .alert-icon {
+        color: #ea580c;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .stock-alert-banner .alert-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #9a3412;
+        flex-shrink: 0;
+    }
+
+    .stock-alert-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .stock-alert-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #ffedd5;
+        border: 1px solid #fed7aa;
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+        color: #7c2d12;
+        font-weight: 500;
+    }
+
+    .stock-alert-chip .chip-stock {
+        font-weight: 700;
+        color: #ea580c;
+    }
   </style>
 </head>
 <body>
 
   <div class="pos-topbar">
     <div class="pos-topbar-logo">
-      <span class="l1">K</span><span class="l2">R</span><span class="l3">System</span>
+      <span class="l1">K</span><span class="l2"> R</span><span class="l3">System</span>
     </div>
-      <h3 style="color: white;">
+    <h3 style="color: white;">
         <i class="fas fa-cash-register"></i> Point of Sale
     </h3>
     <div class="pos-topbar-right">
@@ -107,6 +153,29 @@
       </a>
     </div>
   </div>
+
+  {{-- ── STOCK ALERT BANNER (only shows when low stock products exist) ── --}}
+  @php
+      $lowStockProducts = isset($products)
+          ? $products->filter(fn($p) => $p->add_to_pos == 1 && $p->stock > 0 && $p->stock < 10)
+          : collect();
+  @endphp
+
+  @if($lowStockProducts->isNotEmpty())
+  <div class="stock-alert-banner">
+      <i class="fas fa-triangle-exclamation alert-icon"></i>
+      <span class="alert-label">Low Stock Alert:</span>
+      <div class="stock-alert-items">
+          @foreach($lowStockProducts as $lp)
+              <span class="stock-alert-chip">
+                  <i class="fas fa-box" style="font-size:10px;"></i>
+                  {{ $lp->name }}
+                  <span class="chip-stock">({{ $lp->stock }} left)</span>
+              </span>
+          @endforeach
+      </div>
+  </div>
+  @endif
 
   <div id="loading-overlay">
     <div class="spinner"></div>

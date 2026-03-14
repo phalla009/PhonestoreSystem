@@ -68,7 +68,7 @@
         <div class="filter-section">
             <h4>Filter Products</h4>
             <form id="filterForm" method="GET" action="{{ route('products.index') }}">
-                <div class="filter-controls" style="display:flex; align-items:center; gap: 10px;">
+                <div class="filter-controls" style="display:flex; align-items:center; gap: 10px; margin-top: -5px;">
 
                     {{-- Category Dropdown --}}
                     <div class="form-group" style="min-width: 200px;">

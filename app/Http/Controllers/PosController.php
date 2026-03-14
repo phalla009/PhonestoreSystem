@@ -11,11 +11,12 @@ class PosController extends Controller
 {
     /**
      * Show the POS page.
+     * Only show products that are active AND marked as Add to POS.
      */
     public function index()
     {
         $products = Product::with(['images', 'category'])
-            ->where('status', 'active')
+            ->where('add_to_pos', 1)  // ✅ Show all products marked as Add to POS (regardless of status)
             ->get();
 
         return view('pos.index', compact('products'));
@@ -58,6 +59,12 @@ class PosController extends Controller
 
                 if (!$product) {
                     $errors[] = "Product ID {$productId} not found.";
+                    continue;
+                }
+
+                // ✅ Extra guard: skip if product is not marked for POS
+                if (!$product->add_to_pos) {
+                    $errors[] = "\"{$product->name}\" is not available in POS.";
                     continue;
                 }
 

@@ -84,6 +84,9 @@
         .status-active   { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
         .status-inactive { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
 
+        .pos-yes { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .pos-no  { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+
         /* Image Gallery */
         .product-layout {
             display: grid;
@@ -227,7 +230,19 @@
                     </div>
                 </div>
 
-                {{-- Row 4: Description full width --}}
+                {{-- Row 4: Add to POS & Description --}}
+                <div class="info-row">
+                    <div class="info-box">
+                        <div class="info-label"><i class="fas fa-cash-register"></i> Add to POS</div>
+                        <div class="info-value">
+                            <span class="status-badge {{ $product->add_to_pos ? 'pos-yes' : 'pos-no' }}">
+                                {{ $product->add_to_pos ? 'Yes' : 'No' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Row 5: Description full width --}}
                 <div class="info-row">
                     <div class="info-box full">
                         <div class="info-label"><i class="fas fa-align-left"></i> Description</div>
@@ -235,7 +250,7 @@
                     </div>
                 </div>
 
-                {{-- Row 5: Created & Updated --}}
+                {{-- Row 6: Created & Updated --}}
                 <div class="info-row">
                     <div class="info-box">
                         <div class="info-label"><i class="fas fa-calendar-plus"></i> Created</div>

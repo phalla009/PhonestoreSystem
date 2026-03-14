@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Customer;
+use App\Models\Payment;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -197,7 +198,16 @@ class OrderController extends Controller
             'payment_notes'  => 'nullable|string',
         ]);
 
-        $order                 = Order::findOrFail($id);
+        $order = Order::findOrFail($id);
+
+        // ✅ Column is 'amount' — consistent with PaymentController and Blade view
+        Payment::create([
+            'order_id'       => $order->id,
+            'amount'         => $order->total_amount,
+            'payment_method' => $request->payment_method,
+            'paid_at'        => now(),
+        ]);
+
         $order->payment_method = $request->payment_method;
         $order->payment_notes  = $request->payment_notes;
         $order->status         = 'completed';

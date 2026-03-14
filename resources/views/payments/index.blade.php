@@ -11,7 +11,6 @@
     <script src="{{ URL::asset('js/delete_form.js') }}"></script>
 
     <style>
-       
         .filter-search-wrap { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
         .filter-search-wrap input[type="text"] { padding: 10px 16px; border: 1px solid #ccc; border-radius: 24px; width: 300px; font-size: 15px; outline-color: #3498db; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .filter-search-wrap .btn { padding: 10px 18px; font-size: 14px; border-radius: 8px; }
@@ -22,6 +21,19 @@
         .btn.btn-light { border-radius: 24px; margin-top: 2px; background-color: #c82333; color: white; }
         .btn-light:hover { background-color: #a91c2a; border-color: #bd2130; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3); }
         @keyframes fadeOut { 0% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; display: none; } }
+
+        /* =============================================
+           Action Buttons — Teal / Yellow / Red (rounded)
+        ============================================= */
+        .action-buttons { display: flex; gap: 6px; align-items: center; }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.12);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+            color: #fff;
+            text-decoration: none;
+        }
+        .action-btn:active { transform: translateY(0); }
 
         /* Loading Overlay */
         #loading-overlay {
@@ -103,48 +115,96 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($payments as $payment)
+                    @forelse($orders as $order)
                         <tr>
                             <td data-label="No">#{{ $loop->iteration }}</td>
-                            <td data-label="Order Number">{{ $payment->order->order_number ?? 'N/A' }}</td>
-                            <td data-label="Customer">{{ $payment->order->customer->name ?? 'N/A' }}</td>
-                            <td data-label="Product">{{ $payment->order->product->name ?? 'N/A' }}</td>
-                            <td data-label="Amount Paid">${{ number_format($payment->amount, 2) }}</td>
+                            <td data-label="Order Number">{{ $order->order_number ?? 'N/A' }}</td>
+                            <td data-label="Customer">{{ $order->customer->name ?? 'N/A' }}</td>
+                            <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>
+                            <td data-label="Amount Paid">
+                                {{-- ✅ Only reaches here if payments exist (filtered in controller) --}}
+                                ${{ number_format($order->payments->sum('amount'), 2) }}
+                            </td>
                             <td data-label="Actions">
-                            <div class="action-buttons">
+                                <div class="action-buttons">
+                                    @php $payment = $order->payments->first() @endphp
 
-                                <a href="{{ route('payments.show', $payment->id) }}"
-                                class="action-btn show-btn nav-link-loading"
-                                data-loading-text="Loading details..."
-                                title="View Details">
-                                    <i class="fas fa-info-circle"></i>
-                                </a>
+                                    <a href="{{ route('payments.show', $payment->id) }}"
+                                       class="action-btn show-btn nav-link-loading"
+                                       data-loading-text="Loading details..."
+                                       title="View Details">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
 
-                                <a href="{{ route('payments.edit', $payment->id) }}"
-                                class="action-btn edit-btn nav-link-loading"
-                                data-loading-text="Loading add..."
-                                title="Edit Payment">
-                                    <i class="fas fa-pen-to-square"></i>
-                                </a>
+                                    <a href="{{ route('payments.edit', $payment->id) }}"
+                                       class="action-btn edit-btn nav-link-loading"
+                                       data-loading-text="Loading edit..."
+                                       title="Edit Payment">
+                                        <i class="fas fa-pen-to-square"></i>
+                                    </a>
 
-                                <button type="button"
-                                    class="action-btn delete-btn openDeleteModal"
-                                    data-action="{{ route('payments.destroy', $payment->id) }}"
-                                    title="Delete Payment">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                            </div>
-                        </td>
+                                    <button type="button"
+                                        class="action-btn delete-btn openDeleteModal"
+                                        data-action="{{ route('payments.destroy', $payment->id) }}"
+                                        title="Delete Payment">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" style="text-align:center;" id="found">No payments found.</td>
+                            <td colspan="6" style="text-align:center;" id="found">No completed orders found.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
+
+        {{-- ✅ Completed orders that are missing a payment record --}}
+        @if($unpaidOrders->isNotEmpty())
+            <div style="margin-top: 30px;">
+                <h4 style="color: #856404; margin-bottom: 10px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Completed Orders — Missing Payment Record ({{ $unpaidOrders->count() }}) form POS
+                </h4>
+                <div class="table-container">
+                    <table cellpadding="8" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Order Number</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Order Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($unpaidOrders as $i => $order)
+                                <tr style="background: #fffbf0;">
+                                    <td>#{{ $i + 1 }}</td>
+                                    <td>{{ $order->order_number ?? 'N/A' }}</td>
+                                    <td>{{ $order->customer->name ?? 'N/A' }}</td>
+                                    <td>{{ $order->product->name ?? 'N/A' }}</td>
+                                    <td>${{ number_format($order->total_amount, 2) }}</td>
+                                    <td>
+                                        {{-- Link to orders page to re-process payment --}}
+                                        <a href="{{ route('orders.index') }}"
+                                           class="action-btn show-btn nav-link-loading"
+                                           style="width:auto; padding: 10 12px; font-size:12px; gap:5px;"
+                                           data-loading-text="Going to orders..."
+                                           title="Go to Orders to re-process payment">
+                                            <i class="fas fa-arrow-right"></i> Fix in Orders
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- Delete Confirmation Modal -->
@@ -166,27 +226,27 @@
                     <button type="button" id="cancelDelete" class="delete-btn-cancel">
                         <i class="fas fa-times"></i> Cancel
                     </button>
-                    <button type="submit" class="delete-btn-confirm">
+                    <button type="submit" id="confirmDeleteBtn" class="delete-btn-confirm">
                         <i class="fas fa-trash-alt"></i> Yes, Delete
                     </button>
                 </div>
             </form>
         </div>
     </div>
-     <div id="logout-confirm">
-    <div class="confirm-box">
-        <div class="icon-container">
-        <i class="fas fa-sign-out-alt"></i>
-        </div>
-        <p>Are you sure you want to logout?</p>
-        <button id="confirm-yes">Yes, Logout!</button>
-        <button id="confirm-no">No, Keep it!</button>
-    </div>
-    </div>
 
+    <div id="logout-confirm">
+        <div class="confirm-box">
+            <div class="icon-container">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <p>Are you sure you want to logout?</p>
+            <button id="confirm-yes">Yes, Logout!</button>
+            <button id="confirm-no">No, Keep it!</button>
+        </div>
+    </div>
 
     <script>
-             // =============================================
+        // =============================================
         // Logout confirm
         // =============================================
         const logoutLink    = document.getElementById('logout-link');
@@ -229,9 +289,9 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            const modal        = document.getElementById('deleteConfirmModal');
-            const deleteForm   = document.getElementById('deleteForm');
-            const closeModalBtn  = document.getElementById('deleteModalClose');
+            const modal           = document.getElementById('deleteConfirmModal');
+            const deleteForm      = document.getElementById('deleteForm');
+            const closeModalBtn   = document.getElementById('deleteModalClose');
             const cancelDeleteBtn = document.getElementById('cancelDelete');
 
             // Delete modal open
@@ -239,7 +299,6 @@
                 btn.addEventListener('click', function() {
                     deleteForm.action = this.getAttribute('data-action');
                     modal.style.display = 'block';
-                    modal.querySelector('.modal-content').focus();
                 });
             });
 
