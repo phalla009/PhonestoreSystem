@@ -22,9 +22,7 @@
     .form-group select {
         border-radius: 24px;
     }
-    .action-buttons{
-        margin-left: -50px;
-    }
+
     /* Loading Overlay */
     #loading-overlay {
         position: fixed;
