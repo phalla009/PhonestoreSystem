@@ -24,7 +24,7 @@ a {
 
 .sidebar {
     width: 300px;
-    background: #2c3e50;
+    background: #181c27;
     color: white;
     padding: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
@@ -32,11 +32,11 @@ a {
 
 .sidebar-header {
     padding: 1.5rem;
-    background: #34495e;
+    background: #181c27;
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    border-bottom: 1px solid #3d5268;
+    border-bottom: 1px solid #181c27;
 }
 
 .sidebar-menu {
@@ -60,7 +60,7 @@ a {
 }
 
 .sidebar-menu a:hover {
-    background: #3d5268;
+    background: #2d3343;
 }
 
 .sidebar-menu a.active {
@@ -172,7 +172,7 @@ a {
 }
 .btn.btn-primary,
 .btn-update {
-    background: linear-gradient(135deg, #4285f4, #1976d2);
+    background: #181c27;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -203,9 +203,9 @@ a {
     box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
 }
 .btn.btn-primary:hover {
-    background: linear-gradient(135deg, #1976d2, #1565c0);
+    background: #232836e6;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+    box-shadow: 0 4px 12px #181c27;
 }
 .main-content {
     flex: 1;
@@ -223,7 +223,7 @@ a {
 }
 
 .content-section h2 {
-    color: #2c3e50;
+    color: #181c27;
     margin-bottom: 1.5rem;
     font-size: 2rem;
 }
@@ -308,12 +308,8 @@ h2 {
     margin-bottom: 1.5rem;
 }
 .stat-card {
-    color: #007bff;
-    background: linear-gradient(
-        145deg,
-        #b9e2ff77,
-        #8ecfff55
-    ); /* subtle gradient for depth */
+    color: #ffffff;
+    background: #181c27;
     border-radius: 10px;
     padding: 1.25rem 1rem;
     text-align: center;
@@ -362,7 +358,8 @@ table thead tr {
 table thead th {
     position: sticky;
     top: 0;
-    background: #dcedff;
+    background: #181c27;
+    color: white;
     z-index: 2;
 }
 

@@ -85,7 +85,7 @@
       datasets: [{
         label: 'Total Units Sold',
         data: @json($topProducts->pluck('total_sold')),
-        backgroundColor: '#1abc9c', // ពណ៌បៃតងស្រាល
+        backgroundColor: '#181c27', // ពណ៌បៃតងស្រាល
         borderRadius: 5
       }]
     },
@@ -107,7 +107,7 @@
         label: 'Monthly Sales ($)',
         data: @json($monthlyRevenue),
         borderColor:'#2980b9',
-        backgroundColor:'rgba(41,128,185,0.2)',
+        backgroundColor:'#181c27',
         fill:true,
         tension:0.3
       }]

@@ -115,7 +115,7 @@
                     label: 'Monthly Revenue ($)',
                     data: {!! json_encode($chartData ?? []) !!},
                     borderColor: 'rgb(82, 167, 232)',
-                    backgroundColor: 'rgba(13, 104, 232, 0.84)',
+                    backgroundColor: '#181c27',
                     fill: true,
                     tension: 0.3
                 }]

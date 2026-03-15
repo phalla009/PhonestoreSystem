@@ -151,7 +151,7 @@
                 @enderror
             </div>
 
-            <div style="text-align: right; margin-top: 1rem;">
+            <div style="text-align: right; margin-top: 0.6rem;">
                 <button class="btn btn-success" type="submit" aria-label="Add Product">
                     <i class="fas fa-save"></i> Add Product
                 </button>
