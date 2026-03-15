@@ -74,7 +74,6 @@ a {
     width: 20px;
     text-align: center;
 }
-
 @media (max-width: 768px) {
     body {
         overflow-y: auto;
@@ -117,7 +116,7 @@ a {
     padding: 6px 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    background-color: #f8f9fa;
+    background-color: transparent;
     color: #495057;
     font-size: 12px;
     font-weight: 500;
@@ -129,46 +128,49 @@ a {
     text-align: center;
 }
 .action-btn:hover {
-    background-color: #e9ecef;
+    background-color: rgba(0, 0, 0, 0.05);
     border-color: #adb5bd;
     transform: translateY(-1px);
 }
 .action-btn.show-btn {
-    background-color: #17a2b8;
-    color: white;
+    background-color: transparent;
+    color: #17a2b8;
     border-color: #17a2b8;
 }
 .action-btn.show-btn:hover {
-    background-color: #138496;
-    border-color: #117a8b;
+    background-color: rgba(23, 162, 184, 0.1);
+    border-color: #138496;
+    color: #138496;
 }
 .action-btn.edit-btn {
-    background-color: #ffc107;
-    color: #212529;
+    background-color: transparent;
+    color: #d39e00;
     border-color: #ffc107;
 }
+.action-btn.edit-btn:hover {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-color: #d39e00;
+    color: #b38600;
+}
 .action-btn.payment-btn {
-    background-color: #347afd;
-    color: white;
-    border-color: #2e70f4;
+    background-color: transparent;
+    color: #347afd;
+    border-color: #347afd;
 }
 .action-btn.payment-btn:hover {
-    background-color: #014bd4;
-    color: white;
+    background-color: rgba(52, 122, 253, 0.1);
+    color: #014bd4;
     border-color: #246cfd;
 }
-.action-btn.edit-btn:hover {
-    background-color: #e0a800;
-    border-color: #d39e00;
-}
 .action-btn.delete-btn {
-    background-color: #dc3545;
-    color: white;
+    background-color: transparent;
+    color: #dc3545;
     border-color: #dc3545;
 }
 .action-btn.delete-btn:hover {
-    background-color: #c82333;
+    background-color: rgba(220, 53, 69, 0.1);
     border-color: #bd2130;
+    color: #c82333;
 }
 .btn.btn-primary,
 .btn-update {
@@ -308,7 +310,7 @@ h2 {
     margin-bottom: 1.5rem;
 }
 .stat-card {
-    color: #ffffff;
+    color: #00e5a0;
     background: #181c27;
     border-radius: 10px;
     padding: 1.25rem 1rem;
@@ -523,26 +525,46 @@ textarea {
 }
 
 .btn-back {
+    /* Layout & Alignment */
     float: right;
-    background-color: #dfb304;
-    color: #ffffff;
-    border-radius: 24px;
-    width: 15%;
-    padding: 8px 16px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 8px;
+    
+    /* Sizing & Spacing */
+    min-width: 120px; /* Better than 15% for mobile responsiveness */
+    padding: 10px 20px;
+    
+    /* Styling */
+    background-color: #1e293b; /* Deep Slate */
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
     text-decoration: none;
-    font-weight: 500;
+    border-radius: 50px; /* Fully pill-shaped */
+    border: none;
+    
+    /* Performance & Interaction */
     cursor: pointer;
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .btn-back:hover {
-    background-color: #fdcc08;
-    color: #fff;
+    background-color: #334155;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn-back:active {
+    transform: translateY(0);
+}
+
+/* Optional: Icon styling if you use an <i> tag inside */
+.btn-back i {
+    font-size: 1.1em;
 }
 
 .close:hover {

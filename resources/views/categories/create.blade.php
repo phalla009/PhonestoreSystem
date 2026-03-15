@@ -74,7 +74,12 @@
             <div class="form-row">
                 <div class="form-group" style="width: 100%;">
                     <label for="description">Description:</label>
-                    <textarea style="width: 100%;" id="description" name="description" placeholder="Enter description">{{ old('description') }}</textarea>
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        placeholder="Enter description"
+                        style="width: 100%; min-height: 200px; padding: 12px; border: 1px solid #ccc; border-radius: 8px; resize: none;"
+                    >{{ old('description') }}</textarea>
                 </div>
             </div>
             <div style="text-align: right; margin-top: 1rem;">

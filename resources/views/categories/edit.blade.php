@@ -70,14 +70,17 @@
 
             <div class="form-row">
                 <div class="form-group" style="width: 100%;">
-                    <label for="description">Description:</label>
+                    <label for="description" style="font-weight: 500; margin-bottom: 8px; display: block;">Description:</label>
                     <textarea
                         id="description"
                         name="description"
                         placeholder="Enter description"
+                        rows="6" 
+                        style="width: 100%; min-height: 150px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; resize: none; font-family: inherit; transition: border-color 0.2s;"
                     >{{ old('description', $category->description) }}</textarea>
+                    
                     @error('description')
-                        <p class="text-danger mt-1">{{ $message }}</p>
+                        <p class="text-danger mt-1" style="color: #dc3545; font-size: 0.875rem;">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
