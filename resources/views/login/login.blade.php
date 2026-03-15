@@ -14,7 +14,7 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: rgb(232, 236, 235);
+      background: #181c27;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -26,7 +26,7 @@
       display: flex;
       max-width: 900px;
       width: 100%;
-      background: white;
+      background: #252a38;
       border-radius: 15px;
       overflow: hidden;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -54,7 +54,7 @@
       border-radius: 50%;
       animation: zoomIn 0.8s ease, rotateMe 5s linear infinite;
       transition: all 0.3s ease;
-      filter: drop-shadow(12px 8px 8px rgba(105, 134, 128, 0.3));
+      filter: drop-shadow(4px 4px 6px rgb(255, 255, 255));
     }
     /* Animation Definitions */
     @keyframes zoomIn {
@@ -71,10 +71,10 @@
       font-family: 'Arial', sans-serif;  
       font-size: 36px;                   
       font-weight: bold;                
-      color: #333;                     
+      color: white;                     
       text-align: center;           
       margin-bottom: 20px;           
-      text-shadow: 2px 2px 5px rgb(71, 89, 255);
+      text-shadow: 2px 4px 5px #0f1117;
     }
 
     .form-group {
@@ -85,7 +85,7 @@
     .form-group label {
       display: block;
       margin-bottom: 8px;
-      color: #555;
+      color: whitesmoke;
       font-weight: 500;
       font-size: 14px;
     }
@@ -154,7 +154,7 @@
     .submit-btn {
       width: 100%;
       padding: 15px;
-      background: rgb(59, 59, 220);
+      background: #0f1117;
       color: white;
       border: none;
       border-radius: 24px;
@@ -269,7 +269,7 @@
 
     <div class="form-container">
       <div class="form-image">
-        <img src="image/login.jpg" alt="Login Icon">
+        <img src="image/logokr.jpg" alt="Login Icon">
       </div>
 
       <h1 class="form-title">Login</h1>

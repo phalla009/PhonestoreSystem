@@ -640,7 +640,7 @@ textarea {
     top: 20px;
     right: 20px;
     min-width: 300px;
-    background: #ffffff;
+    background: #0f1117;
     border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     overflow: hidden; /* ដើម្បីលាក់ Progress Bar ដែលលើស */
@@ -657,7 +657,7 @@ textarea {
 }
 
 .success-icon {
-    background-color: #2ecc71;
+    background-color: #23e875;
     color: white;
     width: 25px;
     height: 25px;
@@ -670,7 +670,7 @@ textarea {
 }
 
 .success-text {
-    color: #2c3e50;
+    color: whitesmoke;
     font-weight: 500;
     font-size: 15px;
 }
