@@ -39,9 +39,12 @@
     </div>
 
     @if(session('success'))
-        <div id="successMessage" class="custom-success" role="alert" aria-live="polite">
-            <i class="fas fa-check-circle" style="color: green; margin-right: 8px;"></i>
-            {{ session('success') }}
+        <div id="successMessage" class="custom-success">
+            <div class="success-content">
+                <span class="success-icon">✔</span>
+                <span class="success-text">{{ session('success') }}</span>
+            </div>
+            <div class="progress-bar"></div>
         </div>
     @endif
 

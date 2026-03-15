@@ -24,7 +24,15 @@ class DashboardController extends Controller
                              ->take(5)
                              ->get();
 
-        // ===== Monthly Sales Chart (safe for ONLY_FULL_GROUP_BY) =====
+        // ===== Top 10 Best Selling Products =====
+        $topProducts = Order::selectRaw('product_id, SUM(quantity) as total_sold')
+                             ->with('product')
+                             ->groupBy('product_id')
+                             ->orderByDesc('total_sold')
+                             ->take(10)
+                             ->get();
+
+        // ===== Monthly Sales Chart =====
         $monthlySales = Order::selectRaw('MONTH(order_date) as month_number, MONTHNAME(order_date) as month_name, SUM(total_amount) as total')
                              ->groupBy('month_number', 'month_name')
                              ->orderBy('month_number')
@@ -39,24 +47,18 @@ class DashboardController extends Controller
         $runtime = $productionLogs->pluck('run_time')->toArray();
         $downtime = $productionLogs->pluck('downtime')->toArray();
 
-        // ===== Customer Total Quantity Ordered =====
-        $customerTotals = Order::selectRaw('customer_id, SUM(quantity) as total_qty')
-                               ->with('customer')
-                               ->groupBy('customer_id')
-                               ->get();
-
         return view('index', compact(
             'totalProducts',
             'pendingOrders',
             'totalCustomers',
             'currentMonthRevenue',
             'recentOrders',
+            'topProducts',
             'months',
             'monthlyRevenue',
             'productionPhases',
             'runtime',
-            'downtime',
-            'customerTotals'
+            'downtime'
         ));
     }
 }

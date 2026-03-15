@@ -54,8 +54,11 @@
 
     @if(session('success'))
         <div id="successMessage" class="custom-success">
-            <i class="fas fa-check-circle" style="color: green; margin-right: 8px;"></i>
-            {{ session('success') }}
+            <div class="success-content">
+                <span class="success-icon">✔</span>
+                <span class="success-text">{{ session('success') }}</span>
+            </div>
+            <div class="progress-bar"></div>
         </div>
     @endif
 
@@ -123,7 +126,7 @@
 
                 {{-- Password --}}
                 <div class="form-group">
-                    <label for="password">Password: <small style="color:#888;">(optional)</small></label>
+                    <label for="password">Password: <small style="color:#888;"></small></label>
                     <input id="password" type="password" name="password" placeholder="Enter password" autocomplete="new-password">
                     @error('password')
                         <p class="text-danger mt-1">{{ $message }}</p>

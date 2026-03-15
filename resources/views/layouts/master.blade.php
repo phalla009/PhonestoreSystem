@@ -232,11 +232,24 @@
       </li>
       @endif
 
-      {{-- Settings --}}
+      {{-- Settings Dropdown --}}
       @if(Auth::user()->hasPermission('settings'))
-      <li><a href="#"><span class="icon"><i class="fas fa-cog"></i></span> Setting</a></li>
+      <li class="menu-container">
+        <a href="javascript:void(0)" class="submenu-toggle">
+          <span class="icon"><i class="fas fa-cog"></i></span>
+          Settings
+          <span class="dropdown-arrow"><i class="fas fa-chevron-right"></i></span>
+        </a>
+        <div class="submenu">
+          {{-- Check for 'barcodes' slug to match your Seeder --}}
+          @if(Auth::user()->hasPermission('barcodes'))
+          <a href="{{ route('barcodes.index') }}">
+            <span class="icon"><i class="fas fa-barcode"></i></span> Barcode Generator
+          </a>
+          @endif
+        </div>
+      </li>
       @endif
-
       {{-- Logout --}}
       <li>
         <a id="logout-link"><span class="icon"><i class="fas fa-sign-out-alt"></i></span> Logout</a>

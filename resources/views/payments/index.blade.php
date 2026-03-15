@@ -16,7 +16,7 @@
         .filter-search-wrap .btn { padding: 10px 18px; font-size: 14px; border-radius: 8px; }
         .filter-form .btn-light { background-color: #c82333; color: white; }
         .filter-form .btn-light:hover { background-color: #a91c2a; border-color: #bd2130; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3); }
-        .custom-success { padding: 12px 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 6px; margin-bottom: 15px; animation: fadeOut 4s ease forwards; }
+        
         .btn.btn-primary { border-radius: 24px; margin-top: 2px; }
         .btn.btn-light { border-radius: 24px; margin-top: 2px; background-color: #c82333; color: white; }
         .btn-light:hover { background-color: #a91c2a; border-color: #bd2130; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3); }
@@ -67,11 +67,14 @@
     </div>
 
     @if(session('success'))
-        <div id="successMessage" class="custom-success">
-            <i class="fas fa-check-circle"></i>
-            {{ session('success') }}
-        </div>
-    @endif
+            <div id="successMessage" class="custom-success">
+                <div class="success-content">
+                    <span class="success-icon">✔</span>
+                    <span class="success-text">{{ session('success') }}</span>
+                </div>
+                <div class="progress-bar"></div>
+            </div>
+        @endif
 
     <div class="content-section" id="payments">
         <h2><i class="fas fa-credit-card"></i> All Payments</h2>

@@ -14,30 +14,43 @@
     margin-bottom: 5px;
 }
 
-/*  Success message animation */
 .success-message {
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
-    color: white;
-    max-width: 90%;
-    width: 200px;
-    height: auto;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 10px auto;
-    text-align: center;
+    position: fixed;
+    top: 20px;
+    right: 50px;
+    z-index: 1000;
+    background: #e8faf0;
+    color: #333;
+    border-left: 5px solid #2ecc71;
+    width: 280px;
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: "Inter", sans-serif;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 16px;
-    animation: fadeInUp 0.6s ease forwards;
-    z-index: 1000;
+    justify-content: flex-start;
+    animation: slideInRight 0.4s ease-out;
 }
+
 .success-message::before {
-    content: "✓";
-    margin-right: 8px;
-    font-size: 20px;
-    font-weight: bold;
+    content: "✔";
+    color: #2ecc71;
+    background: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 12px;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes fadeInUp {
@@ -108,7 +121,9 @@
 /*  Hover lift effect */
 .card:hover {
     transform: translateY(-5px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 

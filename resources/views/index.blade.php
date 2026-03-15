@@ -25,14 +25,16 @@
         <div class="stat-card"><h3>${{ number_format($currentMonthRevenue,2) }}</h3><p>Monthly Revenue</p></div>
     </div>
 
-    <h2><i class="fas fa-chart-pie"></i> Production Analysis</h2>
+    <h2><i class="fas fa-chart-pie"></i> Sales Analysis & Ranking</h2>
     <div class="charts-grid">
+        {{-- Card ថ្មីសម្រាប់ Top Selling Products --}}
         <div class="card">
-            <h4>Run Time vs Downtime</h4>
-            <canvas id="barChart"></canvas>
+            <h4><i class="fas fa-trophy"></i> Top Selling Products</h4>
+            <canvas id="topProductsChart"></canvas>
         </div>
+        
         <div class="card">
-            <h4>Monthly Sales</h4>
+            <h4><i class="fas fa-chart-line"></i> Monthly Sales</h4>
             <canvas id="lineChart"></canvas>
         </div>
     </div>
@@ -61,7 +63,7 @@
                             <i class="fas fa-hourglass-half" style="color: orange;"></i> Pending
                         @elseif($order->status==='completed')
                             <i class="fas fa-check-circle" style="color: green;"></i> Completed
-                        @elseif($order->status==='cancelled')
+                        @else
                             <i class="fas fa-times-circle" style="color: red;"></i> Cancelled
                         @endif
                     </td>
@@ -75,17 +77,25 @@
 </div>
 
 <script>
-  // ===== Run Time vs Downtime =====
-  new Chart(document.getElementById('barChart'), {
+  // ===== Top 10 Selling Products Chart (ជំនួស Bar Chart ចាស់) =====
+  new Chart(document.getElementById('topProductsChart'), {
     type: 'bar',
     data: {
-      labels: @json($productionPhases),
-      datasets: [
-        { label: 'Downtime (h)', data: @json($downtime), backgroundColor:'#3498db' },
-        { label: 'RunTime (h)', data: @json($runtime), backgroundColor:'#1abc9c' }
-      ]
+      labels: @json($topProducts->pluck('product.name')),
+      datasets: [{
+        label: 'Total Units Sold',
+        data: @json($topProducts->pluck('total_sold')),
+        backgroundColor: '#1abc9c', // ពណ៌បៃតងស្រាល
+        borderRadius: 5
+      }]
     },
-    options: { responsive: true }
+    options: { 
+        indexAxis: 'y', // ធ្វើឱ្យ Bar ដេកដើម្បីងាយស្រួលមើលឈ្មោះផលិតផល
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        }
+    }
   });
 
   // ===== Monthly Sales =====

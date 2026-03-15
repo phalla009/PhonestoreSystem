@@ -79,15 +79,6 @@
     .input-error { border: 1px solid red; }
     .error { color: red; margin-top: 4px; font-size: 0.9em; }
 
-    .custom-success {
-        padding: 12px 20px;
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-        border-radius: 6px;
-        margin-bottom: 15px;
-        animation: fadeOut 4s ease forwards;
-    }
 
     .filter-section { margin-top: -50px; margin-bottom: 20px; }
     .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -277,10 +268,13 @@
         <div id="loading-text">Loading...</div>
     </div>
 
-    @if(session('success'))
+   @if(session('success'))
         <div id="successMessage" class="custom-success">
-            <i class="fas fa-check-circle"></i>
-            {{ session('success') }}
+            <div class="success-content">
+                <span class="success-icon">✔</span>
+                <span class="success-text">{{ session('success') }}</span>
+            </div>
+            <div class="progress-bar"></div>
         </div>
     @endif
 

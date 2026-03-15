@@ -640,22 +640,81 @@ textarea {
 
 .custom-success {
     position: fixed;
-    top: 5%;
-    left: 70%;
-    transform: translate(-50%, -50%);
-    background-color: #5dc860;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
-    font-size: 16px;
-    font-weight: 600;
-    max-width: 90%;
-    text-align: center;
-    animation: fadeInOut 4s ease-in-out forwards;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* ដើម្បីលាក់ Progress Bar ដែលលើស */
+    z-index: 10000;
+    font-family: "Inter", "Hanuman", sans-serif;
+    animation: slideInRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
+.success-content {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.success-icon {
+    background-color: #2ecc71;
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.success-text {
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+/* Progress Bar នៅខាងក្រោម */
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: #2ecc71;
+    animation: progressAnim 4s linear forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(110%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes progressAnim {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
 @keyframes fadeInOut {
     0% {
         opacity: 0;

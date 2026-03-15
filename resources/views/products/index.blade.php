@@ -58,11 +58,13 @@
 
     @if(session('success'))
         <div id="successMessage" class="custom-success">
-            <i class="fas fa-check-circle"></i>
-            {{ session('success') }}
+            <div class="success-content">
+                <span class="success-icon">✔</span>
+                <span class="success-text">{{ session('success') }}</span>
+            </div>
+            <div class="progress-bar"></div>
         </div>
     @endif
-
     <div class="content-section" id="products">
         <h2><i class="fas fa-box-open"></i> Products Management</h2>
         <div class="filter-section">
