@@ -6,716 +6,409 @@
 
 @section('headerBlock')
 <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
-<script src="{{ URL::asset('js/form.js') }}"></script>
 <link rel="stylesheet" href="{{ URL::asset('css/delete_form.css') }}">
+<script src="{{ URL::asset('js/form.js') }}"></script>
 <script src="{{ URL::asset('js/delete_form.js') }}"></script>
 
 <style>
-
-    .status-pending { color: orange; }
+    .status-pending   { color: orange; }
     .status-completed { color: green; }
     .status-cancelled { color: red; }
+    .payment-btn.disabled { pointer-events: none; opacity: 0.5; cursor: default; }
 
-    .payment-btn.disabled {
-        pointer-events: none;
-        opacity: 0.5;
-        cursor: default;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 9999;
-        left: 0; top: 0;
-        width: 100%; height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.5);
-    }
-
-    .modal-content {
-        background-color: #fff;
-        margin: 60px auto;
-        padding: 20px;
-        border-radius: 10px;
-        width: 600px;
-        height: 480px;
-        position: relative;
-        transition: all 0.3s ease;
-        transform: scale(0.95);
-        animation: fadeIn 0.3s forwards;
-        overflow-y: auto;
-    }
-
+    .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background-color: #fff; margin: 60px auto; padding: 20px; border-radius: 10px; width: 600px; height: 480px; position: relative; animation: fadeIn 0.3s forwards; overflow-y: auto; transform: scale(0.95); }
     @keyframes fadeIn { to { transform: scale(1); } }
 
-    .btn-payment {
-        margin-top: 20px;
-        width: 100%;
-        background: #48bb78;
-        color: white;
-        transition: 0.3s ease, transform 0.2s ease;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    .btn-payment:hover {
-        background: #38a169;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
-    }
-
-    .close-modal {
-        position: absolute;
-        top: 10px; right: 15px;
-        font-size: 24px;
-        font-weight: bold;
-        cursor: pointer;
-        color: #333;
-    }
+    .btn-payment { margin-top: 20px; width: 100%; background: #48bb78; color: white; transition: 0.3s ease, transform 0.2s ease; padding: 10px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    .btn-payment:hover { background: #38a169; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56,161,105,0.3); }
+    .close-modal { position: absolute; top: 10px; right: 15px; font-size: 24px; font-weight: bold; cursor: pointer; color: #333; }
     .close-modal:hover { color: #666; }
-
     .input-error { border: 1px solid red; }
     .error { color: red; margin-top: 4px; font-size: 0.9em; }
-
 
     .filter-section { margin-top: -50px; margin-bottom: 20px; }
     .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .filter-form { display: flex; flex-direction: column; gap: 16px; }
-    .grid-3-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-3-columns { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
     .filter-form .form-group { display: flex; flex-direction: column; }
     .filter-form label { font-weight: 600; margin-bottom: 6px; color: #333; }
-    .filter-form select,
-    .filter-form input[type="text"] {
-        padding: 10px 14px;
-        border: 1px solid #ccc;
-        border-radius: 24px;
-        font-size: 14px;
-        outline-color: #3498db;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
+    .filter-form select, .filter-form input[type="text"] { padding: 10px 14px; border: 1px solid #ccc; border-radius: 24px; font-size: 14px; outline-color: #3498db; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
     .filter-form .btn { padding: 10px 14px; font-size: 14px; border-radius: 24px; margin-right: 8px; }
     .filter-form .btn-light { background-color: #c82333; color: white; }
-    .filter-form .btn-light:hover {
-        background-color: #a91c2a;
-        border-color: #bd2130;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
-    }
+    .filter-form .btn-light:hover { background-color: #a91c2a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56,161,105,0.3); }
+    .filter-clear-wrap { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 0; }
+    #filterBtn, #clearBtn { width: 100px; }
 
-    .filter-clear-wrap {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 10px;
-        margin-top: 0px;
-        
-    }
-    #filterBtn,#clearBtn{
-        width: 100px;
-    }
-
-    @keyframes fadeOut {
-        0% { opacity: 1; }
-        80% { opacity: 1; }
-        100% { opacity: 0; display: none; }
-    }
-
-    /* Loading Overlay */
-    #loading-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(255,255,255,0.85);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        z-index: 99999;
-    }
-    .spinner {
-        border: 6px solid #f3f3f3;
-        border-top: 6px solid #3498db;
-        border-radius: 50%;
-        width: 60px; height: 60px;
-        animation: spin 1s linear infinite;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    #loading-text { margin-top: 15px; font-size: 16px; color: #333; }
-
-    /* Bulk Toolbar */
-    #bulkToolbar {
-        display: none;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-        padding: 10px 16px;
-        background: #fff3cd;
-        border: 1px solid #ffc107;
-        border-radius: 8px;
-        animation: slideDown 0.2s ease;
-    }
+    /* Bulk toolbar */
+    #bulkToolbar { display: none; align-items: center; gap: 12px; margin-bottom: 12px; padding: 10px 16px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; animation: slideDown 0.2s ease; }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-
-    #bulkDeleteBtn {
-        background: #c82333;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 18px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: background 0.2s, transform 0.15s;
-    }
+    #bulkDeleteBtn { background: #c82333; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.2s, transform 0.15s; }
     #bulkDeleteBtn:hover { background: #a91c2a; transform: translateY(-1px); }
-
-    #bulkPrintBtn {
-        background: #3498db;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 18px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        transition: background 0.2s, transform 0.15s;
-    }
+    #bulkPrintBtn { background: #3498db; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.2s, transform 0.15s; }
     #bulkPrintBtn:hover { background: #2980b9; transform: translateY(-1px); }
-
-    #cancelSelectionBtn {
-        background: transparent;
-        border: none;
-        color: #856404;
-        cursor: pointer;
-        font-size: 13px;
-        text-decoration: underline;
-    }
-
+    #cancelSelectionBtn { background: transparent; border: none; color: #856404; cursor: pointer; font-size: 13px; text-decoration: underline; }
     tr.row-selected { background-color: #fff8e1 !important; }
+    .row-checkbox, #selectAll { width: 16px; height: 16px; cursor: pointer; accent-color: #c82333; }
 
-    .row-checkbox, #selectAll {
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-        accent-color: #c82333;
-    }
-
-    /* ── PENDING ALERT BANNER ── */
-    .pending-alert-banner {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: #fff7ed;
-        border: 1px solid #fed7aa;
-        border-radius: 10px;
-        padding: 10px 16px;
-    }
-
-    .pending-alert-banner .pending-icon {
-        font-size: 16px;
-        color: #f97316;
-        flex-shrink: 0;
-        animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50%       { transform: scale(1.2); }
-    }
-
-    .pending-alert-banner .pending-text {
-        font-size: 13px;
-        color: #9a3412;
-        font-weight: 500;
-        white-space: nowrap;
-    }
-
-    .pending-alert-banner .pending-count {
-        font-weight: 800;
-        color: #ea580c;
-        font-size: 14px;
-        margin: 0 3px;
-    }
-
-    .pending-alert-banner .pending-filter-link {
-        font-size: 12px;
-        color: #ea580c;
-        text-decoration: none;
-        font-weight: 600;
-        border: 1px solid #fed7aa;
-        padding: 4px 12px;
-        border-radius: 20px;
-        background: #ffedd5;
-        white-space: nowrap;
-        transition: background 0.15s;
-        flex-shrink: 0;
-    }
-
+    /* Pending banner */
+    .pending-alert-banner { display: inline-flex; align-items: center; gap: 10px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 10px 16px; }
+    .pending-alert-banner .pending-icon { font-size: 16px; color: #f97316; flex-shrink: 0; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+    .pending-alert-banner .pending-text { font-size: 13px; color: #9a3412; font-weight: 500; white-space: nowrap; }
+    .pending-alert-banner .pending-count { font-weight: 800; color: #ea580c; font-size: 14px; margin: 0 3px; }
+    .pending-alert-banner .pending-filter-link { font-size: 12px; color: #ea580c; text-decoration: none; font-weight: 600; border: 1px solid #fed7aa; padding: 4px 12px; border-radius: 20px; background: #ffedd5; white-space: nowrap; transition: background 0.15s; flex-shrink: 0; }
     .pending-alert-banner .pending-filter-link:hover { background: #fed7aa; }
 </style>
 @endsection
 
 @section('content')
 
-    {{-- Loading Overlay --}}
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <div id="loading-text">Loading...</div>
+{{-- ❌ លុប: #loading-overlay  — master layout មានហើយ --}}
+{{-- ❌ លុប: #logout-confirm   — master layout មានហើយ --}}
+{{-- ❌ លុប: logout JS         — master layout មានហើយ --}}
+
+@if(session('success'))
+<div id="successMessage" class="custom-success">
+    <div class="success-content">
+        <span class="success-icon">✔</span>
+        <span class="success-text">{{ session('success') }}</span>
     </div>
+    <div class="progress-bar"></div>
+</div>
+@endif
 
-   @if(session('success'))
-        <div id="successMessage" class="custom-success">
-            <div class="success-content">
-                <span class="success-icon">✔</span>
-                <span class="success-text">{{ session('success') }}</span>
-            </div>
-            <div class="progress-bar"></div>
+<div class="content-section" id="orders">
+    <h2><i class="fas fa-shopping-cart"></i> Orders Management</h2>
+
+    <div class="filter-section">
+        <div class="filter-header">
+            <a href="{{ route('orders.create') }}"
+               class="btn btn-primary page-link-loading"
+               data-loading-text="Loading add...">
+                <i class="fas fa-circle-plus"></i> Add New Order
+            </a>
         </div>
-    @endif
 
-    <div class="content-section" id="orders">
-
-        <h2><i class="fas fa-shopping-cart"></i> Orders Management</h2>
-
-        <div class="filter-section">
-            <div class="filter-header">
-                <a href="{{ route('orders.create') }}"
-                   class="btn btn-primary nav-link-loading"
-                   data-loading-text="Loading add...">
-                    <i class="fas fa-circle-plus"></i> Add New Order
-                </a>
+        <form method="GET" action="{{ route('orders.index') }}" class="filter-form" id="filterForm">
+            <div class="grid-3-columns">
+                <div class="form-group">
+                    <label for="customer_id">Customer</label>
+                    <select name="customer_id" id="customer_id">
+                        <option value="">All Customers</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}" {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
+                                {{ $customer->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select name="status" id="status">
+                        <option value="">All Statuses</option>
+                        <option value="pending"   {{ request('status') == 'pending'   ? 'selected' : '' }}>Pending</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="search">Search</label>
+                    <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="customer name...">
+                </div>
             </div>
-
-            <form method="GET" action="{{ route('orders.index') }}" class="filter-form" id="filterForm">
-                <div class="grid-3-columns">
-                    <div class="form-group">
-                        <label for="customer_id">Customer</label>
-                        <select name="customer_id" id="customer_id">
-                            <option value="">All Customers</option>
-                            @foreach($customers as $customer)
-                                <option value="{{ $customer->id }}" {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
-                                    {{ $customer->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select name="status" id="status">
-                            <option value="">All Statuses</option>
-                            <option value="pending"   {{ request('status') == 'pending'   ? 'selected' : '' }}>Pending</option>
-                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                            <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="search">Search</label>
-                        <input type="text" name="search" id="search"
-                               value="{{ request('search') }}"
-                               placeholder="customer name...">
-                    </div>
-                </div>
-
-                {{-- RIGHT: Filter + Clear buttons --}}
-                <div class="filter-clear-wrap">
-                    <button type="submit" class="btn btn-primary" id="filterBtn">
-                        <i class="fas fa-search"></i> Filter
-                    </button>
-                    @if(request()->hasAny(['search', 'customer_id', 'status']))
-                        <a href="{{ route('orders.index') }}"
-                           class="btn btn-light nav-link-loading" id="clearBtn"
-                           data-loading-text="Clearing filters...">
-                            <i class="fas fa-times"></i> Clear
-                        </a>
-                    @endif
-                </div>
-            </form>
-
-            {{-- ── PENDING BANNER នៅខាងក្រៅ form ហើយ align left ── --}}
-            @php $pendingCount = $orders->where('status', 'pending')->count(); @endphp
-            @if($pendingCount > 0)
-                <div class="pending-alert-banner">
-                    <i class="fas fa-hourglass-half pending-icon"></i>
-                    <span class="pending-text">
-                        You have <span class="pending-count">{{ $pendingCount }}</span>
-                        pending order(s) waiting for payment.
-                    </span>
-                    <a href="{{ route('orders.index', ['status' => 'pending']) }}"
-                       class="pending-filter-link nav-link-loading"
-                       data-loading-text="Filtering pending orders...">
-                        <i class="fas fa-filter" style="font-size:10px;"></i> View Pending
+            <div class="filter-clear-wrap">
+                <button type="submit" class="btn btn-primary" id="filterBtn">
+                    <i class="fas fa-search"></i> Filter
+                </button>
+                @if(request()->hasAny(['search','customer_id','status']))
+                    <a href="{{ route('orders.index') }}" class="btn btn-light page-link-loading" id="clearBtn" data-loading-text="Clearing...">
+                        <i class="fas fa-times"></i> Clear
                     </a>
-                </div>
-            @endif
+                @endif
+            </div>
+        </form>
 
+        @php $pendingCount = $orders->where('status','pending')->count(); @endphp
+        @if($pendingCount > 0)
+        <div class="pending-alert-banner">
+            <i class="fas fa-hourglass-half pending-icon"></i>
+            <span class="pending-text">You have <span class="pending-count">{{ $pendingCount }}</span> pending order(s) waiting for payment.</span>
+            <a href="{{ route('orders.index', ['status'=>'pending']) }}" class="pending-filter-link page-link-loading" data-loading-text="Filtering pending...">
+                <i class="fas fa-filter" style="font-size:10px;"></i> View Pending
+            </a>
         </div>
-
-        {{-- Bulk Toolbar --}}
-        <div id="bulkToolbar">
-            <span id="selectedCount" style="font-weight:600; color:#856404;">0 selected</span>
-            <button type="button" id="bulkDeleteBtn">
-                <i class="fas fa-trash-alt"></i> Delete Selected
-            </button>
-            <button type="button" id="bulkPrintBtn">
-                <i class="fas fa-print"></i> Print Invoice
-            </button>
-            <button type="button" id="cancelSelectionBtn">Cancel</button>
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:40px; text-align:center;">
-                            <input type="checkbox" id="selectAll" title="Select All">
-                        </th>
-                        <th>#</th>
-                        <th>Order ID</th>
-                        <th>Product</th>
-                        <th>Quantity</th>
-                        <th>Paid Amount</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="ordersTable">
-                    @forelse ($orders as $order)
-                    <tr>
-                        <td style="text-align:center;">
-                            <input type="checkbox" class="row-checkbox" value="{{ $order->id }}">
-                        </td>
-                        <td data-label="No">#{{ $loop->iteration }}</td>
-                        <td data-label="Order ID">{{ $order->order_number }}</td>
-                        <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>
-                        <td data-label="Quantity">{{ $order->quantity }}</td>
-                        <td data-label="Paid Amount">${{ number_format($order->total_amount ?? 0, 2) }}</td>
-                        <td data-label="Status">
-                            @if($order->status === 'completed')
-                                <i class="fas fa-check-circle" style="color: green; font-size: 20px;"></i>
-                            @elseif($order->status === 'pending')
-                                <i class="fas fa-hourglass-half" style="color: orange; font-size: 20px;"></i>
-                            @elseif($order->status === 'cancelled')
-                                <i class="fas fa-times-circle" style="color: red; font-size: 20px;"></i>
-                            @endif
-                        </td>
-                        <td data-label="Actions">
-                            <div class="action-buttons">
-
-                                <a href="javascript:void(0);"
-                                class="action-btn payment-btn open-payment-modal {{ in_array($order->status, ['completed', 'cancelled']) ? 'disabled' : '' }}"
-                                data-order-id="{{ $order->id }}"
-                                title="Make Payment">
-                                    <i class="fas fa-credit-card"></i>
-                                </a>
-
-                                <a href="{{ route('orders.show', $order->id) }}"
-                                class="action-btn show-btn nav-link-loading"
-                                data-loading-text="Loading details..."
-                                title="View Details">
-                                    <i class="fas fa-info-circle"></i>
-                                </a>
-
-                                <a href="{{ route('orders.edit', $order->id) }}"
-                                class="action-btn edit-btn nav-link-loading"
-                                data-loading-text="Opening editor..."
-                                title="Edit Order">
-                                    <i class="fas fa-pen"></i>
-                                </a>
-
-                                <button type="button"
-                                    class="action-btn delete-btn openDeleteModal"
-                                    data-action="{{ route('orders.destroy', $order->id) }}"
-                                    title="Delete Order">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                        <tr>
-                            <td colspan="9" style="text-align:center;" id="found">No order found.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        @endif
     </div>
 
-    <!-- Delete Modal (single) -->
-    <div id="deleteConfirmModal" class="modal">
-        <div class="delete-modal-box">
-            <div class="delete-modal-icon"><i class="fas fa-trash-alt"></i></div>
-            <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
-            <h3>Delete Record?</h3>
-            <p>This action <strong>cannot be undone.</strong> Are you sure you want to permanently delete this record?</p>
-            <form id="deleteForm" method="POST" action="">
-                @csrf
-                @method('DELETE')
-                <div class="delete-modal-actions">
-                    <button type="button" id="cancelDelete" class="delete-btn-cancel">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                    <button type="submit" class="delete-btn-confirm">
-                        <i class="fas fa-trash-alt"></i> Yes, Delete
-                    </button>
-                </div>
-            </form>
-        </div>
+    {{-- Bulk Toolbar --}}
+    <div id="bulkToolbar">
+        <span id="selectedCount" style="font-weight:600;color:#856404;">0 selected</span>
+        <button type="button" id="bulkDeleteBtn"><i class="fas fa-trash-alt"></i> Delete Selected</button>
+        <button type="button" id="bulkPrintBtn"><i class="fas fa-print"></i> Print Invoice</button>
+        <button type="button" id="cancelSelectionBtn">Cancel</button>
     </div>
 
-    <!-- Bulk Delete Modal -->
-    <div id="bulkDeleteModal" class="modal">
-        <div class="delete-modal-box">
-            <div class="delete-modal-icon"><i class="fas fa-trash-alt"></i></div>
-            <button class="delete-modal-close" id="bulkDeleteModalClose" aria-label="Close">&times;</button>
-            <h3>Delete Selected Orders?</h3>
-            <p>You are about to delete <strong id="bulkDeleteCount">0</strong> order(s). This action <strong>cannot be undone.</strong></p>
-            <form id="bulkDeleteForm" method="POST" action="{{ route('orders.bulkDestroy') }}">
-                @csrf
-                @method('DELETE')
-                <div id="bulkDeleteInputs"></div>
-                <div class="delete-modal-actions">
-                    <button type="button" id="cancelBulkDelete" class="delete-btn-cancel">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                    <button type="submit" class="delete-btn-confirm">
-                        <i class="fas fa-trash-alt"></i> Yes, Delete All
-                    </button>
-                </div>
-            </form>
-        </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px;text-align:center;"><input type="checkbox" id="selectAll" title="Select All"></th>
+                    <th>#</th>
+                    <th>Order ID</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Paid Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTable">
+                @forelse ($orders as $order)
+                <tr>
+                    <td style="text-align:center;"><input type="checkbox" class="row-checkbox" value="{{ $order->id }}"></td>
+                    <td data-label="No">#{{ $loop->iteration }}</td>
+                    <td data-label="Order ID">{{ $order->order_number }}</td>
+                    <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>
+                    <td data-label="Quantity">{{ $order->quantity }}</td>
+                    <td data-label="Paid Amount">${{ number_format($order->total_amount ?? 0, 2) }}</td>
+                    <td data-label="Status">
+                        @if($order->status === 'completed')
+                            <i class="fas fa-check-circle" style="color:green;font-size:20px;"></i>
+                        @elseif($order->status === 'pending')
+                            <i class="fas fa-hourglass-half" style="color:orange;font-size:20px;"></i>
+                        @elseif($order->status === 'cancelled')
+                            <i class="fas fa-times-circle" style="color:red;font-size:20px;"></i>
+                        @endif
+                    </td>
+                    <td data-label="Actions">
+                        <div class="action-buttons">
+                            <a href="javascript:void(0);"
+                               class="action-btn payment-btn open-payment-modal {{ in_array($order->status, ['completed','cancelled']) ? 'disabled' : '' }}"
+                               data-order-id="{{ $order->id }}" title="Make Payment">
+                                <i class="fas fa-credit-card"></i>
+                            </a>
+                            <a href="{{ route('orders.show', $order->id) }}"
+                               class="action-btn show-btn page-link-loading"
+                               data-loading-text="Loading details..." title="View Details">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                            <a href="{{ route('orders.edit', $order->id) }}"
+                               class="action-btn edit-btn page-link-loading"
+                               data-loading-text="Opening editor..." title="Edit Order">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <button type="button" class="action-btn delete-btn openDeleteModal"
+                                data-action="{{ route('orders.destroy', $order->id) }}" title="Delete Order">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                    <tr><td colspan="9" style="text-align:center;" id="found">No order found.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
+</div>
 
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div id="paymentFormContainer"></div>
-        </div>
+{{-- Single Delete Modal --}}
+<div id="deleteConfirmModal" class="modal">
+    <div class="delete-modal-box">
+        <div class="delete-modal-icon"><i class="fas fa-trash-alt"></i></div>
+        <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
+        <h3>Delete Record?</h3>
+        <p>This action <strong>cannot be undone.</strong> Are you sure?</p>
+        <form id="deleteForm" method="POST" action="">
+            @csrf @method('DELETE')
+            <div class="delete-modal-actions">
+                <button type="button" id="cancelDelete" class="delete-btn-cancel"><i class="fas fa-times"></i> Cancel</button>
+                <button type="submit" id="confirmDeleteBtn" class="delete-btn-confirm"><i class="fas fa-trash-alt"></i> Yes, Delete</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div id="logout-confirm">
-        <div class="confirm-box">
-            <div class="icon-container"><i class="fas fa-sign-out-alt"></i></div>
-            <p>Are you sure you want to logout?</p>
-            <button id="confirm-yes">Yes, Logout!</button>
-            <button id="confirm-no">No, Keep it!</button>
-        </div>
+{{-- Bulk Delete Modal --}}
+<div id="bulkDeleteModal" class="modal">
+    <div class="delete-modal-box">
+        <div class="delete-modal-icon"><i class="fas fa-trash-alt"></i></div>
+        <button class="delete-modal-close" id="bulkDeleteModalClose" aria-label="Close">&times;</button>
+        <h3>Delete Selected Orders?</h3>
+        <p>You are about to delete <strong id="bulkDeleteCount">0</strong> order(s). This action <strong>cannot be undone.</strong></p>
+        <form id="bulkDeleteForm" method="POST" action="{{ route('orders.bulkDestroy') }}">
+            @csrf @method('DELETE')
+            <div id="bulkDeleteInputs"></div>
+            <div class="delete-modal-actions">
+                <button type="button" id="cancelBulkDelete" class="delete-btn-cancel"><i class="fas fa-times"></i> Cancel</button>
+                <button type="submit" class="delete-btn-confirm"><i class="fas fa-trash-alt"></i> Yes, Delete All</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <script>
-        const logoutLink    = document.getElementById('logout-link');
-        const logoutConfirm = document.getElementById('logout-confirm');
-        const confirmYes    = document.getElementById('confirm-yes');
-        const confirmNo     = document.getElementById('confirm-no');
-        const logoutForm    = document.getElementById('logout-form');
+{{-- Payment Modal --}}
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div id="paymentFormContainer"></div>
+    </div>
+</div>
 
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            logoutConfirm.style.display = 'flex';
-        });
-        confirmYes.addEventListener('click', function() { logoutForm.submit(); });
-        confirmNo.addEventListener('click',  function() { logoutConfirm.style.display = 'none'; });
+<script>
+    // ✅ reuse overlay ពី master layout
+    function showLoading(msg) {
+        const ov = document.getElementById('loading-overlay');
+        const lt = document.getElementById('loading-text');
+        if (!ov) return;
+        if (lt) lt.textContent = msg || 'Loading...';
+        ov.style.display = 'flex';
+    }
 
-        const overlay     = document.getElementById('loading-overlay');
-        const loadingText = document.getElementById('loading-text');
-
-        function showLoading(message) {
-            loadingText.textContent = message || 'Loading...';
-            overlay.style.display = 'flex';
-        }
-
-        window.addEventListener('load', function () {
-            overlay.style.display = 'none';
-        });
-
-        document.querySelectorAll('.nav-link-loading').forEach(function(link) {
-            link.addEventListener('click', function(e) {
+    // Page nav links — class "page-link-loading"
+    document.querySelectorAll('.page-link-loading').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            const msg  = this.getAttribute('data-loading-text') || 'Loading...';
+            if (href && href !== '#' && href !== 'javascript:void(0)') {
                 e.preventDefault();
-                const href = this.getAttribute('href');
-                const msg  = this.getAttribute('data-loading-text') || 'Loading...';
-                if (href && href !== '#') {
-                    showLoading(msg);
-                    window.location.href = href;
-                }
-            });
+                showLoading(msg);
+                window.location.href = href;
+            }
         });
+    });
 
-        document.getElementById('filterForm').addEventListener('submit', function() {
-            showLoading('Filtering...');
+    // Filter form submit
+    document.getElementById('filterForm').addEventListener('submit', function() {
+        showLoading('Filtering...');
+    });
+
+    // Single delete
+    document.querySelectorAll('.openDeleteModal').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.getElementById('deleteForm').setAttribute('action', this.getAttribute('data-action'));
+            document.getElementById('deleteConfirmModal').style.display = 'flex';
         });
+    });
+    document.getElementById('deleteModalClose').addEventListener('click', function() { document.getElementById('deleteConfirmModal').style.display = 'none'; });
+    document.getElementById('cancelDelete').addEventListener('click', function() { document.getElementById('deleteConfirmModal').style.display = 'none'; });
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        showLoading('Deleting...');
+        setTimeout(function() { document.getElementById('deleteForm').submit(); }, 300);
+    });
 
-        // Single Delete Modal
-        document.querySelectorAll('.openDeleteModal').forEach(function(btn) {
+    // Bulk checkbox
+    const selectAll        = document.getElementById('selectAll');
+    const bulkToolbar      = document.getElementById('bulkToolbar');
+    const selectedCount    = document.getElementById('selectedCount');
+    const bulkDeleteModal  = document.getElementById('bulkDeleteModal');
+    const bulkDeleteCount  = document.getElementById('bulkDeleteCount');
+    const bulkDeleteInputs = document.getElementById('bulkDeleteInputs');
+    const bulkDeleteForm   = document.getElementById('bulkDeleteForm');
+
+    function getChecked() { return Array.from(document.querySelectorAll('.row-checkbox:checked')); }
+    function updateToolbar() {
+        const checked = getChecked(); const count = checked.length;
+        const all = document.querySelectorAll('.row-checkbox');
+        bulkToolbar.style.display = count > 0 ? 'flex' : 'none';
+        if (count > 0) selectedCount.textContent = count + ' selected';
+        selectAll.checked       = count === all.length && all.length > 0;
+        selectAll.indeterminate = count > 0 && count < all.length;
+        document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.closest('tr').classList.toggle('row-selected', cb.checked); });
+    }
+    selectAll.addEventListener('change', function() {
+        document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.checked = selectAll.checked; });
+        updateToolbar();
+    });
+    document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.addEventListener('change', updateToolbar); });
+    document.getElementById('cancelSelectionBtn').addEventListener('click', function() {
+        document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.checked = false; });
+        selectAll.checked = false; selectAll.indeterminate = false; updateToolbar();
+    });
+
+    document.getElementById('bulkDeleteBtn').addEventListener('click', function() {
+        const checked = getChecked(); if (!checked.length) return;
+        bulkDeleteCount.textContent = checked.length;
+        bulkDeleteInputs.innerHTML = '';
+        checked.forEach(function(cb) {
+            const inp = document.createElement('input');
+            inp.type = 'hidden'; inp.name = 'ids[]'; inp.value = cb.value;
+            bulkDeleteInputs.appendChild(inp);
+        });
+        bulkDeleteModal.style.display = 'flex';
+    });
+    document.getElementById('bulkDeleteModalClose').addEventListener('click', function() { bulkDeleteModal.style.display = 'none'; });
+    document.getElementById('cancelBulkDelete').addEventListener('click', function() { bulkDeleteModal.style.display = 'none'; });
+    bulkDeleteForm.addEventListener('submit', function() { showLoading('Deleting selected orders...'); });
+
+    // Bulk print
+    document.getElementById('bulkPrintBtn').addEventListener('click', function() {
+        const ids = getChecked().map(function(cb) { return 'ids[]=' + cb.value; }).join('&');
+        if (!ids) return;
+        const w = window.open('/orders/invoice-combined?' + ids, '_blank', 'width=400,height=700');
+        w.addEventListener('load', function() { w.focus(); w.print(); });
+    });
+
+    // Payment modal
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentModal     = document.getElementById('paymentModal');
+        const paymentContainer = document.getElementById('paymentFormContainer');
+
+        document.querySelectorAll('.open-payment-modal').forEach(function(btn) {
             btn.addEventListener('click', function() {
-                document.getElementById('deleteForm').setAttribute('action', this.getAttribute('data-action'));
-                document.getElementById('deleteConfirmModal').style.display = 'flex';
-            });
-        });
-        document.getElementById('deleteModalClose').addEventListener('click', function() {
-            document.getElementById('deleteConfirmModal').style.display = 'none';
-        });
-        document.getElementById('cancelDelete').addEventListener('click', function() {
-            document.getElementById('deleteConfirmModal').style.display = 'none';
-        });
-        document.getElementById('deleteForm').addEventListener('submit', function() {
-            showLoading('Deleting...');
-        });
-
-        // Checkbox Bulk
-        const selectAll        = document.getElementById('selectAll');
-        const bulkToolbar      = document.getElementById('bulkToolbar');
-        const selectedCount    = document.getElementById('selectedCount');
-        const bulkDeleteBtn    = document.getElementById('bulkDeleteBtn');
-        const cancelSelBtn     = document.getElementById('cancelSelectionBtn');
-        const bulkDeleteModal  = document.getElementById('bulkDeleteModal');
-        const bulkDeleteCount  = document.getElementById('bulkDeleteCount');
-        const bulkDeleteInputs = document.getElementById('bulkDeleteInputs');
-        const bulkDeleteForm   = document.getElementById('bulkDeleteForm');
-
-        function getChecked() {
-            return Array.from(document.querySelectorAll('.row-checkbox:checked'));
-        }
-
-        function updateToolbar() {
-            const checked = getChecked();
-            const count   = checked.length;
-            bulkToolbar.style.display = count > 0 ? 'flex' : 'none';
-            if (count > 0) selectedCount.textContent = count + ' selected';
-            const all = document.querySelectorAll('.row-checkbox');
-            selectAll.checked       = count === all.length && all.length > 0;
-            selectAll.indeterminate = count > 0 && count < all.length;
-            document.querySelectorAll('.row-checkbox').forEach(function(cb) {
-                cb.closest('tr').classList.toggle('row-selected', cb.checked);
-            });
-        }
-
-        selectAll.addEventListener('change', function() {
-            document.querySelectorAll('.row-checkbox').forEach(function(cb) {
-                cb.checked = selectAll.checked;
-            });
-            updateToolbar();
-        });
-        document.querySelectorAll('.row-checkbox').forEach(function(cb) {
-            cb.addEventListener('change', updateToolbar);
-        });
-        cancelSelBtn.addEventListener('click', function() {
-            document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.checked = false; });
-            selectAll.checked = false;
-            selectAll.indeterminate = false;
-            updateToolbar();
-        });
-
-        bulkDeleteBtn.addEventListener('click', function() {
-            const checked = getChecked();
-            if (checked.length === 0) return;
-            bulkDeleteCount.textContent = checked.length;
-            bulkDeleteInputs.innerHTML = '';
-            checked.forEach(function(cb) {
-                const input = document.createElement('input');
-                input.type = 'hidden'; input.name = 'ids[]'; input.value = cb.value;
-                bulkDeleteInputs.appendChild(input);
-            });
-            bulkDeleteModal.style.display = 'flex';
-        });
-        document.getElementById('bulkDeleteModalClose').addEventListener('click', function() {
-            bulkDeleteModal.style.display = 'none';
-        });
-        document.getElementById('cancelBulkDelete').addEventListener('click', function() {
-            bulkDeleteModal.style.display = 'none';
-        });
-        bulkDeleteForm.addEventListener('submit', function() {
-            showLoading('Deleting selected orders...');
-        });
-
-        // Bulk Print
-        document.getElementById('bulkPrintBtn').addEventListener('click', function () {
-            const checked = getChecked();
-            if (checked.length === 0) return;
-            const ids = checked.map(function(cb) { return 'ids[]=' + cb.value; }).join('&');
-            const printWindow = window.open('/orders/invoice-combined?' + ids, '_blank', 'width=400,height=700');
-            printWindow.addEventListener('load', function () { printWindow.focus(); printWindow.print(); });
-        });
-
-        // Payment Modal
-        document.addEventListener('DOMContentLoaded', function() {
-            const paymentModal     = document.getElementById('paymentModal');
-            const paymentContainer = document.getElementById('paymentFormContainer');
-
-            document.querySelectorAll('.open-payment-modal').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    if (this.classList.contains('disabled')) return;
-                    fetch(`/payments/payment/${this.getAttribute('data-order-id')}`)
-                        .then(function(r) { return r.text(); })
-                        .then(function(html) {
-                            paymentContainer.innerHTML = html;
-                            paymentModal.style.display = 'block';
-                            attachPaymentFormScript();
-                        });
-                });
-            });
-
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('close-modal')) {
-                    paymentModal.style.display = 'none';
-                    paymentContainer.innerHTML = '';
-                }
-            });
-            window.addEventListener('click', function(e) {
-                if (e.target === paymentModal) {
-                    paymentModal.style.display = 'none';
-                    paymentContainer.innerHTML = '';
-                }
+                if (this.classList.contains('disabled')) return;
+                fetch('/payments/payment/' + this.getAttribute('data-order-id'))
+                    .then(function(r) { return r.text(); })
+                    .then(function(html) {
+                        paymentContainer.innerHTML = html;
+                        paymentModal.style.display = 'block';
+                        attachPaymentFormScript();
+                    });
             });
         });
 
-        function attachPaymentFormScript() {
-            const paymentForm         = document.getElementById('paymentForm');
-            const paymentMethodSelect = document.getElementById('payment_method');
-            const methodGroup         = document.getElementById('payment-method-group');
-            if (!paymentForm || !paymentMethodSelect || !methodGroup) return;
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('close-modal')) { paymentModal.style.display = 'none'; paymentContainer.innerHTML = ''; }
+        });
+        window.addEventListener('click', function(e) {
+            if (e.target === paymentModal) { paymentModal.style.display = 'none'; paymentContainer.innerHTML = ''; }
+        });
+    });
 
-            paymentForm.addEventListener('submit', function(e) {
-                const existingError = document.querySelector('.payment-method-error');
-                if (existingError) existingError.remove();
-                paymentMethodSelect.classList.remove('input-error');
-                paymentMethodSelect.removeAttribute('aria-describedby');
-                if (paymentMethodSelect.value === '') {
-                    e.preventDefault();
-                    paymentMethodSelect.classList.add('input-error');
-                    paymentMethodSelect.setAttribute('aria-describedby', 'payment_method_error');
-                    const error = document.createElement('div');
-                    error.className = 'error payment-method-error';
-                    error.id = 'payment_method_error';
-                    error.innerText = 'Please select a payment method.';
-                    methodGroup.appendChild(error);
-                }
-            });
+    function attachPaymentFormScript() {
+        const paymentForm         = document.getElementById('paymentForm');
+        const paymentMethodSelect = document.getElementById('payment_method');
+        const methodGroup         = document.getElementById('payment-method-group');
+        if (!paymentForm || !paymentMethodSelect || !methodGroup) return;
+        paymentForm.addEventListener('submit', function(e) {
+            document.querySelector('.payment-method-error')?.remove();
+            paymentMethodSelect.classList.remove('input-error');
+            if (paymentMethodSelect.value === '') {
+                e.preventDefault();
+                paymentMethodSelect.classList.add('input-error');
+                const err = document.createElement('div');
+                err.className = 'error payment-method-error';
+                err.innerText = 'Please select a payment method.';
+                methodGroup.appendChild(err);
+            }
+        });
+        paymentMethodSelect.addEventListener('change', function() {
+            paymentMethodSelect.classList.remove('input-error');
+            document.querySelector('.payment-method-error')?.remove();
+        });
+    }
 
-            paymentMethodSelect.addEventListener('change', function() {
-                paymentMethodSelect.classList.remove('input-error');
-                const error = document.querySelector('.payment-method-error');
-                if (error) error.remove();
-                paymentMethodSelect.removeAttribute('aria-describedby');
-            });
-        }
-
-        const successMsg = document.getElementById('successMessage');
-        if (successMsg) {
-            setTimeout(function() {
-                successMsg.style.transition = 'opacity 0.5s';
-                successMsg.style.opacity = '0';
-                setTimeout(function() { successMsg.style.display = 'none'; }, 500);
-            }, 3000);
-        }
-    </script>
+    // Auto-hide toast
+    const successMsg = document.getElementById('successMessage');
+    if (successMsg) {
+        setTimeout(function() {
+            successMsg.style.transition = 'opacity 0.5s';
+            successMsg.style.opacity = '0';
+            setTimeout(function() { successMsg.style.display = 'none'; }, 500);
+        }, 3000);
+    }
+</script>
 
 @endsection
