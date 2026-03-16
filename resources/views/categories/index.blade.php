@@ -244,7 +244,7 @@
                                        class="action-btn edit-btn nav-link-loading"
                                        data-loading-text="Opening editor..."
                                        title="Edit Category">
-                                        <i class="fas fa-pen-to-square"></i>
+                                        <i class="fas fa-pen"></i>
                                     </a>
 
                                     {{-- Delete Button --}}

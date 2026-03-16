@@ -155,7 +155,7 @@
                                 class="action-btn edit-btn nav-link-loading"
                                 data-loading-text="Loading editor..."
                                 title="Edit Product">
-                                    <i class="fas fa-pen-to-square"></i>
+                                    <i class="fas fa-pen"></i>
                                 </a>
 
                                 <button type="button"

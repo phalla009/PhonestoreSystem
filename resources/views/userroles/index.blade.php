@@ -115,7 +115,7 @@
                                     class="action-btn edit-btn nav-link"
                                     data-id="{{ $role->id }}"
                                     title="Edit Role">
-                                        <i class="fas fa-pen-to-square"></i>
+                                        <i class="fas fa-pen"></i>
                                     </a>
 
                                     <button type="button"

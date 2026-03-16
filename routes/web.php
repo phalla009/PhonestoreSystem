@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', CategoryController::class)->names('categories');
     Route::resource('customers', CustomerController::class)->names('customers');
     Route::resource('inventorys', InventoryController::class)->names('inventorys');
+    Route::resource('inventory', InventoryController::class);
     Route::resource('payments', PaymentController::class)->names('payments');
     Route::resource('userroles', RoleController::class)->parameters([
         'userroles' => 'role'

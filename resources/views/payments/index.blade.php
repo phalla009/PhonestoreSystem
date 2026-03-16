@@ -143,7 +143,7 @@
                                        class="action-btn edit-btn nav-link-loading"
                                        data-loading-text="Loading edit..."
                                        title="Edit Payment">
-                                        <i class="fas fa-pen-to-square"></i>
+                                        <i class="fas fa-pen"></i>
                                     </a>
 
                                     <button type="button"

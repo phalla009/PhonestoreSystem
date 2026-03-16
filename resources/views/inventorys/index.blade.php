@@ -19,6 +19,33 @@
         .stock-in     { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
         .stock-low    { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
         .stock-out    { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+
+        /* Action buttons */
+        .action-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: opacity .15s, transform .12s;
+        }
+
+        .btn-action:hover  { opacity: .82; text-decoration: none; }
+        .btn-action:active { transform: scale(.96); }
+
+        .btn-show { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .btn-edit { background: #fefce8; color: #a16207; border: 1px solid #fde047; }
     </style>
 @endsection
 
@@ -58,6 +85,7 @@
                         <th>Current Stock</th>
                         <th>Status</th>
                         <th>Updated Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,10 +105,21 @@
                                 @endif
                             </td>
                             <td data-label="Updated Date">{{ $product->updated_at->timezone('Asia/Phnom_Penh')->format('Y-m-d H:i') }}</td>
+                            <td data-label="Actions">
+                                <div class="action-buttons">
+                                    <a href="{{ route('inventory.edit', $product->id) }}"
+                                    class="action-btn edit-btn nav-link-loading"
+                                    data-loading-text="Opening editor..."
+                                    title="Edit stock">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                </div>
+                            </td>
+                             
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" style="text-align:center;" id="found">No products found.</td>
+                            <td colspan="7" style="text-align:center;" id="found">No products found.</td>
                         </tr>
                     @endforelse
                 </tbody>
