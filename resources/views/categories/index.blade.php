@@ -59,7 +59,7 @@
             <a href="{{ route('categories.create') }}"
                class="btn btn-primary page-link-loading"
                data-loading-text="Loading form...">
-                <i class="fas fa-circle-plus"></i> Add New Brand
+                <i class="fas fa-circle-plus"></i> Add New Category
             </a>
 
             {{-- Search --}}
@@ -101,7 +101,7 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Brand Name</th>
+                    <th>Category Name</th>
                     <th>Created At</th>
                     <th>Actions</th>
                 </tr>

@@ -45,7 +45,7 @@
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
-        <h2><i class="fas fa-mobile-alt"></i> Edit Brand</h2>
+        <h2><i class="fas fa-mobile-alt"></i> Edit Category</h2>
 
         {{-- FIX: បន្ថែម id="categoryForm" --}}
         <form id="categoryForm" action="{{ route('categories.update', $category->id) }}" method="POST">
@@ -54,7 +54,7 @@
 
             <div class="form-row">
                 <div class="form-group" style="width: 100%;">
-                    <label for="name">Brand Name:</label>
+                    <label for="name">Category Name:</label>
                     <input
                         id="name"
                         type="text"
@@ -87,7 +87,7 @@
 
             <div>
                 <button class="btn btn-update" type="submit">
-                    <i class="fas fa-save"></i> Update Brand
+                    <i class="fas fa-save"></i> Update Category
                 </button>
             </div>
         </form>
