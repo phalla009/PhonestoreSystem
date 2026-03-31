@@ -27,7 +27,7 @@
     .input-error { border: 1px solid red; }
     .error { color: red; margin-top: 4px; font-size: 0.9em; }
 
-    .filter-section { margin-top: -50px; margin-bottom: 20px; }
+    .filter-section { margin-top: 0px; margin-bottom: 20px; }
     .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .filter-form { display: flex; flex-direction: column; gap: 16px; }
     .grid-3-columns { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }

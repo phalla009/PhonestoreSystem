@@ -13,6 +13,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\UserManagerController;
+use App\Http\Controllers\BakongKhqrController;
 use Illuminate\Support\Facades\Route;
 
 // Public auth routes
@@ -42,10 +43,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('inventorys', InventoryController::class)->names('inventorys');
     Route::resource('inventory', InventoryController::class);
     Route::resource('payments', PaymentController::class)->names('payments');
+
     Route::resource('userroles', RoleController::class)->parameters([
         'userroles' => 'role'
-
-        
     ]);
 
     Route::resource('usermanagers', UserManagerController::class);
@@ -57,4 +57,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/payments/payment/{order}', [PaymentController::class, 'payment'])->name('payments.payment');
     Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
     Route::get('/payments/search', [PaymentController::class, 'search'])->name('payments.search');
+
+    Route::post('/pos/khqr/generate', [BakongKhqrController::class, 'khqrGenerate'])->name('pos.khqr.generate');
+    Route::post('/pos/khqr/check-payment', [BakongKhqrController::class, 'checkPayment'])->name('pos.khqr.check');
+    Route::get('/pos/display', function () {
+        return view('pos.customer-display');
+    })->name('pos.display');
+
+   
+
+   
 });

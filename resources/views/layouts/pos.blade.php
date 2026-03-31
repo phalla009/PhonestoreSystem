@@ -137,11 +137,11 @@
 <body>
 
   <div class="pos-topbar">
-    <div class="pos-topbar-logo">
+    {{-- <div class="pos-topbar-logo">
       <span class="l1">K</span><span class="l2"> R</span><span class="l3">System</span>
-    </div>
+    </div> --}}
     <h3 style="color: white;">
-        <i class="fas fa-cash-register"></i> Point of Sale
+        <i class="fas fa-cash-register"></i> POS
     </h3>
     <div class="pos-topbar-right">
       <div class="pos-topbar-user">
