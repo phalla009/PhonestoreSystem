@@ -17,14 +17,38 @@
     table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
     thead tr { background-color: #f7f7f7; }
     th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; vertical-align: middle; word-wrap: break-word; }
+
+    /* Search field */
+    .search-wrapper {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+    }
+    .search-wrapper .search-icon {
+        position: absolute;
+        left: 10px;
+        color: #aaa;
+        pointer-events: none;
+    }
+    #customerSearch {
+        margin-top: -5px;   
+        padding: 10px 12px 10px 34px;
+        border: 1px solid #ddd;
+        border-radius: 24px;
+        font-size: 14px;
+        width: 400px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    #customerSearch:focus {
+        border-color: #132f4f;
+        box-shadow: 0 0 0 3px rgba(74,144,226,0.15);
+    }
+    #noResultsRow { display: none; }
 </style>
 @endsection
 
 @section('content')
-
-{{-- ❌ លុប: #loading-overlay  — master layout មានហើយ --}}
-{{-- ❌ លុប: #logout-confirm   — master layout មានហើយ --}}
-{{-- ❌ លុប: logout JS         — master layout មានហើយ --}}
 
 @if(session('success'))
 <div id="successMessage" class="custom-success">
@@ -46,6 +70,15 @@
                data-loading-text="Loading add...">
                 <i class="fas fa-circle-plus"></i> Add New Customer
             </a>
+
+            {{-- 🔍 Search field --}}
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text"
+                       id="customerSearch"
+                       placeholder="Search by name, phone..."
+                       autocomplete="off">
+            </div>
         </div>
     </div>
 
@@ -101,6 +134,11 @@
                         <td colspan="6" style="text-align:center;" id="found">No customers found.</td>
                     </tr>
                 @endforelse
+
+                {{-- Shown by JS when search yields no matches --}}
+                <tr id="noResultsRow">
+                    <td colspan="6" style="text-align:center;">No customers match your search.</td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -133,7 +171,7 @@
         ov.style.display = 'flex';
     }
 
-    // Page nav links — class "page-link-loading"
+    // Page nav links
     document.querySelectorAll('.page-link-loading').forEach(function(link) {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
@@ -177,6 +215,25 @@
             setTimeout(function() { successMsg.style.display = 'none'; }, 500);
         }, 3000);
     }
+
+    // 🔍 Live search — filters by Name and Phone
+    document.getElementById('customerSearch').addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+        const rows  = document.querySelectorAll('#customersTable tr:not(#noResultsRow)');
+        let visibleCount = 0;
+
+        rows.forEach(function(row) {
+            // Column indices: 1 = Name, 3 = Phone
+            const name  = (row.cells[1]?.textContent || '').toLowerCase();
+            const phone = (row.cells[3]?.textContent || '').toLowerCase();
+            const match = name.includes(query) || phone.includes(query);
+            row.style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        });
+
+        document.getElementById('noResultsRow').style.display =
+            (visibleCount === 0 && query !== '') ? '' : 'none';
+    });
 </script>
 
 @endsection

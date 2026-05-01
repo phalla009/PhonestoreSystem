@@ -9,13 +9,38 @@
     <link rel="stylesheet" href="{{ URL::asset('css/delete_form.css') }}">
     <script src="{{ URL::asset('js/form.js') }}"></script>
     <script src="{{ URL::asset('js/delete_form.js') }}"></script>
+    <style>
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-wrapper .search-icon {
+            position: absolute;
+            left: 10px;
+            color: #9ca3af;
+            pointer-events: none;
+            font-size: 14px;
+        }
+        .search-wrapper input[type="text"] {
+            padding: 10px 12px 10px 32px;
+            border: 1px solid #d1d5db;
+            border-radius: 24px;
+            font-size: 14px;
+            width: 400px;
+            margin-top: -5px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-wrapper input[type="text"]:focus {
+            border-color: #132f4f;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+        #noResultsRow { display: none; }
+    </style>
 @endsection
 
 @section('content')
-
-{{-- ❌ លុប: #loading-overlay  — master layout មានហើយ --}}
-{{-- ❌ លុប: #logout-confirm   — master layout មានហើយ --}}
-{{-- ❌ លុប: logout JS         — master layout មានហើយ --}}
 
 @if(session('success'))
 <div id="successMessage" class="custom-success">
@@ -37,6 +62,15 @@
                data-loading-text="Loading form...">
                 <i class="fas fa-circle-plus"></i> Add New Role
             </a>
+
+            {{-- 🔍 Search Field --}}
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text"
+                       id="roleSearch"
+                       placeholder="Search name or description..."
+                       autocomplete="off">
+            </div>
         </div>
     </div>
 
@@ -53,7 +87,7 @@
             </thead>
             <tbody id="rolesTable">
                 @forelse ($roles as $role)
-                    <tr>
+                    <tr class="role-row">
                         <td data-label="No">#{{ $loop->iteration }}</td>
                         <td data-label="Role Name">
                             @php
@@ -102,6 +136,13 @@
                         <td colspan="5" style="text-align:center;" id="found">No roles found.</td>
                     </tr>
                 @endforelse
+
+                {{-- Shown when search yields no matches --}}
+                <tr id="noResultsRow">
+                    <td colspan="5" style="text-align:center; color:#6b7280;">
+                        <i class="fas fa-search" style="margin-right:6px;"></i> No results match your search.
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -145,6 +186,24 @@
                 window.location.href = href;
             }
         });
+    });
+
+    // 🔍 Live search — filters by role name and description
+    document.getElementById('roleSearch').addEventListener('input', function () {
+        const term = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('#rolesTable .role-row');
+        let visibleCount = 0;
+
+        rows.forEach(function (row) {
+            const name = row.querySelector('[data-label="Role Name"]')?.textContent.toLowerCase() ?? '';
+            const desc = row.querySelector('[data-label="Description"]')?.textContent.toLowerCase() ?? '';
+
+            const matches = name.includes(term) || desc.includes(term);
+            row.style.display = matches ? '' : 'none';
+            if (matches) visibleCount++;
+        });
+
+        document.getElementById('noResultsRow').style.display = (visibleCount === 0) ? '' : 'none';
     });
 
     // Single delete

@@ -22,14 +22,38 @@
         .role-manager { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
         .role-staff   { background: #dbeafe; color: #2563eb; border: 1px solid #bfdbfe; }
         .role-default { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-wrapper .search-icon {
+            position: absolute;
+            left: 10px;
+            color: #9ca3af;
+            pointer-events: none;
+            font-size: 14px;
+        }
+        .search-wrapper input[type="text"] {
+            padding: 10px 12px 10px 32px;
+            border: 1px solid #d1d5db;
+            border-radius: 24px;
+            font-size: 14px;
+            width: 400px;
+            outline: none;
+            margin-top: -5px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-wrapper input[type="text"]:focus {
+            border-color: #132f4f;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+        #noResultsRow { display: none; }
     </style>
 @endsection
 
 @section('content')
-
-{{-- ❌ លុប: #loading-overlay  — master layout មានហើយ --}}
-{{-- ❌ លុប: #logout-confirm   — master layout មានហើយ --}}
-{{-- ❌ លុប: logout JS         — master layout មានហើយ --}}
 
 @if(session('success'))
 <div id="successMessage" class="custom-success">
@@ -51,6 +75,15 @@
                data-loading-text="Loading add...">
                 <i class="fas fa-circle-plus"></i> Add New User Manager
             </a>
+
+            {{-- 🔍 Search Field --}}
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text"
+                       id="userSearch"
+                       placeholder="Search name, email, or role..."
+                       autocomplete="off">
+            </div>
         </div>
     </div>
 
@@ -68,7 +101,7 @@
             </thead>
             <tbody id="usersTable">
                 @forelse ($users as $user)
-                    <tr>
+                    <tr class="user-row">
                         <td data-label="No">#{{ $loop->iteration }}</td>
                         <td data-label="Full Name">
                             <i class="fas fa-user user-icon"></i> {{ $user->name }}
@@ -115,6 +148,13 @@
                         <td colspan="6" style="text-align:center;" id="found">No users found.</td>
                     </tr>
                 @endforelse
+
+                {{-- Shown when search yields no matches --}}
+                <tr id="noResultsRow">
+                    <td colspan="6" style="text-align:center; color:#6b7280;">
+                        <i class="fas fa-search" style="margin-right:6px;"></i> No results match your search.
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -158,6 +198,25 @@
                 window.location.href = href;
             }
         });
+    });
+
+    // 🔍 Live search — filters by name, email, and role
+    document.getElementById('userSearch').addEventListener('input', function () {
+        const term = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('#usersTable .user-row');
+        let visibleCount = 0;
+
+        rows.forEach(function (row) {
+            const name  = row.querySelector('[data-label="Full Name"]')?.textContent.toLowerCase() ?? '';
+            const email = row.querySelector('[data-label="Email"]')?.textContent.toLowerCase() ?? '';
+            const role  = row.querySelector('[data-label="Role"]')?.textContent.toLowerCase() ?? '';
+
+            const matches = name.includes(term) || email.includes(term) || role.includes(term);
+            row.style.display = matches ? '' : 'none';
+            if (matches) visibleCount++;
+        });
+
+        document.getElementById('noResultsRow').style.display = (visibleCount === 0) ? '' : 'none';
     });
 
     // Single delete
