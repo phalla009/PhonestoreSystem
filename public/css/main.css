@@ -284,7 +284,14 @@ a {
 }
 .btn.btn-primary,
 .btn-update {
-    background: #181c27;
+    background: repeating-linear-gradient(
+        -45deg,
+        #0f1117,
+        #0f1117 2px,
+        #000000d1 2px,
+        rgb(9, 9, 9) 4px,
+        rgb(9, 9, 9) 4px
+    );
     color: white;
     padding: 10px 20px;
     border: none;
@@ -313,7 +320,6 @@ a {
     box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
 }
 .btn.btn-primary:hover {
-    background: #232836e6;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px #181c27;
 }
@@ -367,7 +373,14 @@ a {
     gap: 8px;
     min-width: 120px;
     padding: 10px 20px;
-    background-color: #1e293b;
+    background: repeating-linear-gradient(
+        -45deg,
+        #0f1117,
+        #0f1117 2px,
+        #000000d1 2px,
+        rgb(9, 9, 9) 4px,
+        rgb(9, 9, 9) 4px
+    );
     color: #fff;
     font-size: 14px;
     font-weight: 600;
@@ -379,10 +392,9 @@ a {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .btn-back:hover {
-    background-color: #334155;
     color: #fff;
     transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.46);
 }
 .btn-back:active {
     transform: translateY(0);
@@ -402,7 +414,13 @@ a {
 }
 .stat-card {
     color: #00e5a0;
-    background: #181c27;
+    background: repeating-linear-gradient(
+        -45deg,
+        #0f1117,
+        #181c27 2px,
+        rgb(9, 9, 9) 4px,
+        rgb(9, 9, 9) 4px
+    );
     border-radius: 10px;
     padding: 1.25rem 1rem;
     text-align: center;
@@ -453,7 +471,13 @@ table thead tr {
 table thead th {
     position: sticky;
     top: 0;
-    background: #181c27;
+    background: repeating-linear-gradient(
+        -45deg,
+        #0f1117,
+        #000000d1 2px,
+        rgb(9, 9, 9) 4px,
+        rgb(9, 9, 9) 4px
+    );
     color: white;
     z-index: 2;
 }
@@ -637,7 +661,15 @@ label {
     top: 20px;
     right: 20px;
     min-width: 300px;
-    background: #0f1117;
+    background: repeating-linear-gradient(
+        -45deg,
+        #0f1117,
+        #0f1117 2px,
+        #000000d1 2px,
+        #000000b1 3px,
+        rgb(9, 9, 9) 4px,
+        rgb(9, 9, 9) 4px
+    );
     border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     overflow: hidden;

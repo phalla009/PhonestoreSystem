@@ -28,67 +28,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// document.addEventListener("DOMContentLoaded", function () {
-//     const modal = document.getElementById("categoryModal");
-//     const modalBody = document.getElementById("modalBody");
-//     const closeModal = document.getElementById("closeModal");
+// ✅ reuse overlay ពី master layout
+function showLoading(msg) {
+    const ov = document.getElementById("loading-overlay");
+    const lt = document.getElementById("loading-text");
+    if (!ov) return;
+    if (lt) lt.textContent = msg || "Loading...";
+    ov.style.display = "flex";
+}
 
-//     // Open Create Modal
-//     const openCreateBtn = document.getElementById("openCreateModal");
-//     if (openCreateBtn) {
-//         openCreateBtn.addEventListener("click", function (e) {
-//             e.preventDefault();
-//             openModal(this.href);
-//         });
-//     }
-
-//     // Open Edit Modal (multiple buttons)
-//     document.querySelectorAll(".openEditModal").forEach(function (btn) {
-//         btn.addEventListener("click", function (e) {
-//             e.preventDefault();
-//             openModal(this.href);
-//         });
-//     });
-
-//     // Open Show Modal (multiple buttons)
-//     document.querySelectorAll(".openShowModal").forEach(function (btn) {
-//         btn.addEventListener("click", function (e) {
-//             e.preventDefault();
-//             openModal(this.href);
-//         });
-//     });
-
-//     // Handle modal closing (outer span)
-//     if (closeModal) {
-//         closeModal.addEventListener("click", function () {
-//             modal.style.display = "none";
-//             modalBody.innerHTML = "";
-//         });
-//     }
-
-//     // Close modal when clicking outside of it
-//     window.addEventListener("click", function (e) {
-//         if (e.target === modal) {
-//             modal.style.display = "none";
-//             modalBody.innerHTML = "";
-//         }
-//     });
-
-//     function openModal(url) {
-//         fetch(url)
-//             .then((res) => res.text())
-//             .then((html) => {
-//                 modalBody.innerHTML = html;
-//                 modal.style.display = "block";
-
-//                 // Bind close button inside dynamically loaded content
-//                 const innerClose = modalBody.querySelector("#closeModal");
-//                 if (innerClose) {
-//                     innerClose.addEventListener("click", () => {
-//                         modal.style.display = "none";
-//                         modalBody.innerHTML = "";
-//                     });
-//                 }
-//             });
-//     }
-// });
+// Page nav links — class "page-link-loading" មិន conflict ជាមួយ sidebar
+document.querySelectorAll(".page-link-loading").forEach(function (link) {
+    link.addEventListener("click", function (e) {
+        const href = this.getAttribute("href");
+        const msg = this.getAttribute("data-loading-text") || "Loading...";
+        if (href && href !== "#" && href !== "javascript:void(0)") {
+            e.preventDefault();
+            showLoading(msg);
+            window.location.href = href;
+        }
+    });
+});
+// Auto-hide toast
+const successMsg = document.getElementById("successMessage");
+if (successMsg) {
+    setTimeout(function () {
+        successMsg.style.transition = "opacity 0.5s";
+        successMsg.style.opacity = "0";
+        setTimeout(function () {
+            successMsg.style.display = "none";
+        }, 500);
+    }, 3000);
+}

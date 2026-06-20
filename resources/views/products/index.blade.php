@@ -134,92 +134,14 @@
 </div>
 
 {{-- Delete Modal --}}
-<div id="deleteConfirmModal" class="modal">
-    <div class="delete-modal-box">
-        <div class="delete-modal-icon"><i class="fas fa-trash-alt"></i></div>
-        <button class="delete-modal-close" id="deleteModalClose" aria-label="Close">&times;</button>
-        <h3>Delete Record?</h3>
-        <p>This action <strong>cannot be undone.</strong> Are you sure?</p>
-        <form id="deleteForm" method="POST" action="">
-            @csrf
-            @method('DELETE')
-            <div class="delete-modal-actions">
-                <button type="button" id="cancelDelete" class="delete-btn-cancel">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-                <button type="submit" id="confirmDeleteBtn" class="delete-btn-confirm">
-                    <i class="fas fa-trash-alt"></i> Yes, Delete
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
+<x-delete-modal />
 <script>
-    // =============================================
-    // ✅ ប្រើ overlay ពី master layout — មិន create ថ្មីទេ
-    // =============================================
-    function showLoading(msg) {
-        const ov = document.getElementById('loading-overlay');
-        const lt = document.getElementById('loading-text');
-        if (!ov) return;
-        if (lt) lt.textContent = msg || 'Loading...';
-        ov.style.display = 'flex';
-    }
-
-    // =============================================
-    // Page nav links (Add / Show / Edit)
-    // class "page-link-loading" — ប្រើ class ផ្សេងពី sidebar
-    // =============================================
-    document.querySelectorAll('.page-link-loading').forEach(function(link) {
-        link.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            const msg  = this.getAttribute('data-loading-text') || 'Loading...';
-            if (href && href !== '#' && href !== 'javascript:void(0)') {
-                e.preventDefault();
-                showLoading(msg);
-                window.location.href = href;
-            }
-        });
-    });
 
     // Search Enter
     document.getElementById('searchInput').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') showLoading('Searching...');
     });
 
-    // Delete modal open
-    document.querySelectorAll('.openDeleteModal').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.getElementById('deleteForm').setAttribute('action', this.getAttribute('data-action'));
-            document.getElementById('deleteConfirmModal').style.display = 'flex';
-        });
-    });
-
-    // Delete modal close
-    document.getElementById('deleteModalClose').addEventListener('click', function() {
-        document.getElementById('deleteConfirmModal').style.display = 'none';
-    });
-    document.getElementById('cancelDelete').addEventListener('click', function() {
-        document.getElementById('deleteConfirmModal').style.display = 'none';
-    });
-
-    // Confirm delete
-    document.getElementById('confirmDeleteBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        showLoading('Deleting...');
-        setTimeout(function() { document.getElementById('deleteForm').submit(); }, 300);
-    });
-
-    // Auto-hide success toast
-    const successMsg = document.getElementById('successMessage');
-    if (successMsg) {
-        setTimeout(function() {
-            successMsg.style.transition = 'opacity 0.5s';
-            successMsg.style.opacity = '0';
-            setTimeout(function() { successMsg.style.display = 'none'; }, 500);
-        }, 3000);
-    }
 </script>
 
 @endsection

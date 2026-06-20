@@ -19,7 +19,15 @@
     top: 20px;
     right: 50px;
     z-index: 1000;
-    background: #0f1117;
+    background: repeating-linear-gradient(
+        -45deg,
+        #0f1117,
+        #0f1117 2px,
+        #000000d1 2px,
+        #000000b1 3px,
+        rgb(9, 9, 9) 4px,
+        rgb(9, 9, 9) 4px
+    );
     color: whitesmoke;
     border-left: 5px solid #2ecc71;
     width: 280px;

@@ -26,7 +26,14 @@
       display: flex;
       max-width: 900px;
       width: 100%;
-      background: #252a38;
+      background: repeating-linear-gradient(
+            -45deg,
+            #0f1117,
+            #0f1117 2px,
+            #000000d1 2px,
+            #000000b1 3px,
+            rgb(9, 9, 9) 4px
+        );
       border-radius: 15px;
       overflow: hidden;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -154,7 +161,7 @@
     .submit-btn {
       width: 100%;
       padding: 15px;
-      background: #0f1117;
+      background: #ffffff1f;
       color: white;
       border: none;
       border-radius: 24px;
