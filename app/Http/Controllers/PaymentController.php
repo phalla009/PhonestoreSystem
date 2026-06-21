@@ -31,7 +31,7 @@ class PaymentController extends Controller
         $orders       = $allCompleted->filter(fn($o) => $o->payments->isNotEmpty())->values();
         $unpaidOrders = $allCompleted->filter(fn($o) => $o->payments->isEmpty())->values();
 
-        return view('payments.index', compact('orders', 'unpaidOrders'));
+        return view('pages/payments.index', compact('orders', 'unpaidOrders'));
     }
 
     /**
@@ -39,7 +39,7 @@ class PaymentController extends Controller
      */
     public function payment(Order $order)
     {
-        return view('payments.payment', compact('order'));
+        return view('pages/payments.payment', compact('order'));
     }
 
     /**
@@ -75,7 +75,7 @@ class PaymentController extends Controller
     public function show(Payment $payment)
     {
         $payment->load(['order.customer', 'order.product']);
-        return view('payments.show', compact('payment'));
+        return view('pages/payments.show', compact('payment'));
     }
 
     /**
@@ -84,7 +84,7 @@ class PaymentController extends Controller
     public function edit(Payment $payment)
     {
         $payment->load(['order.customer', 'order.product']);
-        return view('payments.edit', compact('payment'));
+        return view('pages/payments.edit', compact('payment'));
     }
 
     /**

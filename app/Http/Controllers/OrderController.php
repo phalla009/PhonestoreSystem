@@ -40,7 +40,7 @@ class OrderController extends Controller
 
         $orders = $query->get();
 
-        return view('orders.index', compact('orders', 'customers'));
+        return view('pages/orders.index', compact('orders', 'customers'));
     }
 
     /**
@@ -50,7 +50,7 @@ class OrderController extends Controller
     {
         $customers = Customer::all();
         $products  = Product::where('status', 'active')->get();
-        return view('orders.create', compact('customers', 'products'));
+        return view('pages/orders.create', compact('customers', 'products'));
     }
 
     /**
@@ -115,7 +115,7 @@ class OrderController extends Controller
                     ->withSum('payments', 'amount')
                     ->findOrFail($id);
 
-        return view('orders.show', compact('order'));
+        return view('pages/orders.show', compact('order'));
     }
 
     /**
@@ -126,7 +126,7 @@ class OrderController extends Controller
         $order     = Order::findOrFail($id);
         $customers = Customer::all();
         $products  = Product::all();
-        return view('orders.edit', compact('order', 'customers', 'products'));
+        return view('pages/orders.edit', compact('order', 'customers', 'products'));
     }
 
     /**

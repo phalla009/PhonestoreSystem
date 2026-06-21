@@ -22,7 +22,7 @@ class InventoryController extends Controller
             return $product->stock * $product->price;
         });
 
-        return view('inventorys.index', compact(
+        return view('pages/inventorys.index', compact(
             'products',
             'totalItems',
             'lowStockItems',
@@ -38,7 +38,7 @@ class InventoryController extends Controller
     {
         $products = Product::orderBy('name')->get();
 
-        return view('inventorys.create', compact('products'));
+        return view('pages/inventorys.create', compact('products'));
     }
 
     /**
@@ -90,7 +90,7 @@ class InventoryController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        return view('inventorys.show', compact('product'));
+        return view('pages/inventorys.show', compact('product'));
     }
 
     /**
@@ -100,7 +100,7 @@ class InventoryController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        return view('inventorys.edit', compact('product'));
+        return view('pages/inventorys.edit', compact('product'));
     }
 
     /**

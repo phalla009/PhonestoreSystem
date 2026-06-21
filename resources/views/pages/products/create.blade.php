@@ -1,40 +1,13 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    Edited Product
+    Add New Product
 @endsection
 
 @section('headerBlock')
     <link rel="stylesheet" href="{{ URL::asset('css/main.css') }}">
     <script src="{{ URL::asset('js/form.js') }}"></script>
     <style>
-        .image-wrapper {
-            position: relative;
-            display: inline-block;
-            margin-right: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .image-wrapper img {
-            border-radius: 8px;
-            object-fit: cover;
-            width: 120px;
-            height: 100px;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .image-wrapper label {
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #d9534f;
-            user-select: none;
-        }
-        .image-wrapper input[type="checkbox"] {
-            margin-right: 5px;
-            vertical-align: middle;
-        }
-
-        /* Loading Overlay */
         #loading-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -65,34 +38,44 @@
         <div id="loading-text">Loading...</div>
     </div>
 
-    <div class="modal-content">
+    @if(session('success'))
+        <div id="successMessage" class="custom-success">
+            <div class="success-content">
+                <span class="success-icon">✔</span>
+                <span class="success-text">{{ session('success') }}</span>
+            </div>
+            <div class="progress-bar"></div>
+        </div>
+    @endif
 
-        <a href="{{ route('products.index') }}" id="backBtn" class="btn btn-back">
+    <div class="modal-content" role="main">
+
+        {{-- Back Button --}}
+        <a href="{{ route('products.index') }}" id="backBtn" class="btn btn-back" aria-label="Back to product list">
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
-        <h2><i class="fas fa-box-open"></i> Edit Product</h2>
+        <h2><i class="fas fa-box-open"></i> Add New Product</h2>
 
-        <form id="productForm" action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+        <form id="productForm" action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" novalidate>
             @csrf
-            @method('PUT')
 
             <!-- Product Name & Brand -->
             <div class="form-row" style="display: flex; gap: 20px; flex-wrap: wrap;">
                 <div class="form-group" style="flex: 1; min-width: 250px;">
-                    <label>Product Name:</label>
-                    <input type="text" name="name" value="{{ old('name', $product->name) }}">
+                    <label for="name">Product Name:</label>
+                    <input id="name" type="text" name="name" placeholder="Enter product name" value="{{ old('name') }}">
                     @error('name')
                         <p class="text-danger mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="form-group" style="flex: 1; min-width: 250px;">
-                    <label>Brand:</label>
-                    <select name="category_id">
+                    <label for="category_id">Brand:</label>
+                    <select id="category_id" name="category_id">
                         <option value="">Select Brand</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? 'selected' : '' }}>
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                 {{ $category->name }}
                             </option>
                         @endforeach
@@ -106,54 +89,38 @@
             <!-- Price & Stock -->
             <div class="form-row" style="display: flex; gap: 20px; flex-wrap: wrap;">
                 <div class="form-group" style="flex: 1; min-width: 250px;">
-                    <label>Price:</label>
-                    <input type="number" name="price" step="0.01" value="{{ old('price', $product->price) }}">
+                    <label for="price">Price:</label>
+                    <input id="price" type="number" name="price" step="0.01" value="{{ old('price') }}">
                     @error('price')
                         <p class="text-danger mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="form-group" style="flex: 1; min-width: 250px;">
-                    <label>Stock:</label>
-                    <input type="number" name="stock" value="{{ old('stock', $product->stock) }}">
+                    <label for="stock">Stock:</label>
+                    <input id="stock" type="number" name="stock" value="{{ old('stock') }}">
                     @error('stock')
                         <p class="text-danger mt-1">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
-            <!-- Current Images -->
-            <div class="form-group">
-                <label>Current Images:</label>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    @foreach($product->images as $image)
-                        <div class="image-wrapper">
-                            <img src="{{ asset('images/products/' . $image->image) }}" alt="Product Image">
-                            <label>
-                                <input type="checkbox" name="delete_images[]" value="{{ $image->id }}">
-                                Remove
-                            </label>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Add More Images & Status -->
+            <!-- Images & Status -->
             <div class="form-row" style="display: flex; gap: 20px; flex-wrap: wrap;">
                 <div class="form-group" style="flex: 1; min-width: 250px;">
-                    <label>Add More Images:</label>
-                    <input type="file" name="images[]" multiple accept="image/*">
-                    @error('images')
+                    <label for="images">Product Images:</label>
+                    <input id="images" type="file" name="images[]" accept="image/*" multiple>
+                    @error('images.*')
                         <p class="text-danger mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="form-group" style="flex: 1; min-width: 250px;">
-                    <label>Status:</label>
-                    <select name="status">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status">
                         <option value="">Select Status</option>
-                        <option value="active"   {{ $product->status == 'active'   ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="active"   {{ old('status') == 'active'   ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
                     @error('status')
                         <p class="text-danger mt-1">{{ $message }}</p>
@@ -165,7 +132,7 @@
             <div class="form-group">
                 <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                     <input id="add_to_pos" type="checkbox" name="add_to_pos" value="1"
-                        {{ old('add_to_pos', $product->add_to_pos) ? 'checked' : '' }}
+                        {{ old('add_to_pos') ? 'checked' : '' }}
                         style="width: 18px; height: 18px; cursor: pointer; accent-color: #3498db;">
                     <span>Add to POS</span>
                 </label>
@@ -176,14 +143,20 @@
 
             <!-- Description -->
             <div class="form-group">
-                <label>Description:</label>
-                <textarea name="description"
-                        style="height: 180px; resize: none;">{{ old('description', $product->description) }}</textarea>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" placeholder="Enter description"
+                        style="height: 180px; resize: none;">{{ old('description') }}</textarea>
+                @error('description')
+                    <p class="text-danger mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
-            <div style="text-align: right; margin-top: 1rem;">
-                <button class="btn btn-update" type="submit">
-                    <i class="fas fa-save"></i> Update Product
+            <div>
+                <button class="btn btn-success" type="submit" aria-label="Add Product">
+                    <i class="fas fa-save"></i> Add Product
+                </button>
+                <button id="cancel" type="button" class="btn btn-cancel" aria-label="Cancel and reset form">
+                    <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
         </form>
@@ -203,8 +176,13 @@
 
         // Submit form → show loading
         document.getElementById('productForm').addEventListener('submit', function() {
-            loadingText.textContent = 'Updating...';
+            loadingText.textContent = 'Saving...';
             overlay.style.display = 'flex';
+        });
+
+        // Cancel → reset form only
+        document.getElementById('cancel').addEventListener('click', function() {
+            document.getElementById('productForm').reset();
         });
     </script>
 

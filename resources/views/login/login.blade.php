@@ -179,7 +179,18 @@
       transform: scale(1.05);
       animation: pulse 1s infinite;
     }
-
+    .site-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 14px 20px;
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.727);
+      backdrop-filter: blur(4px);
+      z-index: 10;
+    }
     .password-toggle {
       position: absolute;
       margin-top: 25px;
@@ -307,6 +318,9 @@
         </div>
 
         <button type="submit" class="submit-btn">Login</button>
+          <footer class="site-footer">
+            &copy; 2024 Heang Phalla. All rights reserved.
+          </footer>
       </form>
     </div>
   </div>

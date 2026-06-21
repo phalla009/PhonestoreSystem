@@ -146,7 +146,7 @@
                 </div> --}}
 
             {{-- Buttons --}}
-            <div style="text-align: right; margin-top: 1rem; display: flex; justify-content: flex-end; gap: 8px;">
+            <div >
                 <button type="submit" class="btn btn-update">
                     <i class="fas fa-save"></i> Update User Manager
                 </button>

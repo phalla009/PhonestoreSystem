@@ -56,7 +56,7 @@ class BarcodeController extends Controller
             ];
         }
 
-        return view('barcodes.index', compact('products', 'productMap'));
+        return view('settings/barcodes.index', compact('products', 'productMap'));
     }
     
 }

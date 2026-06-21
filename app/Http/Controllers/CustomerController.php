@@ -16,13 +16,13 @@ class CustomerController extends Controller
             $customer->status = $customer->orders_count > 0 ? 'Active' : 'Inactive';
         }
 
-        return view('customers.index', compact('customers'));
+        return view('pages/customers.index', compact('customers'));
     }
 
     // Show create form
     public function create()
     {
-        return view('customers.create');
+        return view('pages/customers.create');
     }
 
     // Store new customer
@@ -56,14 +56,14 @@ class CustomerController extends Controller
     public function show(string $id)
     {
         $customer = Customer::findOrFail($id);
-        return view('customers.show', compact('customer'));
+        return view('pages/customers.show', compact('customer'));
     }
 
     // Show edit form
     public function edit(string $id)
     {
         $customer = Customer::findOrFail($id);
-        return view('customers.edit', compact('customer'));
+        return view('pages/customers.edit', compact('customer'));
     }
 
     // Update customer

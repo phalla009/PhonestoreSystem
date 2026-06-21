@@ -11,14 +11,14 @@ class RoleController extends Controller
     public function index()
     {
         $roles = Role::with('permissions')->get();
-        return view('userroles.index', compact('roles'));
+        return view('pages/userroles.index', compact('roles'));
     }
 
     // Show create role form
     public function create()
     {
         $allPermissions = Permission::all()->groupBy('group_name');
-        return view('userroles.create', compact('allPermissions'));
+        return view('pages/userroles.create', compact('allPermissions'));
     }
 
     // Store new role
@@ -50,12 +50,12 @@ class RoleController extends Controller
         $allPermissions = Permission::all()->groupBy('group_name');
         $rolePermissions = $role->permissions->pluck('id')->toArray();
 
-        return view('userroles.edit', compact('role', 'allPermissions', 'rolePermissions'));
+        return view('pages/userroles.edit', compact('role', 'allPermissions', 'rolePermissions'));
     }
     public function show($id)
     {
         $role = Role::findOrFail($id);
-        return view('userroles.show', compact('role'));
+        return view('pages/userroles.show', compact('role'));
     }
 
     // Update role

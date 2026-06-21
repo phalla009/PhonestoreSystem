@@ -149,7 +149,7 @@
                 </div> --}}
 
             {{-- Buttons --}}
-            <div style=" margin-top: 1rem;">
+            <div >
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Add User Manager
                 </button>

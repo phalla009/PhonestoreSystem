@@ -161,7 +161,7 @@
                 </div>
             </div>
 
-            <div style="text-align: right; margin-top: 1rem;">
+            <div>
                 <button class="btn btn-update" type="submit">
                     <i class="fas fa-save"></i> Update Customer
                 </button>

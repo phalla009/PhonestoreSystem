@@ -141,7 +141,7 @@
 
             </div>
 
-            <div style="text-align: right; margin-top: 1.5rem;">
+            <div>
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Add Customer
                 </button>

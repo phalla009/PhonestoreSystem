@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('pageTitle')
-    Edit User Role
+    Add New User Role
 @endsection
 
 @section('headerBlock')
@@ -125,10 +125,13 @@
         <div id="loading-text">Loading...</div>
     </div>
 
-    @if(session('success'))
+   @if(session('success'))
         <div id="successMessage" class="custom-success">
-            <i class="fas fa-check-circle" style="color: green; margin-right: 8px;"></i>
-            {{ session('success') }}
+            <div class="success-content">
+                <span class="success-icon">✔</span>
+                <span class="success-text">{{ session('success') }}</span>
+            </div>
+            <div class="progress-bar"></div>
         </div>
     @endif
 
@@ -137,16 +140,15 @@
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
-        <h2><i class="fas fa-user-shield"></i> Edit User Role</h2>
+        <h2><i class="fas fa-user-shield"></i> Add New User Role</h2>
 
-        <form id="editRoleForm" action="{{ route('userroles.update', $role->id) }}" method="POST">
+        <form id="createRoleForm" action="{{ route('userroles.store') }}" method="POST">
             @csrf
-            @method('PUT')
 
-            <div class="form-row" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+           <div class="form-row" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
                 <div class="form-group">
                     <label for="role_name">Role Name:</label>
-                    <input id="role_name" type="text" name="role_name" value="{{ old('role_name', $role->role_name) }}" placeholder="Enter role name">
+                    <input id="role_name" type="text" name="role_name" value="{{ old('role_name') }}" placeholder="Enter role name">
                     @error('role_name')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
@@ -154,7 +156,7 @@
 
                 <div class="form-group">
                     <label for="description">Description:</label>
-                    <textarea id="description" name="description" style="width:100%;" placeholder="Enter role description">{{ old('description', $role->description) }}</textarea>
+                    <textarea id="description" name="description" style="width:100%;" placeholder="Enter role description">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
@@ -183,8 +185,7 @@
                                                 type="checkbox"
                                                 value="{{ $perm->id }}"
                                                 name="permissions[]"
-                                                id="permissions{{ $perm->id }}"
-                                                @if(in_array($perm->id, $rolePermissions)) checked @endif>
+                                                id="permissions{{ $perm->id }}">
                                             <span>{{ $perm->permission_name }}</span>
                                         </label>
                                     @endforeach
@@ -197,9 +198,12 @@
                 </fieldset>
             </div>
 
-            <div style="text-align: right; margin-top: 1rem;">
-                <button type="submit" class="btn btn-update">
-                    <i class="fas fa-save"></i> Update Role
+            <div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Add Role
+                </button>
+                <button type="button" class="btn btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
                 </button>
             </div>
         </form>
@@ -220,13 +224,13 @@
             window.location.href = this.getAttribute('href');
         });
 
-        document.getElementById('editRoleForm').addEventListener('submit', function () {
+        document.getElementById('createRoleForm').addEventListener('submit', function () {
             loadingText.textContent = 'Saving...';
             overlay.style.display = 'flex';
         });
 
         document.getElementById('cancel').addEventListener('click', function () {
-            document.getElementById('editRoleForm').reset();
+            document.getElementById('createRoleForm').reset();
         });
     </script>
 

@@ -12,14 +12,14 @@ class UserManagerController extends Controller
     public function index()
     {
         $users = UserManager::with('role')->get();
-       return view('usermanagers.index', compact('users'));
+       return view('pages/usermanagers.index', compact('users'));
 
     }
 
     public function create()
     {
         $roles = Role::all();
-        return view('usermanagers.create', compact('roles'));
+        return view('pages/usermanagers.create', compact('roles'));
     }
 
     public function store(Request $request)
@@ -46,11 +46,11 @@ class UserManagerController extends Controller
     public function edit(UserManager $usermanager)
     {
         $roles = Role::all();
-        return view('usermanagers.edit', compact('usermanager','roles'));
+        return view('pages/usermanagers.edit', compact('usermanager','roles'));
     }
     public function show(UserManager $usermanager)
     {
-        return view('usermanagers.show', compact('usermanager'));
+        return view('pages/usermanagers.show', compact('usermanager'));
     }
 
     public function update(Request $request, UserManager $usermanager)

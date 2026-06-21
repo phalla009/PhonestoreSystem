@@ -27,13 +27,13 @@ class ProductController extends Controller
 
         $products = $query->get();
 
-        return view('products.index', compact('products', 'categories'));
+        return view('pages/products.index', compact('products', 'categories'));
     }
 
     public function create()
     {
         $categories = Category::all();
-        return view('products.create', compact('categories'));
+        return view('pages/products.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -77,14 +77,14 @@ class ProductController extends Controller
     public function show(string $id)
     {
         $product = Product::with('images')->findOrFail($id);
-        return view('products.show', compact('product'));
+        return view('pages/products.show', compact('product'));
     }
 
     public function edit(string $id)
     {
         $product = Product::with('images')->findOrFail($id);
         $categories = Category::all();
-        return view('products.edit', compact('product', 'categories'));
+        return view('pages/products.edit', compact('product', 'categories'));
     }
 
     public function update(Request $request, string $id)

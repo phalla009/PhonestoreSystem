@@ -38,7 +38,11 @@ Route::middleware('auth')->group(function () {
     // Resource controllers
     Route::resource('products', ProductController::class)->names('products');
     Route::resource('orders', OrderController::class)->names('orders');
+    Route::delete('/orders/bulk-destroy', [OrderController::class, 'bulkDestroy'])
+    ->name('orders.bulkDestroy');
     Route::resource('categories', CategoryController::class)->names('categories');
+    Route::delete('/categories/bulk-destroy', [CategoryController::class, 'bulkDestroy'])
+    ->name('categories.bulkDestroy');   
     Route::resource('customers', CustomerController::class)->names('customers');
     Route::resource('inventorys', InventoryController::class)->names('inventorys');
     Route::resource('inventory', InventoryController::class);

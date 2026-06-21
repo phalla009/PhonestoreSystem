@@ -82,12 +82,12 @@
                     >{{ old('description') }}</textarea>
                 </div>
             </div>
-            <div style="text-align: right; margin-top: 1rem;">
+            <div >
                 <button id="submitCategory" type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Add New Category
                 </button>
             </div>
-            <div style="text-align: right; margin-top: 1rem;">
+            <div >
                 <button id="cancel" type="button" class="btn btn-cancel">
                     <i class="fas fa-times"></i> Cancel
                 </button>

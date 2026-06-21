@@ -20,7 +20,7 @@ class CategoryController extends Controller
             ->latest()
             ->get();
 
-        return view('categories.index', compact('categories', 'search'));
+        return view('pages/categories.index', compact('categories', 'search'));
     }
 
     /**
@@ -28,7 +28,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('categories.create');
+        return view('pages/categories.create');
     }
 
     /**
@@ -52,7 +52,7 @@ class CategoryController extends Controller
     public function show(string $id)
     {
         $category = Category::findOrFail($id);
-        return view('categories.show', compact('category'));
+        return view('pages/categories.show', compact('category'));
     }
 
     /**
@@ -61,7 +61,7 @@ class CategoryController extends Controller
     public function edit(string $id)
     {
         $category = Category::findOrFail($id);
-        return view('categories.edit', compact('category'));
+        return view('pages/categories.edit', compact('category'));
     }
 
     /**
@@ -90,5 +90,18 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+    }
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:categories,id',
+        ]);
+
+        Category::whereIn('id', $request->ids)->delete();
+
+        return redirect()
+            ->route('categories.index')
+            ->with('success', count($request->ids) . ' categor' . (count($request->ids) === 1 ? 'y' : 'ies') . ' deleted successfully.');
     }
 }
