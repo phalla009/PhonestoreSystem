@@ -165,8 +165,8 @@ a {
 
 .content-section {
     background: white;
-    padding: 2rem;
-    border-radius: 10px;
+    padding: 1.5rem;
+    border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 .content-section h2 {
@@ -327,6 +327,7 @@ a {
         0.3s ease,
         transform 0.2s ease;
     float: left;
+    margin-top: 5px;
 }
 .btn-cancel {
     width: 45%;
@@ -336,6 +337,7 @@ a {
         0.3s ease,
         transform 0.2s ease;
     float: right;
+    margin-top: 5px;
 }
 .btn-success:hover {
     background: #38a169;
@@ -499,8 +501,8 @@ a {
 ============================================= */
 .table-container {
     overflow-x: auto;
-    margin-top: 1rem;
-    max-height: 400px;
+    margin-top: 0.5rem;
+    max-height: 425px;
     -webkit-overflow-scrolling: touch;
 }
 table {

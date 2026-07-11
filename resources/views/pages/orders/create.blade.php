@@ -120,8 +120,8 @@
                 <label>Description:</label>
                 <textarea name="note" placeholder="Optional note...">{{ old('note') }}</textarea>
             </div>
-
-            <div style="text-align: right; margin-top: 1rem;">
+ 
+            <div>
                 <button class="btn btn-success" type="submit">
                     <i class="fas fa-save"></i> Add Order
                 </button>
