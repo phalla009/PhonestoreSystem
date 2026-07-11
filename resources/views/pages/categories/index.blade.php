@@ -223,6 +223,14 @@
             justify-content: center;
         }
     }
+
+    /* Pagination */
+    .categories-pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
 </style>
 @endsection
 
@@ -282,7 +290,7 @@
             @if(!empty($search))
                 <span class="search-results-badge">
                     <i class="fas fa-filter"></i>
-                    {{ $categories->count() }} result{{ $categories->count() !== 1 ? 's' : '' }}
+                    {{ $categories->total() }} result{{ $categories->total() !== 1 ? 's' : '' }}
                     for &ldquo;{{ $search }}&rdquo;
                 </span>
             @endif
@@ -316,7 +324,7 @@
                         <td data-label="Select">
                             <input type="checkbox" class="row-checkbox" value="{{ $category->id }}">
                         </td>
-                        <td data-label="No">#{{ $loop->iteration }}</td>
+                        <td data-label="No">#{{ $loop->iteration + ($categories->currentPage() - 1) * $categories->perPage() }}</td>
                         <td data-label="Category Name">{{ $category->name }}</td>
                         <td data-label="Created At">{{ $category->created_at ? $category->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
                         <td data-label="Actions">
@@ -358,6 +366,44 @@
             </tbody>
         </table>
     </div>
+
+    {{-- Pagination --}}
+    @if ($categories->hasPages())
+    <nav aria-label="Page navigation" class="categories-pagination">
+        <ul class="pagination-list">
+
+            {{-- Previous --}}
+            @if ($categories->onFirstPage())
+                <li class="page-btn disabled"><span>&laquo;</span></li>
+            @else
+                <li class="page-btn">
+                    <a href="{{ $categories->previousPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&laquo;</a>
+                </li>
+            @endif
+
+            {{-- Page numbers --}}
+            @foreach ($categories->getUrlRange(1, $categories->lastPage()) as $page => $url)
+                @if ($page == $categories->currentPage())
+                    <li class="page-btn active"><span>{{ $page }}</span></li>
+                @else
+                    <li class="page-btn">
+                        <a href="{{ $url }}" class="page-link-loading" data-loading-text="Loading...">{{ $page }}</a>
+                    </li>
+                @endif
+            @endforeach
+
+            {{-- Next --}}
+            @if ($categories->hasMorePages())
+                <li class="page-btn">
+                    <a href="{{ $categories->nextPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&raquo;</a>
+                </li>
+            @else
+                <li class="page-btn disabled"><span>&raquo;</span></li>
+            @endif
+
+        </ul>
+    </nav>
+    @endif
 </div>
 
 {{-- Delete Modal --}}

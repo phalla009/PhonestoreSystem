@@ -12,15 +12,20 @@ class InventoryController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
-        $totalItems = $products->sum('stock');
-        $lowStockItems = $products->filter(function ($product) {
+        // Stats must reflect ALL products, not just the current page.
+        $allProducts = Product::all();
+
+        $totalItems = $allProducts->sum('stock');
+        $lowStockItems = $allProducts->filter(function ($product) {
             return $product->stock >= 1 && $product->stock <= 10;
         })->count();
-        $outOfStockItems = $products->where('stock', '<=', 0)->count();
-        $inventoryValue = $products->sum(function ($product) {
+        $outOfStockItems = $allProducts->where('stock', '<=', 0)->count();
+        $inventoryValue = $allProducts->sum(function ($product) {
             return $product->stock * $product->price;
         });
+
+        // Table listing is paginated separately.
+        $products = Product::orderBy('name')->paginate(10)->withQueryString();
 
         return view('pages/inventorys.index', compact(
             'products',

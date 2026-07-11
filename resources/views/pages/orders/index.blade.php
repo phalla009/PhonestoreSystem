@@ -29,10 +29,10 @@
 
     .filter-section { margin-top: 0px; margin-bottom: 20px; }
     .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .filter-form { display: flex; flex-direction: column; gap: 16px; }
-    .grid-3-columns { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .filter-form { display: flex; flex-direction: column; }
+    .grid-3-columns { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
     .filter-form .form-group { display: flex; flex-direction: column; }
-    .filter-form label { font-weight: 600; margin-bottom: 6px; color: #333; }
+    .filter-form label { font-weight: 600;  color: #333; }
     .filter-form select, .filter-form input[type="text"] { padding: 10px 14px; border: 1px solid #ccc; border-radius: 24px; font-size: 14px; outline-color: #3498db; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
     .filter-form .btn { padding: 10px 14px; font-size: 14px; border-radius: 24px; margin-right: 8px; }
     .filter-form .btn-light { background-color: #c82333; color: white; }
@@ -59,6 +59,14 @@
     .pending-alert-banner .pending-count { font-weight: 800; color: #ea580c; font-size: 14px; margin: 0 3px; }
     .pending-alert-banner .pending-filter-link { font-size: 12px; color: #ea580c; text-decoration: none; font-weight: 600; border: 1px solid #fed7aa; padding: 4px 12px; border-radius: 20px; background: #ffedd5; white-space: nowrap; transition: background 0.15s; flex-shrink: 0; }
     .pending-alert-banner .pending-filter-link:hover { background: #fed7aa; }
+
+    /* Pagination */
+    .orders-pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
 </style>
 @endsection
 
@@ -129,7 +137,6 @@
             </div>
         </form>
 
-        @php $pendingCount = $orders->where('status','pending')->count(); @endphp
         @if($pendingCount > 0)
         <div class="pending-alert-banner">
             <i class="fas fa-hourglass-half pending-icon"></i>
@@ -167,7 +174,7 @@
                 @forelse ($orders as $order)
                 <tr>
                     <td style="text-align:center;"><input type="checkbox" class="row-checkbox" value="{{ $order->id }}"></td>
-                    <td data-label="No">#{{ $loop->iteration }}</td>
+                    <td data-label="No">#{{ $loop->iteration + ($orders->currentPage() - 1) * $orders->perPage() }}</td>
                     <td data-label="Order ID">{{ $order->order_number }}</td>
                     <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>
                     <td data-label="Quantity">{{ $order->quantity }}</td>
@@ -211,6 +218,44 @@
             </tbody>
         </table>
     </div>
+
+    {{-- Pagination --}}
+    @if ($orders->hasPages())
+    <nav aria-label="Page navigation" class="orders-pagination">
+        <ul class="pagination-list">
+
+            {{-- Previous --}}
+            @if ($orders->onFirstPage())
+                <li class="page-btn disabled"><span>&laquo;</span></li>
+            @else
+                <li class="page-btn">
+                    <a href="{{ $orders->previousPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&laquo;</a>
+                </li>
+            @endif
+
+            {{-- Page numbers --}}
+            @foreach ($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
+                @if ($page == $orders->currentPage())
+                    <li class="page-btn active"><span>{{ $page }}</span></li>
+                @else
+                    <li class="page-btn">
+                        <a href="{{ $url }}" class="page-link-loading" data-loading-text="Loading...">{{ $page }}</a>
+                    </li>
+                @endif
+            @endforeach
+
+            {{-- Next --}}
+            @if ($orders->hasMorePages())
+                <li class="page-btn">
+                    <a href="{{ $orders->nextPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&raquo;</a>
+                </li>
+            @else
+                <li class="page-btn disabled"><span>&raquo;</span></li>
+            @endif
+
+        </ul>
+    </nav>
+    @endif
 </div>
 
 {{-- Single Delete Modal --}}

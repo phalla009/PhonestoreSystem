@@ -19,6 +19,14 @@
         .stock-in  { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
         .stock-low { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
         .stock-out { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+
+        /* Pagination */
+        .inventory-pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
     </style>
 @endsection
 
@@ -67,7 +75,7 @@
             <tbody>
                 @forelse ($products as $product)
                     <tr>
-                        <td data-label="No">#{{ $loop->iteration }}</td>
+                        <td data-label="No">#{{ $loop->iteration + ($products->currentPage() - 1) * $products->perPage() }}</td>
                         <td data-label="Product">{{ $product->name }}</td>
                         <td data-label="SKU">{{ $product->sku ?? '-' }}</td>
                         <td data-label="Current Stock">{{ $product->stock }}</td>
@@ -100,6 +108,44 @@
             </tbody>
         </table>
     </div>
+
+    {{-- Pagination --}}
+    @if ($products->hasPages())
+    <nav aria-label="Page navigation" class="inventory-pagination">
+        <ul class="pagination-list">
+
+            {{-- Previous --}}
+            @if ($products->onFirstPage())
+                <li class="page-btn disabled"><span>&laquo;</span></li>
+            @else
+                <li class="page-btn">
+                    <a href="{{ $products->previousPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&laquo;</a>
+                </li>
+            @endif
+
+            {{-- Page numbers --}}
+            @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                @if ($page == $products->currentPage())
+                    <li class="page-btn active"><span>{{ $page }}</span></li>
+                @else
+                    <li class="page-btn">
+                        <a href="{{ $url }}" class="page-link-loading" data-loading-text="Loading...">{{ $page }}</a>
+                    </li>
+                @endif
+            @endforeach
+
+            {{-- Next --}}
+            @if ($products->hasMorePages())
+                <li class="page-btn">
+                    <a href="{{ $products->nextPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&raquo;</a>
+                </li>
+            @else
+                <li class="page-btn disabled"><span>&raquo;</span></li>
+            @endif
+
+        </ul>
+    </nav>
+    @endif
 </div>
 
 <script>

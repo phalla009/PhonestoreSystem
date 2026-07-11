@@ -18,7 +18,8 @@ class CategoryController extends Controller
                 $query->where('name', 'like', '%' . $search . '%');
             })
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return view('pages/categories.index', compact('categories', 'search'));
     }

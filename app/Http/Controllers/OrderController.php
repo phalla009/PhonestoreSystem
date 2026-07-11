@@ -38,9 +38,13 @@ class OrderController extends Controller
             });
         }
 
-        $orders = $query->get();
+        // Count pending orders across ALL matching results (not just current page)
+        // before pagination limits the query.
+        $pendingCount = (clone $query)->where('status', 'pending')->count();
 
-        return view('pages/orders.index', compact('orders', 'customers'));
+        $orders = $query->latest()->paginate(10)->withQueryString();
+
+        return view('pages/orders.index', compact('orders', 'customers', 'pendingCount'));
     }
 
     /**

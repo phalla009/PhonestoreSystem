@@ -13,14 +13,11 @@
     .status-active   { color: green; background-color: transparent !important; }
     .status-inactive { color: red;   background-color: transparent !important; }
     .form-group select { border-radius: 24px; }
+
 </style>
 @endsection
 
 @section('content')
-
-{{-- ❌ លុប: #loading-overlay duplicate — master layout មានហើយ --}}
-{{-- ❌ លុប: #logout-confirm duplicate  — master layout មានហើយ --}}
-
 @if(session('success'))
 <div id="successMessage" class="custom-success">
     <div class="success-content">
@@ -35,12 +32,19 @@
     <h2><i class="fas fa-box-open"></i> Products Management</h2>
 
     <div class="filter-section">
-        <h4>Filter Products</h4>
+        
         <form id="filterForm" method="GET" action="{{ route('products.index') }}">
-            <div class="filter-controls" style="display:flex; align-items:center; gap:10px; margin-top:-5px;">
-
+            <div class="filter-controls" style="display:flex; align-items:center; gap:10px; flex-wrap:nowrap;">
+                {{-- Add — pushed to the right --}}
+                 <a href="{{ route('products.create') }}"
+                    class="btn btn-primary page-link-loading"
+                    data-loading-text="Loading form..."
+                    style="flex-shrink:0; white-space:nowrap; margin-left:auto;">
+                    <i class="fas fa-circle-plus"></i> Add New Product
+                </a>
                 {{-- Category --}}
-                <div class="form-group" style="min-width:200px;">
+                
+                <div class="form-group" style="min-width:50px; flex-shrink:0;">
                     <select name="category_id" onchange="showLoading('Filtering...'); this.form.submit()">
                         <option value="">All Brands</option>
                         @foreach($categories as $category)
@@ -53,7 +57,7 @@
                 </div>
 
                 {{-- Search --}}
-                <div class="form-group" style="position:relative;">
+                <div class="form-group" style="position:relative; min-width:450px;">
                     <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#aaa;font-size:14px;pointer-events:none;"></i>
                     <input type="text" name="search"
                         value="{{ request('search') }}"
@@ -62,12 +66,7 @@
                         style="border-radius:24px; padding-left:38px;">
                 </div>
 
-                {{-- Add --}}
-                <a href="{{ route('products.create') }}"
-                   class="btn btn-primary page-link-loading"
-                   data-loading-text="Loading form...">
-                    <i class="fas fa-circle-plus"></i> Add New Product
-                </a>
+            
             </div>
         </form>
     </div>
@@ -87,7 +86,7 @@
             <tbody id="productsTable">
                 @forelse ($products as $product)
                     <tr>
-                        <td data-label="No">#{{ $loop->iteration }}</td>
+                        <td data-label="No">#{{ $loop->iteration + ($products->currentPage() - 1) * $products->perPage() }}</td>
                         <td data-label="Name">{{ $product->name }}</td>
                         <td data-label="Brand">{{ $product->category->name ?? 'N/A' }}</td>
                         <td data-label="Price">${{ number_format($product->price, 2) }}</td>
@@ -131,6 +130,44 @@
             </tbody>
         </table>
     </div>
+
+    {{-- Pagination --}}
+    @if ($products->hasPages())
+    <nav aria-label="Page navigation" class="products-pagination">
+        <ul class="pagination-list">
+
+            {{-- Previous --}}
+            @if ($products->onFirstPage())
+                <li class="page-btn disabled"><span>&laquo;</span></li>
+            @else
+                <li class="page-btn">
+                    <a href="{{ $products->previousPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&laquo;</a>
+                </li>
+            @endif
+
+            {{-- Page numbers --}}
+            @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                @if ($page == $products->currentPage())
+                    <li class="page-btn active"><span>{{ $page }}</span></li>
+                @else
+                    <li class="page-btn">
+                        <a href="{{ $url }}" class="page-link-loading" data-loading-text="Loading...">{{ $page }}</a>
+                    </li>
+                @endif
+            @endforeach
+
+            {{-- Next --}}
+            @if ($products->hasMorePages())
+                <li class="page-btn">
+                    <a href="{{ $products->nextPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&raquo;</a>
+                </li>
+            @else
+                <li class="page-btn disabled"><span>&raquo;</span></li>
+            @endif
+
+        </ul>
+    </nav>
+    @endif
 </div>
 
 {{-- Delete Modal --}}

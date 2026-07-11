@@ -266,7 +266,6 @@ a {
    BUTTONS
 ============================================= */
 .btn {
-    margin-top: 5px;
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 24px;
@@ -443,7 +442,58 @@ a {
     font-size: 1.1rem;
     opacity: 0.9;
 }
-
+/* Pagination */
+.products-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.pagination-list {
+    display: flex;
+    list-style: none;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+}
+.page-btn a,
+.page-btn span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 24px;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 14px;
+    transition: all 0.15s ease;
+}
+.page-btn a:hover {
+    background: #f0f0f0;
+    border-color: #ccc;
+}
+.page-btn.active span {
+    background: repeating-linear-gradient(
+        -45deg,
+        #0f1117,
+        #0f1117 2px,
+        #000000d1 2px,
+        rgb(9, 9, 9) 4px,
+        rgb(9, 9, 9) 4px
+    );
+    color: #fff;
+    border-color: #2563eb;
+    font-weight: 600;
+}
+.page-btn.disabled span {
+    color: #bbb;
+    border-color: #eee;
+    cursor: default;
+}
 /* =============================================
    TABLE
 ============================================= */
@@ -504,7 +554,6 @@ tr:hover {
 }
 .form-group {
     flex: 1 1 48%;
-    margin-bottom: 0.5rem;
     text-align: left;
 }
 .form-group label {
