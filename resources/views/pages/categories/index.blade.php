@@ -374,10 +374,12 @@
 
             {{-- Previous --}}
             @if ($categories->onFirstPage())
-                <li class="page-btn disabled"><span>&laquo;</span></li>
+                <li class="page-btn disabled"><span><i class="fa fa-angle-left"></i></span></li>
             @else
                 <li class="page-btn">
-                    <a href="{{ $categories->previousPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&laquo;</a>
+                    <a href="{{ $categories->previousPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">
+                         <i class="fa fa-angle-left"></i>
+                    </a>
                 </li>
             @endif
 
@@ -395,10 +397,12 @@
             {{-- Next --}}
             @if ($categories->hasMorePages())
                 <li class="page-btn">
-                    <a href="{{ $categories->nextPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">&raquo;</a>
+                    <a href="{{ $categories->nextPageUrl() }}" class="page-link-loading" data-loading-text="Loading...">
+                         <i class="fa fa-angle-right"></i>
+                    </a>
                 </li>
             @else
-                <li class="page-btn disabled"><span>&raquo;</span></li>
+                <li class="page-btn disabled"><span><i class="fa fa-angle-right"></i></span></li>
             @endif
 
         </ul>

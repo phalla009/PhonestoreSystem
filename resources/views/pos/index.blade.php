@@ -78,9 +78,10 @@
         .product-card-name { font-size: 12.5px; font-weight: 600; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em; line-height: 1.3; }
         .product-card-brand { font-size: 10.5px; color: #aaa; font-weight: 400; letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 6px; }
         .product-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+        .product-card-stock.out { color: #fff; background: #ef4444; font-weight: 700; }
         .product-card-price { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: #ff0000; letter-spacing: -0.02em; }
-        .product-card-stock { font-size: 10px; font-weight: 500; color: #bbb; background: #f5f5f5; padding: 2px 7px; border-radius: 20px; letter-spacing: 0.01em; }
-        .product-card-stock.low { color: #ef4444; background: #fef2f2; }
+        .product-card-stock { font-size: 10px; font-weight: 500; color: #ffffff; background: #00cb3d; padding: 2px 7px; border-radius: 20px; letter-spacing: 0.01em; }
+        .product-card-stock.low { color: hsl(47, 100%, 50%); background: #fef2f2; }
 
         /* ── CART PANEL ── */
         .pos-cart-panel {
@@ -894,7 +895,15 @@
                                             <div class="product-card-brand">{{ $product->category->name ?? 'N/A' }}</div>
                                             <div class="product-card-footer">
                                                 <div class="product-card-price">${{ number_format($product->price, 2) }}</div>
-                                                <div class="product-card-stock {{ $product->stock <= 5 ? 'low' : '' }}">{{ $product->stock }}</div>
+                                                <div class="product-card-stock {{ $product->stock <= 0 ? 'out' : ($product->stock <= 5 ? 'low' : '') }}">
+                                                    @if($product->stock <= 0)
+                                                        Out of Stock
+                                                    @elseif($product->stock <= 5)
+                                                        Low Stock ({{ $product->stock }})
+                                                    @else
+                                                        In Stock ({{ $product->stock }})
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
