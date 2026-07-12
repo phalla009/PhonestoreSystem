@@ -31,7 +31,15 @@
 @endsection
 
 @section('content')
-
+@if(session('success'))
+<div id="successMessage" class="custom-success">
+    <div class="success-content">
+        <span class="success-icon">✔</span>
+        <span class="success-text">{{ session('success') }}</span>
+    </div>
+    <div class="progress-bar"></div>
+</div>
+@endif
 {{-- ❌ លុប: #logout-confirm  — master layout មានហើយ --}}
 {{-- ❌ លុប: logout JS        — master layout មានហើយ --}}
 
@@ -88,7 +96,7 @@
                                 <span class="stock-badge stock-in">In Stock</span>
                             @endif
                         </td>
-                        <td data-label="Updated Date">{{ $product->updated_at->timezone('Asia/Phnom_Penh')->format('Y-m-d H:i') }}</td>
+                        <td data-label="Updated Date">{{ $product->updated_at->timezone('Asia/Phnom_Penh')->format('d M, Y h:i A') }}</td>
                         <td data-label="Actions">
                             <div class="action-buttons">
                                 <a href="{{ route('inventory.edit', $product->id) }}"

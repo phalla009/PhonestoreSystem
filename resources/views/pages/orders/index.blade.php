@@ -165,8 +165,9 @@
                     <th>Order ID</th>
                     <th>Product</th>
                     <th>Quantity</th>
+                    <th>Order Date</th>
                     <th>Paid Amount</th>
-                    <th>Status</th>
+                    {{-- <th>Status</th> --}}
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -178,8 +179,11 @@
                     <td data-label="Order ID">{{ $order->order_number }}</td>
                     <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>
                     <td data-label="Quantity">{{ $order->quantity }}</td>
+                    <td data-label="Order Date">
+                        {{ $order->created_at?->timezone('Asia/Phnom_Penh')->format('d M, Y h:i A') ?? 'N/A' }}
+                    </td>
                     <td data-label="Paid Amount">${{ number_format($order->total_amount ?? 0, 2) }}</td>
-                    <td data-label="Status">
+                    {{-- <td data-label="Status">
                         @if($order->status === 'completed')
                             <i class="fas fa-check-circle" style="color:green;font-size:20px;"></i>
                         @elseif($order->status === 'pending')
@@ -187,7 +191,7 @@
                         @elseif($order->status === 'cancelled')
                             <i class="fas fa-times-circle" style="color:red;font-size:20px;"></i>
                         @endif
-                    </td>
+                    </td> --}}
                     <td data-label="Actions">
                         <div class="action-buttons">
                             <a href="javascript:void(0);"

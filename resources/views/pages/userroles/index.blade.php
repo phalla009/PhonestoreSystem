@@ -107,7 +107,7 @@
                             {{ $role->role_name }}
                         </td>
                         <td data-label="Description">{{ $role->description ?? 'N/A' }}</td>
-                        <td data-label="Created At">{{ $role->created_at ? $role->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
+                        <td data-label="Created At">{{ $role->created_at ? $role->created_at->format('d M, Y h:i A') :'N/A' }}</td>
                         <td data-label="Actions">
                             <div class="action-buttons">
                                 <a href="{{ route('userroles.show', $role->id) }}"

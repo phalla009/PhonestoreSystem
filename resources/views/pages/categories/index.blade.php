@@ -326,7 +326,7 @@
                         </td>
                         <td data-label="No">#{{ $loop->iteration + ($categories->currentPage() - 1) * $categories->perPage() }}</td>
                         <td data-label="Category Name">{{ $category->name }}</td>
-                        <td data-label="Created At">{{ $category->created_at ? $category->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
+                        <td data-label="Created At">{{ $category->created_at ? $category->created_at->format('d M, y H:i A') : 'N/A' }}</td>
                         <td data-label="Actions">
                             <div class="action-buttons">
                                 <a href="{{ route('categories.show', $category->id) }}"

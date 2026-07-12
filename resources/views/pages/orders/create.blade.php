@@ -110,7 +110,7 @@
 
             <div class="form-group">
                 <label>Order Date:</label>
-                <input type="date" name="order_date" value="{{ old('order_date') }}">
+                <input type="date" name="order_date" value="{{ old('order_date', now('Asia/Phnom_Penh')->format('Y-m-d')) }}">
                 @error('order_date')
                     <p class="text-danger mt-1">{{ $message }}</p>
                 @enderror

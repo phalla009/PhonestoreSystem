@@ -18,11 +18,13 @@ class Product extends Model
         'status',
         'category_id',
         'add_to_pos',
+        'created_at',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'stock' => 'integer',
+        'created_at' => 'datetime',
         'min_stock' => 'integer',
     ];
 

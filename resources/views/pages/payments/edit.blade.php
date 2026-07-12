@@ -79,7 +79,7 @@
                 </select>
             </div>
 
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 5px;">
                 <button type="submit" class="btn btn-update">
                     <i class="fas fa-save"></i> Update Payment
                 </button>

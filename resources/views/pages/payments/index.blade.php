@@ -68,6 +68,7 @@
                 <tr>
                     <th>#</th>
                     <th>Order Number</th>
+                    <th>Payment At</th>
                     <th>Customer</th>
                     <th>Product</th>
                     <th>Amount Paid</th>
@@ -79,6 +80,9 @@
                     <tr>
                         <td data-label="No">#{{ $loop->iteration }}</td>
                         <td data-label="Order Number">{{ $order->order_number ?? 'N/A' }}</td>
+                        <td data-label="Order Date">
+                            {{ $order->created_at?->timezone('Asia/Phnom_Penh')->format('d M, Y h:i A') ?? 'N/A' }}
+                        </td>
                         <td data-label="Customer">{{ $order->customer->name ?? 'N/A' }}</td>
                         <td data-label="Product">{{ $order->product->name ?? 'N/A' }}</td>
                         <td data-label="Amount Paid">${{ number_format($order->payments->sum('amount'), 2) }}</td>
@@ -131,6 +135,7 @@
                         <tr>
                             <th>#</th>
                             <th>Order Number</th>
+                             <th>Payment At</th>
                             <th>Customer</th>
                             <th>Product</th>
                             <th>Order Total</th>
@@ -142,6 +147,9 @@
                             <tr style="background:#fffbf0;">
                                 <td>#{{ $i + 1 }}</td>
                                 <td>{{ $order->order_number ?? 'N/A' }}</td>
+                                <td data-label="Order Date">
+                                    {{ $order->created_at?->timezone('Asia/Phnom_Penh')->format('d M, Y h:i A') ?? 'N/A' }}
+                                </td>
                                 <td>{{ $order->customer->name ?? 'N/A' }}</td>
                                 <td>{{ $order->product->name ?? 'N/A' }}</td>
                                 <td>${{ number_format($order->total_amount, 2) }}</td>
