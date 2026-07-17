@@ -63,7 +63,7 @@
         /* ── PRODUCT CARD ── */
         .product-card { position: relative; border: 1px solid #ebebeb; border-radius: 12px; cursor: pointer; background: #fff; overflow: hidden; transition: border-color 0.2s, box-shadow 0.25s, transform 0.2s; display: flex; flex-direction: column; animation: cardFadeUp 0.3s ease both; }
         .product-card::after { content: ''; position: absolute; inset: 0; border-radius: 12px; background: rgba(0,0,0,0); transition: background 0.2s; pointer-events: none; }
-        .product-card:hover { border-color: #a5b4fc; box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-3px); }
+        .product-card:hover { border-color: #000000; box-shadow: 0 12px 24px rgba(0,0,0,0.08); transform: translateY(-3px); }
         .product-card:active { transform: translateY(0px) scale(0.98); }
         .product-card.out-of-stock { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 
@@ -71,7 +71,7 @@
         .product-card-img { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform 0.35s ease; }
         .product-card:hover .product-card-img { transform: scale(1.04); }
         .product-card-img-placeholder { width: 100%; height: 100%; background: #f7f7f7; display: flex; align-items: center; justify-content: center; color: #d4d4d4; font-size: 22px; }
-        .product-card-add-badge { position: absolute; bottom: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: #111; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.7); transition: opacity 0.2s, transform 0.2s; font-weight: 300; line-height: 1; }
+        .product-card-add-badge { position: absolute; bottom: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: #111; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.7); transition: opacity 0.2s, transform 0.2s; font-weight: 500; line-height: 1; }
         .product-card:hover .product-card-add-badge { opacity: 1; transform: scale(1); }
 
         .product-card-body { padding: 10px 11px 12px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
@@ -187,7 +187,14 @@
         .btn-confirm-remove:hover { background: #dc2626; }
 
         /* ── TOAST ── */
-        .toast { position: fixed; bottom: 28px; right: 28px; background: #111; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 999999; opacity: 0; transform: translateY(12px); transition: opacity 0.25s, transform 0.25s; pointer-events: none; }
+        .toast { position: fixed; top: 60px; right: 28px; background: repeating-linear-gradient(
+            -45deg,
+            #0f1117,
+            #0f1117 2px,
+            #000000d1 2px,
+            rgb(9, 9, 9) 4px,
+            rgb(9, 9, 9) 4px
+        ); color: #fff; padding: 12px 20px; border-radius: 5px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 999999; opacity: 0; transform: translateY(12px); transition: opacity 0.25s, transform 0.25s; pointer-events: none; }
         .toast.show { opacity: 1; transform: translateY(0); }
         .toast.success i { color: #10b981; }
         .toast.error   i { color: #ef4444; }
@@ -600,10 +607,6 @@
             .remove-modal-box  { padding: 24px 18px; }
             .checkout-success-box { padding: 28px 20px; }
             .atc-modal-box { padding: 18px 16px 16px; border-radius: 16px; }
-
-            /* Toast full-width */
-            .toast { left: 16px; right: 16px; bottom: 16px; border-radius: 10px; font-size: 12px; }
-
             /* Cart item adjustments */
             .cart-item { gap: 8px; padding: 8px 6px; }
             .cart-item-thumb { width: 36px; height: 36px; }
@@ -807,8 +810,12 @@
             <h3>Remove Item?</h3>
             <p id="removeModalText">This item will be removed from your cart.</p>
             <div class="remove-modal-actions">
-                <button class="btn-cancel-remove" onclick="closeRemoveModal()">Cancel</button>
-                <button class="btn-confirm-remove" id="removeConfirmBtn">Remove</button>
+                <button class="btn-cancel-remove" onclick="closeRemoveModal()">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+                <button class="btn-confirm-remove" id="removeConfirmBtn">
+                    <i class="fa-solid fa-trash"></i> Remove
+                </button>
             </div>
         </div>
     </div>
