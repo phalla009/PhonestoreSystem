@@ -31,6 +31,24 @@
     .search-results-badge { display: inline-flex; align-items: center; gap: 5px; background: #eaf4fd; color: #2980b9; border: 1px solid #b6d9f5; border-radius: 20px; padding: 3px 11px; font-size: 12.5px; font-weight: 500; white-space: nowrap; }
     .search-results-badge i { font-size: 11px; }
 
+    /* Status filter select */
+    .status-filter-select {
+        padding: 10px 16px; border: 1.5px solid #dde3ec; border-radius: 24px;
+        font-size: 14px; color: #333; background: #f9fafc; cursor: pointer; outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .status-filter-select:focus { border-color: #3498db; background: #fff; box-shadow: 0 0 0 3px rgba(52,152,219,0.13); }
+
+    /* Status badge in table */
+    .status-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 12px; border-radius: 20px; font-size: 12.5px; font-weight: 600;
+        text-transform: capitalize;
+    }
+    .status-badge.status-active { background: #eafaf1; color: #27ae60; border: 1px solid #b7ecc9; }
+    .status-badge.status-inactive { background: #fdf1f0; color: #e74c3c; border: 1px solid #f5c2c2; }
+    .status-badge i { font-size: 8px; }
+
     /* Bulk delete */
     .bulk-actions-bar {
         display: none; align-items: center; gap: 10px; margin-bottom: 10px;
@@ -236,10 +254,6 @@
 
 @section('content')
 
-{{-- ❌ លុប: #loading-overlay  — master layout មានហើយ --}}
-{{-- ❌ លុប: #logout-confirm   — master layout មានហើយ --}}
-{{-- ❌ លុប: logout JS         — master layout មានហើយ --}}
-
 @if(session('success'))
 <div id="successMessage" class="custom-success">
     <div class="success-content">
@@ -276,10 +290,18 @@
                         </button>
                     @endif
                 </div>
+
+                {{-- Status filter --}}
+                <select name="status" class="status-filter-select" onchange="document.getElementById('searchForm').submit()">
+                    <option value="">All Statuses</option>
+                    <option value="active" {{ ($status ?? '') === 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive" {{ ($status ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                </select>
+
                 <button type="submit" class="search-submit-btn">
                     <i class="fas fa-search"></i> Search
                 </button>
-                @if(!empty($search))
+                @if(!empty($search) || !empty($status))
                     <a href="{{ route('categories.index') }}" class="search-reset-btn">
                         <i class="fas fa-rotate-left"></i> Reset
                     </a>
@@ -314,6 +336,7 @@
                     <th style="width:36px;"><input type="checkbox" id="selectAllCheckbox" title="Select all"></th>
                     <th>#</th>
                     <th>Category Name</th>
+                    <th>Status</th>
                     <th>Created At</th>
                     <th>Actions</th>
                 </tr>
@@ -326,6 +349,11 @@
                         </td>
                         <td data-label="No">#{{ $loop->iteration + ($categories->currentPage() - 1) * $categories->perPage() }}</td>
                         <td data-label="Category Name">{{ $category->name }}</td>
+                        <td data-label="Status">
+                            <span class="status-badge status-{{ $category->status }}">
+                                <i class="fas fa-circle"></i> {{ $category->status }}
+                            </span>
+                        </td>
                         <td data-label="Created At">{{ $category->created_at ? $category->created_at->format('d M, y H:i A') : 'N/A' }}</td>
                         <td data-label="Actions">
                             <div class="action-buttons">
@@ -352,7 +380,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align:center; padding:30px;" id="found">
+                        <td colspan="6" style="text-align:center; padding:30px;" id="found">
                             @if(!empty($search))
                                 <i class="fas fa-search" style="font-size:24px;color:#ccc;display:block;margin-bottom:8px;"></i>
                                 No categories found matching &ldquo;<strong>{{ $search }}</strong>&rdquo;.
@@ -461,18 +489,15 @@
         const checked = rowCheckboxes().filter(cb => cb.checked);
         const count = checked.length;
 
-        // toggle row highlight
         rowCheckboxes().forEach(cb => {
             const row = cb.closest('tr');
             if (row) row.classList.toggle('row-selected', cb.checked);
         });
 
-        // bar visibility + count text
         bulkActionsBar.classList.toggle('active', count > 0);
         selectedCountEl.textContent = count + ' selected';
         bulkDeleteBtn.disabled = count === 0;
 
-        // select-all checkbox state
         if (selectAllCheckbox) {
             const total = rowCheckboxes().length;
             selectAllCheckbox.checked = total > 0 && count === total;
@@ -522,14 +547,12 @@
         bulkDeleteCloseBtn.addEventListener('click', closeBulkDeleteModal);
     }
 
-    // close modal on backdrop click
     if (bulkDeleteModal) {
         bulkDeleteModal.addEventListener('click', function(e) {
             if (e.target === bulkDeleteModal) closeBulkDeleteModal();
         });
     }
 
-    // close modal on Escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && bulkDeleteModal.classList.contains('open')) {
             closeBulkDeleteModal();

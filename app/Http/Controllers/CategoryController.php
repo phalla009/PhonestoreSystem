@@ -37,9 +37,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-       $validated = $request->validate([
-            'name' => 'required|string|max:200|unique:categories,name',
+        $validated = $request->validate([
+            'name'        => 'required|string|max:200|unique:categories,name',
             'description' => 'nullable|string|max:1000',
+            'status'      => 'required|in:active,inactive',
         ]);
 
         Category::create($validated);
@@ -72,9 +73,10 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-       $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+        $validated = $request->validate([
+            'name'        => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string|max:1000',
+            'status'      => 'required|in:active,inactive',
         ]);
 
         $category->update($validated);
@@ -92,10 +94,11 @@ class CategoryController extends Controller
 
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }
+
     public function bulkDestroy(Request $request)
     {
         $request->validate([
-            'ids' => 'required|array',
+            'ids'   => 'required|array',
             'ids.*' => 'integer|exists:categories,id',
         ]);
 

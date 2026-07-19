@@ -8,25 +8,27 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    // List all categories
+    // List all active categories
     public function index()
     {
-        $categories = Category::all()->map(function ($category) {
-            return [
-                'id'          => $category->id,
-                'name'        => $category->name,
-                'description' => $category->description,
-                
-            ];
-        });
+        $categories = Category::where('status', 'active')
+            ->get()
+            ->map(function ($category) {
+                return [
+                    'id'          => $category->id,
+                    'name'        => $category->name,
+                    'description' => $category->description,
+                    'status'      => $category->status,
+                ];
+            });
 
         return response()->json($categories);
     }
 
-    // Show single category
+    // Show single active category
     public function show($id)
     {
-        $category = Category::find($id);
+        $category = Category::where('status', 'active')->find($id);
 
         if (!$category) {
             return response()->json([
@@ -39,7 +41,7 @@ class CategoryController extends Controller
             'id'          => $category->id,
             'name'        => $category->name,
             'description' => $category->description,
-           
+            'status'      => $category->status,
         ]);
     }
 
@@ -49,7 +51,11 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name'        => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string|max:1000',
+            'status'      => 'nullable|in:active,inactive',
         ]);
+
+        // Default to active if not provided
+        $validated['status'] = $validated['status'] ?? 'active';
 
         $category = Category::create($validated);
 
@@ -57,7 +63,7 @@ class CategoryController extends Controller
             'id'          => $category->id,
             'name'        => $category->name,
             'description' => $category->description,
-            
+            'status'      => $category->status,
         ], 201);
     }
 
@@ -76,6 +82,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name'        => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string|max:1000',
+            'status'      => 'nullable|in:active,inactive',
         ]);
 
         $category->update($validated);
@@ -84,7 +91,7 @@ class CategoryController extends Controller
             'id'          => $category->id,
             'name'        => $category->name,
             'description' => $category->description,
-            
+            'status'      => $category->status,
         ]);
     }
 

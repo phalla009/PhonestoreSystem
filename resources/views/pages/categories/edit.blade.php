@@ -40,19 +40,17 @@
 
     <div class="modal-content" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
 
-        {{-- FIX: បន្ថែម id="backBtn" --}}
         <a href="{{ route('categories.index') }}" id="backBtn" class="btn btn-back">
             <i class="fas fa-chevron-left"></i> Back
         </a>
 
         <h2><i class="fas fa-mobile-alt"></i> Edit Category</h2>
 
-        {{-- FIX: បន្ថែម id="categoryForm" --}}
         <form id="categoryForm" action="{{ route('categories.update', $category->id) }}" method="POST">
             @csrf
             @method('PUT')
 
-            <div class="form-row">
+            <div class="form-row" style="display: flex; gap: 20px;">
                 <div class="form-group" style="width: 100%;">
                     <label for="name">Category Name:</label>
                     <input
@@ -64,6 +62,21 @@
                     >
                     @error('name')
                         <p class="text-danger mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="form-group" style="width: 100%;">
+                    <label for="status" style="font-weight: 500; margin-bottom: 8px; display: block;">Status:</label>
+                    <select
+                        id="status"
+                        name="status"
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"
+                    >
+                        <option value="active" {{ old('status', $category->status) === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ old('status', $category->status) === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                    @error('status')
+                        <p class="text-danger mt-1" style="color: #dc3545; font-size: 0.875rem;">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -84,6 +97,8 @@
                     @enderror
                 </div>
             </div>
+
+           
 
             <div>
                 <button class="btn btn-update" type="submit">

@@ -63,10 +63,20 @@
         <form action="{{ route('categories.store') }}" method="POST" id="categoryForm">
             @csrf
             <div class="form-row">
-                <div class="form-group" style="width: 100%;">
+                <div class="form-group" style="width: 50%;">
                     <label for="name">Category Name:</label>
                     <input id="name" type="text" name="name" value="{{ old('name') }}" placeholder="Enter category name">
                     @error('name')
+                        <p class="text-danger mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="form-group" style="width: 50%;">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px;">
+                        <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ old('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                    @error('status')
                         <p class="text-danger mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -82,6 +92,7 @@
                     >{{ old('description') }}</textarea>
                 </div>
             </div>
+            
             <div >
                 <button id="submitCategory" type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Add New Category

@@ -12,20 +12,23 @@ class ProductController extends Controller
     // List all products with category name and images URLs
     public function index()
     {
-        $products = Product::with(['category', 'images'])->get()->map(function ($product) {
-            return [
-                'id'          => $product->id,
-                'name'        => $product->name,
-                'price'       => $product->price,
-                'stock'       => $product->stock,
-                'description' => $product->description,
-                'status'      => $product->status,
-                'category'    => $product->category ? $product->category->name : null,
-                'images'      => $product->images->map(function ($img) {
-                    return url('images/products/' . $img->image);
-                }),
-            ];
-        });
+        $products = Product::with(['category', 'images'])
+            ->where('status', 'active')
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'id'          => $product->id,
+                    'name'        => $product->name,
+                    'price'       => $product->price,
+                    'stock'       => $product->stock,
+                    'description' => $product->description,
+                    'status'      => $product->status,
+                    'category'    => $product->category ? $product->category->name : null,
+                    'images'      => $product->images->map(function ($img) {
+                        return url('images/products/' . $img->image);
+                    }),
+                ];
+            });
 
         return response()->json($products);
     }
