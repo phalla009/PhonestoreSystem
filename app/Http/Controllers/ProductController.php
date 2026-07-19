@@ -6,6 +6,9 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use App\Imports\ProductsImport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ProductsExport;
 
 class ProductController extends Controller
 {
@@ -178,5 +181,34 @@ class ProductController extends Controller
             'outOfStockItems',
             'inventoryValue'
         ));
+    }
+
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:5120',
+        ]);
+
+        $import = new ProductsImport();
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $errors = $import->failures()->map(function ($failure) {
+                return 'Row ' . $failure->row() . ': ' . implode(', ', $failure->errors());
+            });
+
+            return redirect()->route('products.index')
+                ->with('error', 'Some rows failed to import.')
+                ->with('import_errors', $errors);
+        }
+
+        return redirect()->route('products.index')->with('success', 'Products imported successfully.');
+    }
+    public function export(Request $request)
+    {
+        $filename = 'products_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new ProductsExport($request), $filename);
     }
 }

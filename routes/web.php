@@ -35,6 +35,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}/invoice-partial', [OrderController::class, 'invoicePartial'])->name('orders.invoicePartial');
     Route::get('/orders/invoice-combined', [OrderController::class, 'invoiceCombined'])->name('orders.invoiceCombined');
     Route::get('/barcodes', [BarcodeController::class, 'index'])->name('barcodes.index');
+
+    // Product import/export — MUST be registered before the products resource route,
+    // otherwise GET /products/export gets swallowed by GET /products/{product} (show),
+    // since "export" would be treated as the {product} route parameter and 404 via findOrFail().
+    Route::post('products/import', [ProductController::class, 'import'])->name('products.import');
+    Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
+
     // Resource controllers
     Route::resource('products', ProductController::class)->names('products');
     Route::resource('orders', OrderController::class)->names('orders');
@@ -68,7 +75,4 @@ Route::middleware('auth')->group(function () {
         return view('pos.customer-display');
     })->name('pos.display');
 
-   
-
-   
 });
