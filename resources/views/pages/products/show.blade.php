@@ -74,16 +74,14 @@
             font-weight: 500;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+         .status-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px; font-size: 12.5px; font-weight: 600;
+            text-transform: capitalize;
         }
         .status-active   { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
         .status-inactive { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-
+        .status-badge i { font-size: 8px; color: inherit; }
         .pos-yes { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
         .pos-no  { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
 
@@ -221,13 +219,13 @@
                         <div class="info-value">{{ $product->stock }}</div>
                     </div>
                     <div class="info-box">
-                        <div class="info-label"><i class="fas fa-circle"></i> Status</div>
-                        <div class="info-value">
-                            <span class="status-badge status-{{ strtolower($product->status) }}">
-                                {{ ucfirst($product->status) }}
-                            </span>
-                        </div>
+                    <div class="info-label"><i class="fas fa-circle-check"></i> Status</div>
+                    <div class="info-value">
+                        <span class="status-badge status-{{ $product->status }}">
+                            <i class="fas fa-circle"></i> {{ $product->status }}
+                        </span>
                     </div>
+            </div>
                 </div>
 
                 {{-- Row 4: Add to POS & Description --}}

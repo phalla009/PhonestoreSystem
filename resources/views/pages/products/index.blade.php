@@ -80,7 +80,7 @@
                     <th>Products</th>
                     <th>Brand</th>
                     <th>Price</th>
-                    <th>Status</th>
+                    {{-- <th>Status</th> --}}
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -94,15 +94,15 @@
                         <td data-label="Name">{{ $product->name }}</td>
                         <td data-label="Brand">{{ $product->category->name ?? 'N/A' }}</td>
                         <td data-label="Price">${{ number_format($product->price, 2) }}</td>
-                        <td data-label="Status">
+                        {{-- <td data-label="Status">
                             @if(strtolower($product->status) === 'active')
                                 <i class="fas fa-check-circle" style="color:green;margin-right:5px;"></i>
-                                {{-- <span class="status-active">Active</span> --}}
+                                <span class="status-active">Active</span>
                             @elseif(strtolower($product->status) === 'inactive')
                                 <i class="fas fa-times-circle" style="color:red;margin-right:5px;"></i>
-                                {{-- <span class="status-inactive">Inactive</span> --}}
+                                <span class="status-inactive">Inactive</span>
                             @endif
-                        </td>
+                        </td> --}}
                         <td data-label="Actions">
                             <div class="action-buttons">
                                 <a href="{{ route('products.show', $product->id) }}"

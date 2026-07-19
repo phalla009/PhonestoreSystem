@@ -130,7 +130,7 @@
 
             <!-- Add to POS -->
             <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 10px;">
                     <input id="add_to_pos" type="checkbox" name="add_to_pos" value="1"
                         {{ old('add_to_pos') ? 'checked' : '' }}
                         style="width: 18px; height: 18px; cursor: pointer; accent-color: #3498db;">

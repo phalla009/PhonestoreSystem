@@ -69,6 +69,15 @@
             color: #1f2937;
             font-weight: 500;
         }
+
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px; font-size: 12.5px; font-weight: 600;
+            text-transform: capitalize;
+        }
+        .status-badge.status-active { background: #eafaf1; color: #27ae60; border: 1px solid #b7ecc9; }
+        .status-badge.status-inactive { background: #fdf1f0; color: #e74c3c; border: 1px solid #f5c2c2; }
+        .status-badge i { font-size: 8px; color: inherit; }
     </style>
 @endsection
 
@@ -87,7 +96,7 @@
 
         <h2><i class="fas fa-mobile-alt"></i> Brand Details</h2>
 
-        {{-- Row 1: Brand Name & Description --}}
+        {{-- Row 1: Brand Name & Status --}}
         <div class="info-row">
             <div class="info-box">
                 <div class="info-label"><i class="fas fa-tag"></i> Brand Name</div>
@@ -95,12 +104,24 @@
             </div>
 
             <div class="info-box">
+                <div class="info-label"><i class="fas fa-circle-check"></i> Status</div>
+                <div class="info-value">
+                    <span class="status-badge status-{{ $category->status }}">
+                        <i class="fas fa-circle"></i> {{ $category->status }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Row 2: Description --}}
+        <div class="info-row">
+            <div class="info-box" style="grid-column: 1 / -1;">
                 <div class="info-label"><i class="fas fa-align-left"></i> Description</div>
                 <div class="info-value">{{ $category->description ?? 'No description available.' }}</div>
             </div>
         </div>
 
-        {{-- Row 2: Created At & Last Updated --}}
+        {{-- Row 3: Created At & Last Updated --}}
         <div class="info-row">
             <div class="info-box">
                 <div class="info-label"><i class="fas fa-calendar-plus"></i> Created At</div>

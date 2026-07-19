@@ -78,15 +78,13 @@
         }
 
         .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            width: fit-content;
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px; font-size: 12.5px; font-weight: 600;
+            text-transform: capitalize;
         }
-        .status-active   { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
-        .status-inactive { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+        .status-badge.status-active { background: #eafaf1; color: #27ae60; border: 1px solid #b7ecc9; }
+        .status-badge.status-inactive { background: #fdf1f0; color: #e74c3c; border: 1px solid #f5c2c2; }
+        .status-badge i { font-size: 8px; color: inherit; }
     </style>
 @endsection
 
@@ -128,12 +126,24 @@
                 <div class="info-value">{{ $customer->email ?? 'No Email' }}</div>
             </div>
             <div class="info-box">
-                <div class="info-label"><i class="fas fa-circle"></i> Status</div>
+                <div class="info-label"><i class="fas fa-circle-check"></i> Status</div>
                 <div class="info-value">
-                    <span class="status-badge status-{{ strtolower($customer->status) }}">
-                        {{ ucfirst($customer->status) }}
+                    <span class="status-badge status-{{ $customer->status }}">
+                        <i class="fas fa-circle"></i> {{ $customer->status }}
                     </span>
-                </div>
+                </div> 
+            </div>
+        </div>
+
+        {{-- Row 3: Created At & Last Updated --}}
+        <div class="info-row">
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-calendar-plus"></i> Created At</div>
+                <div class="info-value">{{ $customer->created_at ? $customer->created_at->format('Y-m-d H:i') : 'N/A' }}</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label"><i class="fas fa-clock"></i> Last Updated</div>
+                <div class="info-value">{{ $customer->updated_at ? $customer->updated_at->format('Y-m-d H:i') : 'N/A' }}</div>
             </div>
         </div>
 
